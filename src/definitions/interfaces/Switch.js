@@ -1,14 +1,22 @@
+import WSwitch from '../../components/widgets/WSwitch'
+
 export default {
 
   icon: 'mdi-toggle-switch',
 
   widgets: {
     'switch': {
-      description: 'toggle the device',
-      type: 'WSwitch',
-      options: {
-        attr: 'state',
-        fn_setter: 'setState'
+      extends: WSwitch,
+      props: {
+        attr: {
+          default: 'state',
+        },
+        fn_setter: {
+          default: 'setState',
+        }
+      },
+      metadata: {
+        description: 'toggle the device'
       }
     }
   }

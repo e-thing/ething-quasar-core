@@ -54,8 +54,8 @@ export default {
       }
     },
 
-    meta: {
-      name: 'qnob',
+    metadata: {
+      label: 'qnob',
       minWidth: 160,
       minHeight: 160
     }

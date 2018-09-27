@@ -26,8 +26,8 @@ export default {
       }
     },
 
-    meta: {
-      name: 'WGenericSensor',
+    metadata: {
+      label: 'WGenericSensor',
       minWidth: 50,
       minHeight: 50
     }

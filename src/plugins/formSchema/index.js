@@ -31,10 +31,10 @@ import FormSchemaWeekCalendar from './FormSchemaWeekCalendar'
 import FormSchemaScheduler from './FormSchemaScheduler'
 
 export default {
-  install ({ ethingUI, Vue }) {
-    
-    ethingUI.formSchema = core
-    
+  install ({ EThingUI, Vue }) {
+
+    EThingUI.formSchema = core
+
     Vue.component('FormSchema', FormSchema)
     Vue.component('FormSchemaObject', FormSchemaObject)
     Vue.component('FormSchemaArray', FormSchemaArray)
@@ -60,8 +60,8 @@ export default {
     Vue.component('FormSchemaSerialPort', FormSchemaSerialPort)
     Vue.component('FormSchemaWeekCalendar', FormSchemaWeekCalendar) // deprecated !
     Vue.component('FormSchemaScheduler', FormSchemaScheduler)
-    
+
     Vue.config.optionMergeStrategies.validations = Vue.config.optionMergeStrategies.data
-    
+
   }
 }

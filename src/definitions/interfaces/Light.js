@@ -1,10 +1,14 @@
+
 export default {
 
   icon: 'lightbulb outline',
 
   widgets: {
     'switch': {
-      description: 'toggle the light'
+      // inherits Switch
+      metadata: {
+        description: 'toggle the light'
+      }
     }
   }
 

@@ -56,8 +56,8 @@ export default {
 
     var eventOptions = []
 
-    for (let k in this.$ethingUI.meta.definitions.events) {
-      let event = this.$ethingUI.meta.definitions.events[k]
+    for (let k in this.$ethingUI.definitions.events) {
+      let event = this.$ethingUI.definitions.events[k]
       if (!event.virtual) {
         var description = event.description
         if (!description) {
@@ -95,14 +95,14 @@ export default {
       if (this.event) {
 
 
-        let meta = this.$ethingUI.meta.get(this.event)
+        let meta = this.$ethingUI.get(this.event)
 
         schema = meta
 
         if (meta.inheritances.indexOf("events/ResourceEvent") !== -1 && meta.signal) {
 
           var signal = meta.signal
-          var meta = this.$ethingUI.meta
+          var meta = this.$ethingUI
 
           schema = extend(true, {
             properties: {

@@ -82,8 +82,8 @@ var FormSchemaScriptInputItem = {
         var input = type ? inputs[type] : null
         var options = null
 
-        if (input && input.meta && input.meta.options)
-          options = input.meta.options
+        if (input && input.metadata && input.metadata.options)
+          options = input.metadata.options
 
         if (!options || Object.keys(options).length === 0) {
           options = null

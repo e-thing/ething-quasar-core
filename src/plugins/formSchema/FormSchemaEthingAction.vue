@@ -55,8 +55,8 @@ export default {
 
     var actionOptions = []
 
-    for (let k in this.$ethingUI.meta.definitions.actions) {
-      let action = this.$ethingUI.meta.definitions.actions[k]
+    for (let k in this.$ethingUI.definitions.actions) {
+      let action = this.$ethingUI.definitions.actions[k]
       if (!action.virtual) {
         var description = action.description
         if (!description) {
@@ -92,7 +92,7 @@ export default {
       }
 
       if (this.action) {
-        let meta = this.$ethingUI.meta.get(this.action)
+        let meta = this.$ethingUI.get(this.action)
         schema = meta
       }
 

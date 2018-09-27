@@ -21,8 +21,8 @@ export default {
       }
     },
 
-    meta: {
-      name: 'chart',
+    metadata: {
+      label: 'chart',
       minWidth: 250,
       minHeight: 150,
       options: {

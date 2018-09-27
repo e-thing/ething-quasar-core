@@ -2,7 +2,7 @@
   <div>
 
     <q-list no-border>
-      <q-collapsible icon="keyboard_arrow_right" :label="operation.name" :sublabel="operation.return" v-for="operation in operations" :key="operation.name">
+      <q-collapsible icon="keyboard_arrow_right" :label="operation.name" :sublabel="operationReturnToString(operation)" v-for="operation in operations" :key="operation.name">
 
         <div class="content">
           <blockquote class="q-my-md" v-if="operation.description"><vue-markdown>{{ operation.description }}</vue-markdown></blockquote>
@@ -92,7 +92,7 @@ export default {
     methods: {
 
       buildApi () {
-        var methods = this.$ethingUI.meta.get(this.device).methods
+        var methods = this.$ethingUI.get(this.device).methods
         var operations = []
 
         for(let name in methods) {
@@ -123,6 +123,17 @@ export default {
 
       hasParameters (operation) {
         return Object.keys(operation.schema.properties || {}).length
+      },
+
+      operationReturnToString (operation) {
+        var ret = operation.return
+        if (typeof ret === 'string' ) {
+          return ret
+        } else if (typeof ret === 'object' && ret !== null) {
+          return ret.type
+        } else {
+          return ''
+        }
       },
 
       execute (operation) {

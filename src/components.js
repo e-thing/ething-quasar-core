@@ -12,8 +12,6 @@ import ResourceWidget from './components/ResourceWidget'
 import Widget from './components/Widget'
 import widgets from './components/widgets'
 
-console.log(widgets)
-
 export {
     widgets,
     Chart,

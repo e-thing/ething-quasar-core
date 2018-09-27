@@ -83,8 +83,8 @@ export default {
       }
     },
 
-    meta: {
-      name: 'button',
+    metadata: {
+      label: 'button',
       minWidth: 50,
       minHeight: 50,
       options: {

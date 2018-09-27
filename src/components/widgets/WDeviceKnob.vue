@@ -39,8 +39,8 @@ export default {
       },
     },
 
-    meta: {
-      name: 'knob',
+    metadata: {
+      label: 'knob',
       minWidth: 160,
       minHeight: 160
     }

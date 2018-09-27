@@ -93,7 +93,7 @@ export default {
           var type = this.resource instanceof EThing.Resource ? this.resource.type() : this.resource
           var resource = this.resource instanceof EThing.Resource ? this.resource : null
 
-          var meta = resource ? this.$ethingUI.meta.get(resource) : this.$ethingUI.meta.get(type)
+          var meta = resource ? this.$ethingUI.get(resource) : this.$ethingUI.get(type)
 
           meta = this.customize(meta, resource, type)
 

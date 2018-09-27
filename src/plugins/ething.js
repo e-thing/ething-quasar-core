@@ -1,7 +1,7 @@
 import EThing from 'ething-js'
 
 export default {
-  install ({ ethingUI, Vue }) {
+  install ({ EThingUI, Vue }) {
     Vue.prototype.$ething = EThing
     window.EThing = EThing
   }

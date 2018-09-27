@@ -1,5 +1,5 @@
 <template>
-  <q-input type="number" :value="value" @input="$emit('input', $event)" v-bind="$attrs"/>
+  <q-input type="number" placeholder="input..." :value="value" @input="$emit('input', $event)" v-bind="$attrs"/>
 </template>
 
 <script>
@@ -9,7 +9,7 @@ export default {
 
   props: ['value'],
 
-  meta: {
+  metadata: {
     options: {
       properties: {
         min: {

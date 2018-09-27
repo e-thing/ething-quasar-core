@@ -175,8 +175,8 @@ export default {
       this.update()
     },
 
-    meta: {
-      name: 'multilabel',
+    metadata: {
+      label: 'multilabel',
       minWidth: 50,
       minHeight: 50
     }

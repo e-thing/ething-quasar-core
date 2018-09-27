@@ -44,8 +44,9 @@ export default {
 
     mixins: [WResource],
 
-    meta: {
-      name: 'camera',
+    metadata: {
+      label: 'camera',
+      description: 'show the last image',
       minWidth: 320,
       minHeight: 280,
       options: {

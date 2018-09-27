@@ -15,8 +15,8 @@ export default {
 
     mixins: [WResource],
 
-    meta: {
-      name: 'image',
+    metadata: {
+      label: 'image',
       minWidth: 320,
       minHeight: 280
     }

@@ -1,18 +1,25 @@
+/*
+this module is responsible of downloading metadata from the ething server.
+*/
 import EThing from 'ething-js'
 import localDefinitions from '../definitions'
 import * as formSchemaCore from './formSchema/core'
 import { extend } from 'quasar'
 
 
+function getFromPath (obj, path, delimiter, createIfNotFound) {
 
-function getFromPath (obj, path) {
-
-  var parts = path.split('/')
+  var parts = path.split(delimiter || '/')
   var p = obj
 
   for (var i in parts) {
     var key = parts[i]
     if (typeof p === 'object' && p !== null) {
+
+      if (typeof p[key] === 'undefined' && createIfNotFound) {
+        p[key] = {}
+      }
+
       p = p[key]
     } else {
       return
@@ -198,99 +205,14 @@ function normalize (obj) {
       }
     }
 
-    for (let k in obj.widgets) {
-      obj.widgets[k] = extend({
-        label: k,
-        description: '',
-        type: null,
-        options: {}
-      }, obj.widgets[k])
-    }
   }
 
   return obj
 }
 
-function getScript(source, callback) {
-    var script = document.createElement('script');
-    var prior = document.getElementsByTagName('script')[0];
-    script.async = 1;
-
-    script.onload = script.onreadystatechange = function( _, isAbort ) {
-        if(isAbort || !script.readyState || /loaded|complete/.test(script.readyState) ) {
-            script.onload = script.onreadystatechange = null;
-            script = undefined;
-
-            if(!isAbort) { if(callback) callback(); }
-        }
-    };
-
-    script.src = source;
-    prior.parentNode.insertBefore(script, prior);
-}
-
-function importDefinitions (def, done) {
-
-  // load plugins index.js file
-  var plugins = def.plugins || {}
-
-  var pluginPromises = []
-  for (let name in plugins) {
-    let plugin = plugins[name]
-    if (plugin.js_index) {
-      pluginPromises.push(new Promise(function(resolve, reject) {
-        getScript(EThing.config.serverUrl + '/api/plugin/' + name + '/index.js', () => {
-          console.log('plugin ' + name + ' index.js loaded')
-          resolve()
-        })
-      }))
-    }
-  }
-
-  meta.scopes = def.scopes || {}
-  meta.info = def.info || {}
-  meta.plugins = plugins
-  meta.config = def.config || {}
-
-  Promise.all(pluginPromises).then(() => {
-
-    var definitions = def.definitions
-
-    // merge with locals
-    walkThrough(definitions, meta.definitions, (node, local, stop, path) => {
-      if (typeof node['type'] !== 'undefined' || typeof node['allOf'] !== 'undefined') {
-        node = mergeClass(node, local)
-        stop()
-      }
-      return node
-    })
-
-    // resolve references
-    walkThrough(definitions, (node, _, stop, path) => {
-      if (typeof node['type'] !== 'undefined' || typeof node['allOf'] !== 'undefined') {
-        node = resolve(node, definitions)
-        stop()
-      }
-      return node
-    })
-
-    console.log(definitions)
-
-    extend(formSchemaCore.definitions, definitions)
-
-    meta.definitions = definitions
-
-    if (done)
-      done(meta)
-
-  })
-
-}
-
-
 var cached_meta_types = {}
 
-function get (type, raw) {
+function get (definitions, type, raw) {
   var resource = null
 
   if (type instanceof EThing.Resource) {
@@ -313,7 +235,7 @@ function get (type, raw) {
   }
 
   // generate schema
-  var m = getFromPath(meta.definitions, type) || {}
+  var m = getFromPath(definitions, type) || {}
 
   // normalize
   if (!raw) {
@@ -340,32 +262,133 @@ function get (type, raw) {
 }
 
 
-export var meta = {
-  info: {},
-  mergeClass,
-  get,
-  definitions: localDefinitions,
-  plugins: {},
-  scopes: {},
-  loadDefinitions () {
-    return new Promise(function(resolve, reject) {
-      EThing.request({
-        url: 'utils/definitions',
-        dataType: 'json',
-      }).then( (def) => {
-        console.log('ething meta loaded !')
-        importDefinitions(def, resolve)
-      })
-    })
-  }
+function getScript(source, callback) {
+    var script = document.createElement('script');
+    var prior = document.getElementsByTagName('script')[0];
+    script.async = 1;
 
+    script.onload = script.onreadystatechange = function( _, isAbort ) {
+        if(isAbort || !script.readyState || /loaded|complete/.test(script.readyState) ) {
+            script.onload = script.onreadystatechange = null;
+            script = undefined;
 
+            if(!isAbort) { if(callback) callback(); }
+        }
+    };
+
+    script.src = source;
+    prior.parentNode.insertBefore(script, prior);
 }
 
+function importMeta (self, meta, done) {
+
+  self.scopes = meta.scopes || {}
+  self.info = meta.info || {}
+  self.config = meta.config || {}
+
+  // load plugins index.js file
+  var plugins = meta.plugins || {}
+
+  var pluginPromises = []
+  for (let name in plugins) {
+    let plugin = plugins[name]
+    if (plugin.js_index) {
+      pluginPromises.push(new Promise(function(resolve, reject) {
+        getScript(EThing.config.serverUrl + '/api/plugin/' + name + '/index.js', () => {
+          console.log('plugin ' + name + ' index.js loaded')
+          resolve()
+        })
+      }))
+    }
+  }
+
+  self.plugins = plugins
+
+  Promise.all(pluginPromises).then(() => {
+
+    var serverDefinitions = meta.definitions
+
+    // merge with locals
+    walkThrough(serverDefinitions, self.definitions, (node, local, stop, path) => {
+      if (typeof node['type'] !== 'undefined' || typeof node['allOf'] !== 'undefined') {
+        node = mergeClass(node, local)
+        stop()
+      }
+      return node
+    })
+
+    // resolve references
+    walkThrough(serverDefinitions, (node, _, stop, path) => {
+      if (typeof node['type'] !== 'undefined' || typeof node['allOf'] !== 'undefined') {
+        node = resolve(node, serverDefinitions)
+        stop()
+      }
+      return node
+    })
+
+    self.definitions = serverDefinitions
+
+    extend(formSchemaCore.definitions, self.definitions)
+
+    if (done)
+      done(self)
+
+  })
+
+}
 
 export default {
-  install ({ ethingUI }) {
-    ethingUI.meta = meta
+  install ({ EThingUI }) {
+    Object.assign(EThingUI, {
+
+      // contains some information about the server
+      info: {},
+
+      mergeClass,
+
+      definitions: localDefinitions,
+
+      // returns metadata of any type or resource
+      get: function (type, raw) {
+        return get (this.definitions, type, raw)
+      },
+
+      // extend the metadata of a given type
+      extend: function (type, definition) {
+        var obj = type
+        if (typeof type === 'string') {
+          obj = getFromPath(this.definitions, type, /[\.\/]/, true)
+        }
+        mergeClass(obj, definition)
+      },
+
+      // store informations about loaded plugins
+      plugins: {},
+
+      // list the available scopes (used in api key)
+      scopes: {},
+
+      loadMeta (done) {
+        var self = this
+        return new Promise(function(resolve, reject) {
+          EThing.request({
+            url: 'utils/definitions',
+            dataType: 'json',
+          }).then( (meta) => {
+            console.log('ething meta loaded !')
+            importMeta(self, meta, () => {
+              if (done) {
+                done()
+              }
+
+              resolve()
+            })
+          }).catch(err => {
+            reject(err)
+          })
+        })
+      },
+
+    })
   }
 }
-

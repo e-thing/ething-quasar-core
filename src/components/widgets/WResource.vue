@@ -19,7 +19,7 @@ export default {
         if (this.resource instanceof EThing.Resource) {
           return this.resource
         } else {
-          var r = this.$store.getters['ething/get'](this.resource)
+          var r = EThing.arbo.get(this.resource)
           if (!r) {
             this.setError('the resource does not exist anymore ! ('+this.resource+')')
           }

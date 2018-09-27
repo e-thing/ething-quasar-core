@@ -1,26 +1,45 @@
+import WDeviceLabel from '../../components/widgets/WDeviceLabel'
+import WDeviceKnob from '../../components/widgets/WDeviceKnob'
+
 export default {
 
   icon: 'mdi-thermometer',
 
   widgets: {
-    'temperature.knob': {
-      label: 'temperature (knob)',
-      description: 'show the temperature',
-      type: 'WDeviceKnob',
-      options: {
-        attr: 'temperature',
-        unit: '°C',
-        min: -20,
-        max: 40,
+    'temperature.label': {
+      extends: WDeviceLabel,
+      props: {
+        attr: {
+          default: 'temperature'
+        },
+        unit: {
+          default: '°C'
+        }
+      },
+      metadata: {
+        label: 'temperature (label)',
+        description: 'show the temperature'
       }
     },
-    'temperature.label': {
-      label: 'temperature (label)',
-      description: 'show the temperature',
-      type: 'WDeviceLabel',
-      options: {
-        attr: 'temperature',
-        unit: '°C',
+    'temperature.knob': {
+      extends: WDeviceKnob,
+      props: {
+        attr: {
+          default: 'temperature'
+        },
+        unit: {
+          default: '°C'
+        },
+        min: {
+          default: -20
+        },
+        max: {
+          default: 50
+        }
+      },
+      metadata:{
+        label: 'temperature (knob)',
+        description: 'show the temperature'
       }
     }
   }

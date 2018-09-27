@@ -1,7 +1,7 @@
 <template>
   <q-item class="item" @click.native="open(resource)" :link="!readonly">
     <div v-for="n in level" :class="gen(n)"></div>
-    <q-item-side :icon="$ethingUI.meta.get(resource).icon" inverted :color="$ethingUI.meta.get(resource).color" />
+    <q-item-side :icon="$ethingUI.get(resource).icon" inverted :color="$ethingUI.get(resource).color" />
     <q-item-main>
       <q-item-tile label>
         <span class="vertical-middle text-black">{{ resource.basename() }}</span>

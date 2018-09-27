@@ -1,6 +1,45 @@
 import { date, format } from 'quasar'
 import EThing from 'ething-js'
 
+/**
+ * Get the raw type string of a value e.g. [object Object]
+ */
+const _toString = Object.prototype.toString
+
+export function isPlainObject (obj) {
+  return _toString.call(obj) === '[object Object]'
+}
+
+export function isRegExp (v) {
+  return _toString.call(v) === '[object RegExp]'
+}
+
+export function extend(out) {
+  out = out || {};
+
+  for (var i = 1, len = arguments.length; i < len; ++i) {
+    var obj = arguments[i];
+
+    if (!obj) {
+      continue;
+    }
+
+    for (var key in obj) {
+      if (!obj.hasOwnProperty(key)) {
+        continue;
+      }
+
+      if (isPlainObject(obj[key])) {
+        out[key] = extend(out[key], obj[key]);
+        continue;
+      }
+
+      out[key] = obj[key];
+    }
+  }
+
+  return out;
+}
 
 export function getParameterByName(name, url) {
     if (!url) url = window.location.href;

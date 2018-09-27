@@ -7,15 +7,10 @@ promiseFinally.shim()
 
 
 export default {
-  install (ethingUI, Vue) {
-      
-      for( var k in Vue) {
-          console.log('Vue.'+k+':', Vue[k])
-      }
-      console.log(Vue)
-    
-    Object.assign(ethingUI, {
-        
+  install (EThingUI, Vue) {
+
+    Object.assign(EThingUI, {
+
         /*
         return the url for opening a resource
         */
@@ -47,9 +42,9 @@ export default {
         }
 
     })
-    
-    
-    
-    
+
+
+
+
   }
 }

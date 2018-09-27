@@ -13,7 +13,7 @@ export default {
     }
   },
 
-  meta: {
+  metadata: {
     options: {
       properties: {
         min: {

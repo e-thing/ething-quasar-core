@@ -23,7 +23,7 @@ export default {
 
     computed: {
       widgets () {
-        return this.$ethingUI.meta.get(this.resource).widgets || []
+        return this.$ethingUI.get(this.resource).widgets || []
       },
 
       widget () {

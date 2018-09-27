@@ -20,9 +20,6 @@ export default {
   },
 
   widgets: {
-    'chart': {
-      description: 'print a chart',
-      type: 'WChart'
-    }
+    'chart': 'WChart'
   }
 }

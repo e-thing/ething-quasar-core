@@ -1,40 +1,45 @@
-// widgets api
+// widgets module
 
-import widgets from '../components/widgets'
+import coreWidgets from '../components/widgets'
 
+// global widgets map
+export var widgets = {}
 
 function normalize(widget) {
   widget.meta = widget.meta || {}
   return widget
 }
 
-for(var k in widgets) {
-  widgets[k] = normalize(widgets[k])
+// find a widget by its name
+function findWidget (name) {
+  if (widgets.hasOwnProperty(name)) {
+    return widgets[name]
+  }
 }
 
-var widget = {
-
-  // list the available widgets
-  widgets,
-
-  // find a widget by its name
-  find (name) {
-    if (widgets.hasOwnProperty(name)) {
-      return widgets[name]
-    }
-  },
-
-  register (widget) {
-    if (!widget.name) {
-      throw new Error('No name set in the widget definition')
-    }
-    widgets[widget.name] = normalize(widget)
-  },
+// register a widget
+function registerWidget (widget) {
+  if (!widget.name) {
+    throw new Error('No name set in the widget definition')
+  }
+  widgets[widget.name] = normalize(widget)
+  return widgets[widget.name]
 }
 
 // leave the export, even if you don't use it
 export default {
-  install ({ ethingUI }) {
-    ethingUI.widget = widget
+  install ({ EThingUI }) {
+
+    Object.assign(EThingUI, {
+      widgets,
+      findWidget,
+      registerWidget
+    })
+
+    // register core widgets
+    for(var k in coreWidgets) {
+      registerWidget(coreWidgets[k])
+    }
+
   }
 }

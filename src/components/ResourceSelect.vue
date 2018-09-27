@@ -94,8 +94,8 @@ export default {
           return {
             label: r.name(),
             value: this.useId ? r.id() : r,
-            icon: this.$ethingUI.meta.get(r).icon,
-            leftColor: this.$ethingUI.meta.get(r).color,
+            icon: this.$ethingUI.get(r).icon,
+            leftColor: this.$ethingUI.get(r).color,
             inset: true,
             stamp: r.type(),
             sublabel: createdByArr.length ? createdByArr.reverse().map(r => r.basename()).join(' -> ') : undefined

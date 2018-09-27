@@ -28,8 +28,8 @@ export default {
       unit: String,
     },
 
-    meta: {
-      name: 'label',
+    metadata: {
+      label: 'label',
       minWidth: 50,
       minHeight: 50
     }

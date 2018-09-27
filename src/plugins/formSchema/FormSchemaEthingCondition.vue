@@ -55,8 +55,8 @@ export default {
 
     var conditionOptions = []
 
-    for (let k in this.$ethingUI.meta.definitions.conditions) {
-      let condition = this.$ethingUI.meta.definitions.conditions[k]
+    for (let k in this.$ethingUI.definitions.conditions) {
+      let condition = this.$ethingUI.definitions.conditions[k]
       if (!condition.virtual) {
         var description = condition.description
         if (!description) {
@@ -92,7 +92,7 @@ export default {
       }
 
       if (this.condition) {
-        let meta = this.$ethingUI.meta.get(this.condition)
+        let meta = this.$ethingUI.get(this.condition)
         schema = meta
       }
 

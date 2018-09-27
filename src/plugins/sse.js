@@ -1,6 +1,6 @@
 // import something here
 import EThing from 'ething-js'
-import { Notify } from 'quasar'
+
 
 if (!EventSource) {
 	console.log('load EventSource polyfill')
@@ -9,70 +9,60 @@ if (!EventSource) {
 
 // SSE
 
-// server sent event
+var _events_handlers = {}
+
+
 export var SSE = {
 	source: null,
 
 	connected: false,
-	showReconnect: false,
 
-	onconnect: null,
-	ondisconnect: null,
+	on (event, handler) {
+		if (!_events_handlers[event]) {
+			_events_handlers[event] = []
+		}
+		_events_handlers[event].push({
+			handler
+		})
+	},
+
+	off (event, handler) {
+		if (_events_handlers[event]) {
+			if (handler) {
+				_events_handlers[event] = _events_handlers[event].filter(item => item.handler !== handler)
+			} else {
+				// remove all handler
+				_events_handlers[event] = []
+			}
+		}
+	},
+
+	emit (event, args) {
+		if (_events_handlers[event]) {
+			_events_handlers[event].forEach(item => {
+				item.handler(args)
+			})
+		}
+	},
 
 	start () {
 		var self = this
+
 		var source = this.source = new EventSource(EThing.config.serverUrl + "/api/events", { withCredentials: true, https: {rejectUnauthorized: false} })
 
 		source.onopen = function() {
 			console.log("SSE connected")
 			self.connected = true
 
-			if (self.notification) {
-				self.notification()
-			}
-
-			if (self.showReconnect) {
-				self.notification = Notify.create({
-					type: 'positive',
-					color: 'positive',
-				  message: 'Reconnected to server !',
-					icon: 'thumb_up',
-					position: 'top-right',
-					onDismiss () {
-						delete self.notification
-					}
-				})
-			}
-
-			if (self.onconnect) {
-				self.onconnect.call(self)
-			}
+			self.emit('connected')
 		}
 
 		source.onerror = function() {
 			if (self.connected === true) {
 				console.warn("SSE disconnected")
 				self.connected = false
-				self.showReconnect = true
 
-				if (self.notification) {
-					self.notification()
-				}
-
-				self.notification = Notify.create({
-					type: 'negative',
-					color: 'negative',
-				  message: 'Lost connection to server !',
-					icon: 'report_problem',
-					position: 'top-right',
-					onDismiss () {
-						delete self.notification
-					}
-				})
-
-				if (self.ondisconnect) {
-					self.ondisconnect.call(self)
-				}
+				self.emit('disconnected')
 			}
 		}
 
@@ -121,23 +111,11 @@ export var SSE = {
 		}
   },
 
-  cacheDelay: 500,
-  cache: {},
-
-  fetch (resourceId) {
-    if(this.cache[resourceId]) clearTimeout(this.cache[resourceId]);
-		this.cache[resourceId] = setTimeout(() => {
-			delete this.cache[resourceId];
-			//console.log("updating resource " + resourceId);
-			EThing.get(resourceId);
-		}, this.cacheDelay);
-  }
-
 };
 
 
 export default {
-  install ({ ethingUI }) {
-    ethingUI.sse = SSE
+  install ({ EThingUI }) {
+    EThingUI.SSE = SSE
   }
 }

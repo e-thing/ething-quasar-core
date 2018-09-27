@@ -33,8 +33,8 @@ export default {
 
     var selectOptions = []
 
-    for (let k in this.$ethingUI.meta.scopes) {
-      let scope = this.$ethingUI.meta.scopes[k]
+    for (let k in this.$ethingUI.scopes) {
+      let scope = this.$ethingUI.scopes[k]
       selectOptions.push({
         label: k,
         value: k,

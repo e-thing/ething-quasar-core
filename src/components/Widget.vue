@@ -1,12 +1,17 @@
 <template>
-  <div class="widget" :class="{'widget-err': !!error}">
-    <div v-if="!!error" class="widget-err-content absolute-center text-center">{{ error }}</div>
-    <componant v-else ref="widget" :is="type" :style="style" v-bind="attr" :class="inline ? '' : 'fit'" @error="error = $event"/>
+  <div class="widget" :class="{'widget-err': error}" :style="style">
+    <div v-if="error" class="widget-err-layer absolute-center text-center">error</div>
+    <div v-else class="widget-content-layer" :class="inline ? '' : 'fit'">
+      <template v-if="isDynReg">
+        <div ref="dynW"/>
+      </template>
+      <component v-else ref="staticW" :is="widgetClass" v-bind="widgetOptions" @error="error = $event"/>
+    </div>
   </div>
 </template>
 
 <script>
-import widgets from './widgets'
+import { widgets } from '../plugins/widget'
 
 
 export default {
@@ -15,62 +20,90 @@ export default {
     components: widgets,
 
     props: {
-      type: String,
-      options: {},
+      widgetClass: {},
+      widgetOptions: {},
       inline: Boolean
     },
-
-    data () {
-        return {
-          error: false
-        }
+    data() {
+      return {
+        error: false,
+        widgetInstance: null
+      };
     },
-
     computed: {
-      attr () {
-        return Object.assign({}, this.options, this.$attrs)
+      isDynReg() {
+        return typeof this.widgetClass !== "string";
       },
-
-      widgetClass () {
-        return this.$ethingUI.widget.find(this.type)
-      },
-
-      widgetClassMeta () {
-        return this.widgetClass ? this.widgetClass.meta : {}
-      },
-
       style () {
         var style = {}
 
-        if (this.widgetClassMeta.minWidth) {
-          style.minWidth = this.widgetClassMeta.minWidth + 'px'
-          if (this.inline) {
-            style.width = style.minWidth
+        if (this.widgetInstance) {
+          var metadata = this.widgetInstance.constructor.options.metadata
+          if (metadata.minWidth) {
+            style.minWidth = metadata.minWidth + 'px'
+            if (this.inline) {
+              style.width = style.minWidth
+            }
           }
-        }
-        if (this.widgetClassMeta.minHeight) {
-          style.minHeight = this.widgetClassMeta.minHeight + 'px'
-          style.height = this.inline ? style.minHeight : '1px'
+          if (metadata.minHeight) {
+            style.minHeight = metadata.minHeight + 'px'
+            style.height = this.inline ? style.minHeight : '1px'
+          }
         }
 
         return style
       }
     },
+    mounted() {
+      if (this.isDynReg) {
 
+        var WidgetComponent;
+
+        // create constructor
+        if (this.$ethingUI.utils.isPlainObject(this.widgetClass)) {
+          WidgetComponent = Vue.extend(this.widgetClass);
+        } else {
+          WidgetComponent = this.widgetClass
+        }
+
+        // create an instance of WidgetComponent and mount it
+        var WidgetComponentInstance = new WidgetComponent({
+          propsData: this.widgetOptions,
+          parent: this
+        });
+
+        WidgetComponentInstance.$on("error", evt => {
+          this.error = evt;
+        });
+
+        WidgetComponentInstance.$mount(this.$refs.dynW);
+
+        this.widgetInstance = WidgetComponentInstance
+      } else {
+        this.widgetInstance = this.$refs.staticW
+      }
+    },
     methods: {
       hasContentOverflow () {
-        var widgetRef = this.$refs.widget
-        if (widgetRef) {
-          var el = widgetRef.$el
+        var el = null
+        if (this.isDynReg) {
+          el = this.$refs.dynW
+        } else {
+          if (this.$refs.staticW) {
+            el = this.$refs.staticW.$el
+          }
+        }
+        if (el) {
           return el.scrollWidth > el.clientWidth
         }
+        return false
       }
     }
 
 }
 </script>
 
-<style lang="stylus" scoped>
+<style lang="stylus">
 @import '~variables'
 
 .widget
@@ -78,7 +111,10 @@ export default {
   &.widget-err
     border 1px solid $negative
     background-color $red-1
-  & .widget-err-content
+  & > .widget-err-layer
     color $negative
+  & > .widget-content-layer.fit > *
+    width: 100%
+    height: 100%
 
 </style>

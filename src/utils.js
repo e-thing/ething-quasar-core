@@ -1,5 +1,7 @@
 import { date, format } from 'quasar'
 import EThing from 'ething-js'
+import saveAs_ from 'file-saver'
+
 
 /**
  * Get the raw type string of a value e.g. [object Object]
@@ -103,4 +105,20 @@ export function describe (obj) {
     s.push(k + ': ' + l)
   }
   return s.join(', ')
+}
+
+export function saveAs (data, filename) {
+  if (isPlainObject(data)) {
+    // convert it into a String
+    data = JSON.stringify(data, null, 2)
+  }
+
+  if (typeof data === 'string') {
+    // convert it into a Blob
+    data = new Blob([data], {
+        type: 'text/plain'
+    });
+  }
+
+  return saveAs_(data, filename || 'data')
 }

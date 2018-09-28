@@ -1,6 +1,6 @@
 <template>
   <w-layout v-bind="$attrs">
-    <small slot="header" class="cursor-pointer" @click="$ui.open(r)">
+    <small slot="header" class="cursor-pointer" @click="$ethingUI.open(r)">
       {{ r.basename() }}
     </small>
 

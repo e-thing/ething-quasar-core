@@ -295,7 +295,7 @@ function importMeta (self, meta, done) {
     if (plugin.js_index) {
       pluginPromises.push(new Promise(function(resolve, reject) {
         getScript(EThing.config.serverUrl + '/api/plugin/' + name + '/index.js', () => {
-          console.log('plugin ' + name + ' index.js loaded')
+          console.log('plugin ' + name + ' loaded')
           resolve()
         })
       }))
@@ -307,6 +307,8 @@ function importMeta (self, meta, done) {
   Promise.all(pluginPromises).then(() => {
 
     var serverDefinitions = meta.definitions
+
+    console.log(extend(true, {}, serverDefinitions))
 
     // merge with locals
     walkThrough(serverDefinitions, self.definitions, (node, local, stop, path) => {

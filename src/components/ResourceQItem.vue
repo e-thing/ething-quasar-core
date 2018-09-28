@@ -46,7 +46,6 @@
 
 <script>
 import ResourceBatteryChip from './ResourceBatteryChip'
-import FileSaver from 'file-saver'
 
 export default {
   name: 'ResourceQItem',
@@ -227,7 +226,7 @@ export default {
           url: this.resource.getContentUrl(),
           dataType: 'blob'
         }).then((data) => {
-          FileSaver.saveAs(data, this.resource.basename())
+          this.$ethingUI.utils.saveAs(data, this.resource.basename())
         })
       } else if (this.resource instanceof this.$ething.Table) {
 
@@ -250,14 +249,14 @@ export default {
             url: this.resource.getContentUrl() + '?fmt=' + format,
             dataType: 'blob'
           }).then((data) => {
-            FileSaver.saveAs(data, this.resource.basename() + '.' + (format=='json_pretty' ? 'json' : format))
+            this.$ethingUI.utils.saveAs(data, this.resource.basename() + '.' + (format=='json_pretty' ? 'json' : format))
           })
         })
       }
     },
 
     open (r) {
-      if (!this.readonly) this.$ui.open(r)
+      if (!this.readonly) this.$ethingUI.open(r)
     }
   }
 

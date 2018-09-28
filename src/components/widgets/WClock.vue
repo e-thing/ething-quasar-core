@@ -51,8 +51,9 @@ export default {
     },
 
     beforeDestroy () {
-      if(this.timerId !== null)
+      if(this.timerId !== null) {
         clearInterval(this.timerId)
+      }
     },
 
     methods: {

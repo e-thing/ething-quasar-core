@@ -7,7 +7,10 @@ promiseFinally.shim()
 
 
 export default {
-  install (EThingUI, Vue) {
+  install (EThingUI, Vue, opts) {
+    
+    var router = opts.router
+    var store = opts.store
 
     Object.assign(EThingUI, {
 
@@ -39,7 +42,14 @@ export default {
           else if (resource instanceof EThing.Rule) {
             return '/rule'
           }
-        }
+        },
+
+        open (resource, more) {
+          var route = EThingUI.route(resource, more)
+          if (route) {
+            router.push(route)
+          }
+        },
 
     })
 

@@ -20,7 +20,7 @@ EThingUI.install = function(Vue, opts = {}) {
   if (EThingUI.__installed) { return }
   EThingUI.__installed = true
 
-  Core.install(EThingUI, Vue)
+  Core.install(EThingUI, Vue, opts)
 
   Vue.prototype.$ethingUI = EThingUI
   if (window) {

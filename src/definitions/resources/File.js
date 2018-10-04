@@ -44,5 +44,17 @@ export default {
     if (icon) m.icon = icon
     if (widgets) m.widgets = widgets
     return m
+  },
+
+  open (resource, more) {
+    if (/\.plot$/.test(resource.basename())) {
+      return '/chart/' + resource.id()
+    } else if (/image/.test(resource.mime())) {
+      return '/image/' + resource.id()
+    } else if ('application/javascript' == resource.mime()) {
+      return '/script/' + resource.id()
+    } else {
+      return '/text/' + resource.id()
+    }
   }
 }

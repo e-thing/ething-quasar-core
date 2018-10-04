@@ -136,7 +136,6 @@ export default {
       },
 
       refresh () {
-        console.log('refresh')
         this.loading = true
         this.error = false
         this.imgKey += 1

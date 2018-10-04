@@ -1,7 +1,7 @@
 <template>
   <q-item class="item" @click.native="open(resource)" :link="!readonly">
     <div v-for="n in level" :class="gen(n)"></div>
-    <q-item-side :icon="$ethingUI.get(resource).icon" inverted :color="$ethingUI.get(resource).color" />
+    <q-item-side :icon="meta.icon" inverted :color="meta.color" />
     <q-item-main>
       <q-item-tile label>
         <span class="vertical-middle text-black">{{ resource.basename() }}</span>
@@ -16,6 +16,9 @@
       <q-item-tile sublabel v-if="showSize">{{ $ethingUI.utils.sizeToString(resource.size()) }}</q-item-tile>
       <q-item-tile sublabel v-if="showLength">{{ resource.length() }} rows</q-item-tile>
     </q-item-main>
+    <q-item-side right v-if="Object.keys(data).length>0" class="data gt-sm ellipsis">
+      {{ $ethingUI.utils.describe(data) }}
+    </q-item-side>
     <q-item-side right v-if="showLocation" class="gt-xs">
       <q-chip small detail icon="location_on">
         {{ resource.location() }}
@@ -116,6 +119,14 @@ export default {
 
     showDownload () {
       return this.resource instanceof this.$ething.File || this.resource instanceof this.$ething.Table
+    },
+
+    meta () {
+      return this.$ethingUI.get(this.resource)
+    },
+
+    data () {
+      return this.meta.data()
     }
 
   },
@@ -267,6 +278,13 @@ export default {
 
 <style lang="stylus" scoped>
 @import '~variables'
+
+.data
+  max-width 500px
+
+@media (max-width: $breakpoint-md)
+  .data
+    max-width 250px
 
 .parent:hover
   text-decoration underline

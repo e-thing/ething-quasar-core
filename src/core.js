@@ -1,5 +1,6 @@
 import EThing from 'ething-js'
 import promiseFinally from 'promise.prototype.finally'
+import storeModules from './store'
 
 
 // necessary for older browsers
@@ -8,40 +9,36 @@ promiseFinally.shim()
 
 export default {
   install (EThingUI, Vue, opts) {
-    
+
     var router = opts.router
     var store = opts.store
 
+    console.log(router)
+
+    if (!router) {
+      throw new Error('no router set !')
+    }
+
+    if (!store) {
+      throw new Error('no store set !')
+    }
+
+    if (storeModules) {
+      for (var name in storeModules) {
+        store.registerModule(name, storeModules[name])
+      }
+    }
+
     Object.assign(EThingUI, {
+
+        router,
+        store,
 
         /*
         return the url for opening a resource
         */
         route (resource, more) {
-          if (resource instanceof EThing.File) {
-            if (/\.plot$/.test(resource.basename())) {
-              return '/chart/' + resource.id()
-            } else if (/image/.test(resource.mime())) {
-              return '/image/' + resource.id()
-            } else if ('application/javascript' == resource.mime()) {
-              return '/script/' + resource.id()
-            } else {
-              return '/text/' + resource.id()
-            }
-          }
-          else if (resource instanceof EThing.Table) {
-            if (more === 'chart') {
-              return '/chart/' + resource.id()
-            } else {
-              return '/table/' + resource.id()
-            }
-          }
-          else if (resource instanceof EThing.Device) {
-            return '/device/' + resource.id()
-          }
-          else if (resource instanceof EThing.Rule) {
-            return '/rule'
-          }
+          return this.get(resource).open(more)
         },
 
         open (resource, more) {

@@ -5,6 +5,12 @@ export default {
 
   icon: 'mdi-water-percent',
 
+  data (resource) {
+    return {
+      'humidity': resource.attr('humidity') + '%'
+    }
+  },
+
   widgets: {
     'humidity.label': {
       extends: WDeviceLabel,

@@ -71,7 +71,7 @@ function resolve(node, definitions) {
       return resolve(getFromPath(definitions, ref), definitions)
 
     } else {
-      console.warn('invalid JSON reference: ' + ref)
+      console.warn('[meta] invalid JSON reference: ' + ref)
       return {}
     }
   }
@@ -122,6 +122,28 @@ function resolve(node, definitions) {
   }
 }
 
+function mergeFunction (a, b) {
+  // concat the data function into an array
+  var aDataFn = a
+  var bDataFn = b
+  var mergedDataFn = []
+  if (aDataFn) {
+    if (Array.isArray(aDataFn)) {
+      mergedDataFn = mergedDataFn.concat(aDataFn)
+    } else {
+      mergedDataFn.push(aDataFn)
+    }
+  }
+  if (bDataFn) {
+    if (Array.isArray(bDataFn)) {
+      mergedDataFn = mergedDataFn.concat(bDataFn)
+    } else {
+      mergedDataFn.push(bDataFn)
+    }
+  }
+  return mergedDataFn
+}
+
 function mergeClass(a, b) {
 
   if (!b) return a
@@ -154,6 +176,9 @@ function mergeClass(a, b) {
     }
   })
 
+  var mergedDataFn = mergeFunction(a.data, b.data)
+  var mergedDynamicFn = mergeFunction(a.dynamic, b.dynamic)
+
   var merged = extend(true, a, b)
 
   // reorder properties and remove any invalid anyOf :
@@ -172,6 +197,10 @@ function mergeClass(a, b) {
   merged.required = mergedRequired
 
   merged.signals = mergedSignals
+
+  merged.data = mergedDataFn
+
+  merged.dynamic = mergedDynamicFn
 
   return merged
 }
@@ -192,7 +221,9 @@ function normalize (obj) {
       widgets: {},
       inheritances: [],
       disableCreation: false,
-      dynamic: null
+      dynamic: null,
+      data: null,
+      open: null
     }, obj)
 
     for (let k in obj.properties) {
@@ -205,14 +236,53 @@ function normalize (obj) {
       }
     }
 
+    var rawData = obj.data
+    obj.data = function (resource) {
+      var compiled = {}
+      if (rawData) {
+        var arrayFn = typeof rawData === 'function' ? [rawData] : rawData
+        rawData.forEach(dataFn => {
+          var res = dataFn.call(this, resource)
+          if (res) Object.assign(compiled, res)
+        })
+      }
+      return compiled
+    }
+
+    if (typeof obj.open !== 'function') {
+      var originalOpen = obj.open
+      obj.open = function () {
+        return originalOpen
+      }
+    }
+
+    delete obj.dynamic
+
   }
 
   return obj
 }
 
+function bind (m, resource) {
+  /*
+  bind a metadata object to a resource
+  */
+  var originalDataFn = m.data
+  m.data = function () {
+    return originalDataFn.call(this, resource)
+  }
+
+  var originalOpenFn = m.open
+  m.open = function (more) {
+    return originalOpenFn.call(this, resource, more)
+  }
+
+  return m
+}
+
 var cached_meta_types = {}
 
-function get (definitions, type, raw) {
+function get (definitions, type) {
   var resource = null
 
   if (type instanceof EThing.Resource) {
@@ -221,41 +291,44 @@ function get (definitions, type, raw) {
   }
 
   // check in cache first
-  if (!raw) {
-    if (resource) {
-      var id = resource.id()
-      if (id in cached_meta_types) {
-        return cached_meta_types[id]
-      }
-    } else {
-      if (type in cached_meta_types) {
-        return cached_meta_types[type]
-      }
+  if (resource) {
+    var id = resource.id()
+    if (id in cached_meta_types) {
+      return cached_meta_types[id]
+    }
+  } else {
+    if (type in cached_meta_types) {
+      return cached_meta_types[type]
     }
   }
 
   // generate schema
   var m = getFromPath(definitions, type) || {}
 
-  // normalize
-  if (!raw) {
-    m = normalize(m)
-  }
-
-  // store it in cache
-  if (!raw) {
-    if (resource) {
-      var id = resource.id()
-      if (m.dynamic) {
-        var dyn_m = m.dynamic.call(m, resource)
+  // dynamic
+  if (resource) {
+    if (m.dynamic) {
+      m = extend(true, {}, m); // deep copy first !
+      (Array.isArray(m.dynamic) ? m.dynamic : [m.dynamic]).forEach(dynamicFn => {
+        var dyn_m = dynamicFn.call(m, resource)
         if (dyn_m) {
           mergeClass(m, dyn_m)
         }
-      }
-      cached_meta_types[id] = m
-    } else {
-      cached_meta_types[type] = m
+      })
     }
+  }
+
+  // normalize
+  m = normalize(m)
+  if (resource) {
+    m = bind(m, resource)
+  }
+
+  // store it in cache
+  if (resource) {
+    cached_meta_types[resource.id()] = m
+  } else {
+    cached_meta_types[type] = m
   }
 
   return m
@@ -295,7 +368,7 @@ function importMeta (self, meta, done) {
     if (plugin.js_index) {
       pluginPromises.push(new Promise(function(resolve, reject) {
         getScript(EThing.config.serverUrl + '/api/plugin/' + name + '/index.js', () => {
-          console.log('plugin ' + name + ' loaded')
+          console.log('[meta] plugin ' + name + ' loaded')
           resolve()
         })
       }))
@@ -307,8 +380,6 @@ function importMeta (self, meta, done) {
   Promise.all(pluginPromises).then(() => {
 
     var serverDefinitions = meta.definitions
-
-    console.log(extend(true, {}, serverDefinitions))
 
     // merge with locals
     walkThrough(serverDefinitions, self.definitions, (node, local, stop, path) => {
@@ -377,7 +448,7 @@ export default {
             url: 'utils/definitions',
             dataType: 'json',
           }).then( (meta) => {
-            console.log('ething meta loaded !')
+            console.log('[meta] ething meta loaded !')
             importMeta(self, meta, () => {
               if (done) {
                 done()

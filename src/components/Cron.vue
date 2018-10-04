@@ -361,8 +361,6 @@ export default {
       },
 
       unserialize (cron) {
-
-        console.log('unserialize: '+cron)
         var model = {}
         var parts = cron.split(' ')
         var isNumber = /^[0-9]+$/

@@ -3,7 +3,7 @@ import EThing from 'ething-js'
 
 
 if (!EventSource) {
-	console.log('load EventSource polyfill')
+	console.log('[SSE] load EventSource polyfill')
 	EventSource = require('eventsource')
 }
 
@@ -11,11 +11,16 @@ if (!EventSource) {
 
 var _events_handlers = {}
 
+const CLOSED = 0
+const OPENING = 1
+const OPEN = 2
 
 export var SSE = {
 	source: null,
 
-	connected: false,
+	state: CLOSED,
+
+	autoreconnect: true,
 
 	on (event, handler) {
 		if (!_events_handlers[event]) {
@@ -48,21 +53,34 @@ export var SSE = {
 	start () {
 		var self = this
 
+		this.state = OPENING
+
+		console.log('[SSE] connecting...')
+
 		var source = this.source = new EventSource(EThing.config.serverUrl + "/api/events", { withCredentials: true, https: {rejectUnauthorized: false} })
 
 		source.onopen = function() {
-			console.log("SSE connected")
-			self.connected = true
+			console.log("[SSE] connected")
+			self.state = OPEN
 
 			self.emit('connected')
 		}
 
 		source.onerror = function() {
-			if (self.connected === true) {
-				console.warn("SSE disconnected")
-				self.connected = false
+			if (self.state !== CLOSED) {
+				console.warn("[SSE] disconnected")
+				self.stop()
 
 				self.emit('disconnected')
+
+				if (self.autoreconnect) {
+					setTimeout(() => {
+						if (self.state === CLOSED) {
+							console.log("[SSE] reconnecting...")
+							self.start()
+						}
+					}, 5000)
+				}
 			}
 		}
 
@@ -75,8 +93,11 @@ export var SSE = {
 	},
 
 	stop () {
-		if(this.source)
+		this.state = CLOSED
+		if(this.source){
+			console.log('[SSE] stop')
       this.source.close()
+		}
 	},
 
   dispatch (event) {

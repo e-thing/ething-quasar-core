@@ -21,5 +21,13 @@ export default {
 
   widgets: {
     'chart': 'WChart'
+  },
+
+  open (resource, more) {
+    if (more === 'chart') {
+      return '/chart/' + resource.id()
+    } else {
+      return '/table/' + resource.id()
+    }
   }
 }

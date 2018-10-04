@@ -4,6 +4,12 @@ export default {
 
   icon: 'mdi-contrast-circle',
 
+  data (resource) {
+    return {
+      'level': resource.attr('level') + '%'
+    }
+  },
+
   widgets: {
     'dimmer': {
       extends: WDimmable,

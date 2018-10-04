@@ -682,7 +682,7 @@ export default {
           this.load(preferences)
         }
         catch(e){
-          console.error(e)
+          console.error('[chart] unable to load chart file', e)
         }
       })
     } else {

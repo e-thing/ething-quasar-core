@@ -39,4 +39,8 @@ export default {
 
   methods: {},
 
+  open (resource, more) {
+    return '/device/' + resource.id()
+  }
+
 }

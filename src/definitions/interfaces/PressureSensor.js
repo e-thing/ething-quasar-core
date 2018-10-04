@@ -4,6 +4,12 @@ export default {
 
   icon: 'mdi-weight',
 
+  data (resource) {
+    return {
+      'pressure': resource.attr('pressure') + 'Pa'
+    }
+  },
+
   widgets: {
     'pressure.label': {
       extends: WDeviceLabel,

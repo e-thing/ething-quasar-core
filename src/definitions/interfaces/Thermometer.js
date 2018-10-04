@@ -5,6 +5,12 @@ export default {
 
   icon: 'mdi-thermometer',
 
+  data (resource) {
+    return {
+      'temperature': resource.attr('temperature') + '°C'
+    }
+  },
+
   widgets: {
     'temperature.label': {
       extends: WDeviceLabel,

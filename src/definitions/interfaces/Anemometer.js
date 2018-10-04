@@ -4,6 +4,12 @@ export default {
 
   icon: 'mdi-weather-windy',
 
+  data (resource) {
+    return {
+      'wind': resource.attr('wind_speed') + 'm/s'
+    }
+  },
+
   widgets: {
     'wind': {
       extends: WDeviceMultiLabel,

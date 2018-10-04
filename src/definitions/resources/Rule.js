@@ -13,7 +13,7 @@ export default {
       _label: function (index, item) {
         var cp = Object.assign({}, item)
         delete cp.type
-        return item.type + ' (' + this.$ui.describe(cp) + ')'
+        return item.type.replace(/^events\//, '') + ' (' + this.$ethingUI.utils.describe(cp) + ')'
       }
     },
     conditions: {
@@ -23,7 +23,7 @@ export default {
       _label: function (index, item) {
         var cp = Object.assign({}, item)
         delete cp.type
-        return item.type + ' (' + this.$ui.describe(cp) + ')'
+        return item.type.replace(/^conditions\//, '') + ' (' + this.$ethingUI.utils.describe(cp) + ')'
       }
     },
     actions: {
@@ -33,7 +33,7 @@ export default {
       _label: function (index, item) {
         var cp = Object.assign({}, item)
         delete cp.type
-        return item.type + ' (' + this.$ui.describe(cp) + ')'
+        return item.type.replace(/^actions\//, '') + ' (' + this.$ethingUI.utils.describe(cp) + ')'
       }
     },
   }

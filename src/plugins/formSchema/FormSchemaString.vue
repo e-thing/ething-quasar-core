@@ -2,7 +2,7 @@
   <div class="form-schema-string">
     <small v-if="schema.description" class="form-schema-description">{{ schema.description }}</small>
     <q-input
-      :type="schema.format === 'text' ? 'textarea' : 'text'"
+      :type="inputType"
       v-bind:value="castedModel"
       v-on:input="setValue"
       :error="$v.value.$error"
@@ -14,7 +14,7 @@
 <script>
 
 import { FormComponent } from './core'
-import { minLength, maxLength } from 'vuelidate/lib/validators'
+import { minLength, maxLength, email } from 'vuelidate/lib/validators'
 import { regex } from './validators'
 
 export default {
@@ -35,6 +35,9 @@ export default {
     if (typeof this.schema.pattern === 'string') {
       validators.regex = regex(this.schema.pattern)
     }
+    if (this.schema.format === 'email') {
+      validators.email = email
+    }
 
     return {
       value: validators
@@ -44,6 +47,14 @@ export default {
   methods: {
     cast (model) {
       return model === null ? '' : String(model)
+    },
+  },
+
+  computed: {
+    inputType () {
+      if (this.schema.format === 'text') return 'textarea'
+      if (this.schema.format === 'email') return 'email'
+      return 'text'
     }
   }
 

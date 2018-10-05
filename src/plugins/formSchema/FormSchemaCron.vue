@@ -23,13 +23,7 @@ import Cron from '../../components/Cron'
 import cronstrue from 'cronstrue'
 
 
-registerForm(schema => {
-  if (schema.format === 'cron') {
-    return 'form-schema-cron'
-  }
-})
-
-export default {
+var FormSchemaCron = {
   name: 'FormSchemaCron',
 
   mixins: [FormComponent],
@@ -59,5 +53,15 @@ export default {
   }
 
 }
+
+
+registerForm(FormSchemaCron, schema => {
+  if (schema.format === 'cron') {
+    return true
+  }
+})
+
+export default FormSchemaCron
+
 
 </script>

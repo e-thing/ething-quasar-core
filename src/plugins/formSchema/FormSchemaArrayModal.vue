@@ -73,7 +73,7 @@
 
 <script>
 
-import { makeForm, FormComponent } from './core'
+import { FormComponent } from './core'
 import { minLength, maxLength } from 'vuelidate/lib/validators'
 
 export default {

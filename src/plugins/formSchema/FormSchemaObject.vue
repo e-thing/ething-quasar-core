@@ -21,7 +21,7 @@
 
 <script>
 
-import { makeForm, FormComponent } from './core'
+import { FormComponent } from './core'
 
 export default {
   name: 'FormSchemaObject',

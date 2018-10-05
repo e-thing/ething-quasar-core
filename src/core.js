@@ -13,8 +13,6 @@ export default {
     var router = opts.router
     var store = opts.store
 
-    console.log(router)
-
     if (!router) {
       throw new Error('no router set !')
     }

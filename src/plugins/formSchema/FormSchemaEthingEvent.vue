@@ -28,13 +28,7 @@ import { FormComponent, registerForm } from './core'
 import { extend } from 'quasar'
 
 
-registerForm(schema => {
-  if (schema.format === 'ething.event') {
-    return 'form-schema-ething-event'
-  }
-})
-
-export default {
+var FormSchemaEthingEvent = {
   name: 'FormSchemaEthingEvent',
 
   mixins: [FormComponent],
@@ -146,6 +140,14 @@ export default {
     }
   }
 }
+
+registerForm(FormSchemaEthingEvent, schema => {
+  if (schema.format === 'ething.event') {
+    return true
+  }
+})
+
+export default FormSchemaEthingEvent
 
 </script>
 

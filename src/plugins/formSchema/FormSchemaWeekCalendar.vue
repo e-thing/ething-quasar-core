@@ -47,15 +47,9 @@
 import { FormComponent, registerForm } from './core'
 
 
-registerForm(schema => {
-  if (schema.format === 'week-calendar') {
-    return 'form-schema-week-calendar'
-  }
-})
-
 const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
-export default {
+var FormSchemaWeekCalendar = {
   name: 'FormSchemaWeekCalendar',
 
   mixins: [FormComponent],
@@ -173,6 +167,15 @@ export default {
     this.updateValue()
   }
 }
+
+
+registerForm(FormSchemaWeekCalendar, schema => {
+  if (schema.format === 'week-calendar') {
+    return true
+  }
+})
+
+export default FormSchemaWeekCalendar
 
 </script>
 

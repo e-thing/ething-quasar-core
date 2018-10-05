@@ -27,13 +27,7 @@ import ResourceSelect from '../../components/ResourceSelect'
 import { FormComponent, registerForm } from './core'
 
 
-registerForm(schema => {
-  if (schema.format === 'ething.action') {
-    return 'form-schema-ething-action'
-  }
-})
-
-export default {
+var FormSchemaEthingAction = {
   name: 'FormSchemaEthingAction',
 
   mixins: [FormComponent],
@@ -123,5 +117,13 @@ export default {
     }
   }
 }
+
+registerForm(FormSchemaEthingAction, schema => {
+  if (schema.format === 'ething.action') {
+    return true
+  }
+})
+
+export default FormSchemaEthingAction
 
 </script>

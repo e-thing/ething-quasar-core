@@ -4,6 +4,8 @@
 
 import * as core from './core'
 import FormSchema from './FormSchema.vue'
+
+// builtins
 import FormSchemaObject from './FormSchemaObject.vue'
 //import FormSchemaArray from './FormSchemaArray.vue'
 import FormSchemaArray from './FormSchemaArrayModal.vue'
@@ -18,6 +20,8 @@ import FormSchemaOptional from './FormSchemaOptional.vue'
 import FormSchemaMultiType from './FormSchemaMultiType.vue'
 import FormSchemaNumberSlider from './FormSchemaNumberSlider.vue'
 import FormSchemaFile from './FormSchemaFile.vue'
+
+// extras
 import FormSchemaBluetoothInterface from './FormSchemaBluetoothInterface'
 import FormSchemaCron from './FormSchemaCron'
 import FormSchemaEthingAction from './FormSchemaEthingAction'
@@ -33,9 +37,10 @@ import FormSchemaScheduler from './FormSchemaScheduler'
 export default {
   install ({ EThingUI, Vue }) {
 
-    EThingUI.formSchema = core
+    EThingUI.form = core
 
     Vue.component('FormSchema', FormSchema)
+
     Vue.component('FormSchemaObject', FormSchemaObject)
     Vue.component('FormSchemaArray', FormSchemaArray)
     Vue.component('FormSchemaString', FormSchemaString)
@@ -49,17 +54,6 @@ export default {
     Vue.component('FormSchemaMultiType', FormSchemaMultiType)
     Vue.component('FormSchemaNumberSlider', FormSchemaNumberSlider)
     Vue.component('FormSchemaFile', FormSchemaFile)
-    Vue.component('FormSchemaBluetoothInterface', FormSchemaBluetoothInterface)
-    Vue.component('FormSchemaCron', FormSchemaCron)
-    Vue.component('FormSchemaEthingAction', FormSchemaEthingAction)
-    Vue.component('FormSchemaEthingCondition', FormSchemaEthingCondition)
-    Vue.component('FormSchemaEthingEvent', FormSchemaEthingEvent)
-    Vue.component('FormSchemaEthingResource', FormSchemaEthingResource)
-    Vue.component('FormSchemaHost', FormSchemaHost)
-    Vue.component('FormSchemaScope', FormSchemaScope)
-    Vue.component('FormSchemaSerialPort', FormSchemaSerialPort)
-    Vue.component('FormSchemaWeekCalendar', FormSchemaWeekCalendar) // deprecated !
-    Vue.component('FormSchemaScheduler', FormSchemaScheduler)
 
     Vue.config.optionMergeStrategies.validations = Vue.config.optionMergeStrategies.data
 

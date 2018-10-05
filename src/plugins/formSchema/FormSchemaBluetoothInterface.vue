@@ -43,13 +43,7 @@ import EThing from 'ething-js'
 import { FormComponent, registerForm } from './core'
 
 
-registerForm(schema => {
-  if (schema.format === 'bluetooth-interface') {
-    return 'form-schema-bluetooth-interface'
-  }
-})
-
-export default {
+var FormSchemaBluetoothInterface = {
   name: 'FormSchemaBluetoothInterface',
 
   mixins: [FormComponent],
@@ -87,5 +81,13 @@ export default {
   }
 
 }
+
+registerForm(FormSchemaBluetoothInterface, schema => {
+  if (schema.format === 'bluetooth-interface') {
+    return true
+  }
+})
+
+export default FormSchemaBluetoothInterface
 
 </script>

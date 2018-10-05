@@ -6,14 +6,19 @@ var definitions = {}
 
 var _registeredForms = []
 
-var registerForm = function (generator) {
-  if (typeof generator === 'function') {
-    _registeredForms.push(generator)
-  }
+var registerForm = function (component, test) {
+
+  _registeredForms.push({
+    component,
+    test
+  })
+
 }
 
-var unregisterForm = function (generator) {
-  const index = _registeredForms.indexOf(generator)
+var unregisterForm = function (component) {
+  const index = _registeredForms.findIndex(item => {
+    return item.component === component
+  })
   if (index !== -1)
     _registeredForms.splice(index, 1)
 }
@@ -73,9 +78,12 @@ var makeForm = function (createElement, schema, model, level, onValueUpdate, onE
   }
 
   for (let i in _registeredForms) {
-    let element = _registeredForms[i](schema)
-    if (element) {
-      return createElement(element, attributes)
+    let item = _registeredForms[i]
+    if (item.test) {
+      let result = item.test(schema)
+      if (result) {
+        return createElement(item.component, attributes)
+      }
     }
   }
 

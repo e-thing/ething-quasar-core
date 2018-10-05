@@ -39,12 +39,6 @@ import { FormComponent, registerForm } from './core'
 import { extend } from 'quasar'
 
 
-registerForm(schema => {
-  if (schema.format === 'scheduler') {
-    return 'form-schema-scheduler'
-  }
-})
-
 const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
 function pad(n, width, z) {
@@ -79,7 +73,7 @@ function dateSuffix (dayOfMounth) {
 }
 
 
-export default {
+var FormSchemaScheduler = {
   name: 'FormSchemaScheduler',
 
   mixins: [FormComponent],
@@ -196,5 +190,12 @@ export default {
   },
 }
 
+registerForm(FormSchemaScheduler, schema => {
+  if (schema.format === 'scheduler') {
+    return true
+  }
+})
+
+export default FormSchemaScheduler
 
 </script>

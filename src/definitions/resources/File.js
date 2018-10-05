@@ -36,10 +36,6 @@ export default {
       icon = 'mdi-file-xml'
     }
 
-    if (resource.mime() === 'application/javascript') {
-      widgets.push('WScript')
-    }
-
     var m = {}
     if (icon) m.icon = icon
     if (widgets) m.widgets = widgets
@@ -51,8 +47,6 @@ export default {
       return '/chart/' + resource.id()
     } else if (/image/.test(resource.mime())) {
       return '/image/' + resource.id()
-    } else if ('application/javascript' == resource.mime()) {
-      return '/script/' + resource.id()
     } else {
       return '/text/' + resource.id()
     }

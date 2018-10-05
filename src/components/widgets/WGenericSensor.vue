@@ -15,7 +15,7 @@ export default {
         var computedItems = []
 
         for(var key in data) {
-          computedItems.append({
+          computedItems.push({
             label: key,
             unit: null,
             value: data[key]

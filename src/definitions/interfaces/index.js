@@ -8,6 +8,7 @@ import Anemometer from './Anemometer'
 import PressureSensor from './PressureSensor'
 import HumiditySensor from './HumiditySensor'
 import MoistureSensor from './MoistureSensor'
+import DoorSensor from './DoorSensor'
 
 export default {
   Thermometer,
@@ -18,5 +19,6 @@ export default {
   Anemometer,
   PressureSensor,
   HumiditySensor,
-  MoistureSensor
+  MoistureSensor,
+  DoorSensor
 }

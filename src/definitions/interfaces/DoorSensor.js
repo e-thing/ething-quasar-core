@@ -15,16 +15,18 @@ export default {
       extends: WDeviceMultiLabel,
       props: {
         attr: {
-          default: [{
-            attr: 'state',
-            map: [{
-              key: true,
-              value: 'opened'
-            },{
-              key: false,
-              value: 'closed'
+          default () {
+            return [{
+              attr: 'state',
+              map: [{
+                key: true,
+                value: 'opened'
+              },{
+                key: false,
+                value: 'closed'
+              }]
             }]
-          }]
+          }
         }
       },
       metadata: {

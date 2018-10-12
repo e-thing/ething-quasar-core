@@ -1,7 +1,7 @@
 <template>
   <div class="form-schema-color">
     <small v-if="schema.description" class="form-schema-description">{{ schema.description }}</small>
-    <q-color v-bind:value="model" v-on:input="setValue" :error="$v.value.$error"/>
+    <q-color :value="castedModel" v-on:input="setValue" :error="$v.value.$error" format-model="hex"/>
     <small class="form-schema-error" v-if="$v.value.$error">{{ errorMessage }}</small>
   </div>
 </template>
@@ -18,6 +18,12 @@ export default {
   props: {
     model: String
   },
+
+  methods: {
+    cast (model) {
+      return model || '#FF0000' // qcolor bugs if #000000 or #FFFFFF
+    }
+  }
 }
 
 </script>

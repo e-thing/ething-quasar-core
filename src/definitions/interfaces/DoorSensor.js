@@ -14,7 +14,7 @@ export default {
     'state': {
       extends: WDeviceMultiLabel,
       props: {
-        attr: {
+        items: {
           default () {
             return [{
               attr: 'state',

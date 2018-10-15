@@ -1,7 +1,9 @@
 <template>
   <div class="form-schema-boolean">
     <small v-if="schema.description" class="form-schema-description">{{ schema.description }}</small>
-    <q-toggle v-bind:value="model" v-on:input="setValue" :error="$v.value.$error"/>
+    <div>
+      <q-toggle v-bind:value="model" v-on:input="setValue" :error="$v.value.$error"/>
+    </div>
     <small class="form-schema-error" v-if="$v.value.$error">{{ errorMessage }}</small>
   </div>
 </template>

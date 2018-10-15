@@ -20,16 +20,16 @@ export default {
   },
 
   dynamic (resource) {
-    var icon, widgets = []
+    var icon, widgets = {}
 
     if (resource.extension() === 'plot') {
       icon = 'mdi-file-chart'
-      widgets.push('WChart')
+      widgets.chart = 'WChart'
     } else if (/^text/.test(resource.mime())) {
       icon = 'mdi-file-document'
     } else if (/^image/.test(resource.mime())) {
       icon = 'mdi-file-image'
-      widgets.push('WImage')
+      widgets.image = 'WImage'
     } else if (/^video/.test(resource.mime())) {
       icon = 'mdi-file-video'
     } else if (/^application/.test(resource.mime())) {

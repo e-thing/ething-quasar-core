@@ -57,7 +57,7 @@ export default {
         settings: {},
 
         loadSettings () {
-          return EThing.settings.load().then(settings => {
+          return EThing.settings.get().then(settings => {
 
             this.settings = settings
 

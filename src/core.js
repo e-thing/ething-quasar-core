@@ -27,6 +27,11 @@ export default {
       }
     }
 
+    EThing.on('ConfigUpdated', function(evt) {
+      console.log('[app] settings updated', evt)
+      EThingUI.settings = evt.data.config
+    })
+
     Object.assign(EThingUI, {
 
         router,
@@ -45,6 +50,20 @@ export default {
             router.push(route)
           }
         },
+
+        /*
+        settings
+        */
+        settings: {},
+
+        loadSettings () {
+          return EThing.settings.load().then(settings => {
+
+            this.settings = settings
+
+            return settings
+          })
+        }
 
     })
 

@@ -54,12 +54,11 @@ var makeForm = function (createElement, schema, model, level, onValueUpdate, onE
   schema = resolve(schema)
 
   var attributes = {
-    props: {
+    props: Object.assign({
       schema,
       model,
-      level,
-      ...props
-    },
+      level
+    }, props),
     on: {
       'input': onValueUpdate,
       'error': onErrorUpdate,

@@ -127,9 +127,9 @@ export var SSE = {
 				resource.trigger(evt);
 			}
 
-		} else {
-			EThing.trigger(evt);
 		}
+
+		EThing.trigger(evt);
   },
 
 };

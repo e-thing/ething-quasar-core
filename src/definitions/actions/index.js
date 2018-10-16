@@ -1,9 +1,7 @@
 import ExecuteDevice from './ExecuteDevice'
-import Notify from './Notify'
-import RunScript from './RunScript'
+import HttpRequest from './HttpRequest'
 
 export default {
   ExecuteDevice,
-  Notify,
-  RunScript,
+  HttpRequest
 }

@@ -28,13 +28,7 @@ export default {
       getFormatted: function (resource) {
         return (this.get(resource) || []).join(', ')
       }
-    },
-
-    interfaces: {
-      getFormatted: function (resource) {
-        return (this.get(resource) || []).join(', ')
-      }
-    },
+    }
   },
 
   methods: {},

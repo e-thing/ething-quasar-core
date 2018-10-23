@@ -35,7 +35,7 @@
         <q-btn icon="cloud_download" round flat dense color="secondary" @click.stop="download"/>
       </q-item-side>
       <q-item-side right class="gt-xs">
-        <q-btn icon="delete" round flat dense color="negative" @click.stop="remove"/>
+        <q-btn icon="delete" round flat dense @click.stop="remove"/>
       </q-item-side>
       <q-item-side right class="gt-xs">
         <q-btn icon="settings" round flat dense @click.stop="settings"/>
@@ -293,6 +293,10 @@ pad-width = 42px
 pad-width-xs = 28px
 pad-start = 34px
 pad-start-xs = 26px
+
+.item
+  &:hover
+    background-color #027be30f !important
 
 @media (max-width: $breakpoint-xs)
   .item

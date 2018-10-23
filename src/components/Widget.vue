@@ -38,6 +38,9 @@ export default {
         var style = {}
 
         if (this.widgetInstance) {
+
+          style['background-color'] = this.widgetInstance.color || '#FFFFFF'
+
           var metadata = this.widgetInstance.constructor.options.metadata
           if (metadata.minWidth) {
             style.minWidth = metadata.minWidth + 'px'

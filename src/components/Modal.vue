@@ -36,6 +36,7 @@
             :label="validBtnLabel"
             :disable="validBtnDisable"
             :loading="validBtnLoading"
+            class="q-mr-sm"
           />
 
           <q-btn
@@ -45,6 +46,7 @@
             :label="cancelBtnLabel"
             :disable="cancelBtnDisable"
             flat
+            class="q-mr-sm"
           />
 
           <q-btn
@@ -54,6 +56,7 @@
             :label="btn.label"
             :flat="btn.flat"
             :disable="btn.disable"
+            class="q-mr-sm"
           />
 
           <slot name="buttons"></slot>

@@ -2,15 +2,21 @@
 <script>
 
 import Vue from 'vue'
+import { extend } from 'quasar'
 
-
-Vue.config.optionMergeStrategies.metadata = Vue.config.optionMergeStrategies.props;
+Vue.config.optionMergeStrategies.metadata = function (parent, child) {
+    return extend(true, {}, parent || {}, child || {})
+}
 
 export default {
 
   name: 'WWidget',
 
-  props: {},
+  props: {
+    color: String,
+    default: '#ffffff'
+  },
+
   data() {
     return {
       error: false
@@ -36,7 +42,14 @@ export default {
     maxHeight: null,
     options: {
       // a json schema describing the user options
-      properties: {}
+      properties: {
+        color: {
+          type: 'string',
+          format: 'color',
+          description: 'The color of the widget\'s background',
+          default: '#ffffff'
+        }
+      }
     }
   }
 }

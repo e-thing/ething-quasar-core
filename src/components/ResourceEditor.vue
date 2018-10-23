@@ -2,8 +2,8 @@
   <div>
     <slot></slot>
 
-    <blockquote class="q-mt-xl">
-      <vue-markdown v-if="meta.description">{{ meta.description.trim() }}</vue-markdown>
+    <blockquote>
+      <vue-markdown v-if="meta.description" :anchorAttributes="{target: '_blank'}">{{ meta.description.trim() }}</vue-markdown>
     </blockquote>
 
     <form-schema :schema="schema" v-model="model" @error="inputError = $event" class="q-mb-xl"/>

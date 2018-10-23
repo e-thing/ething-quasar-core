@@ -292,7 +292,13 @@ export default {
     expended: Boolean,
     dense: Boolean,
     readonly: Boolean,
-    history: {}
+    history: {},
+    chartOptions: {
+      type: Object,
+      default () {
+        return {}
+      }
+    }
   },
 
   components: {
@@ -420,7 +426,7 @@ export default {
           }
         }
 
-        this.options = {
+        this.options = extend(true, {
             chart: {
               plotBorderWidth: 1,
               zoomType: 'x'
@@ -526,7 +532,7 @@ export default {
             time: {
               useUTC: false
             }
-        }
+        }, this.chartOptions)
 
         var marge = 5; // vertical space between 2 panes (in %)
         var paneHeight = (100-(preferences.panes.length-1)*marge)/preferences.panes.length; // in %

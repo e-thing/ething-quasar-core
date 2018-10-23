@@ -1,5 +1,5 @@
 <template>
-  <chart :preferences="r" :history="history" expended dense readonly/>
+  <chart :preferences="r" :history="history" expended dense readonly :chartOptions="{chart:{backgroundColor:'rgba(255, 255, 255, 0.0)'}}"/>
 </template>
 
 <script>

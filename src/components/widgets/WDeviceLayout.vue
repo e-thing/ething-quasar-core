@@ -27,10 +27,9 @@ export default {
 
     computed: {
       date () {
-        var lastSeenDate = this.r.lastSeenDate()
-        var date = this.r.modifiedDate()
-        if (lastSeenDate && lastSeenDate > date) {
-          date = lastSeenDate
+        var date = this.r.lastSeenDate()
+        if (!date) {
+          date = this.r.modifiedDate()
         }
         return this.$ethingUI.utils.dateToString(date)
       }

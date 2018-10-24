@@ -1,7 +1,7 @@
 <template>
   <div class="form-schema-color">
     <small v-if="schema.description" class="form-schema-description">{{ schema.description }}</small>
-    <q-color :value="castedModel" v-on:input="setValue" :error="$v.value.$error" format-model="hex"/>
+    <q-color :value="castedModel" v-on:input="setValue" :error="$v.value.$error" format-model="hex" :style="{'border-bottom': '4px solid '+castedModel}" hide-underline/>
     <small class="form-schema-error" v-if="$v.value.$error">{{ errorMessage }}</small>
   </div>
 </template>

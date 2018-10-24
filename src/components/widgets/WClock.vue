@@ -60,8 +60,8 @@ export default {
 
       refreshTime () {
         var now = new Date()
-        this.hours = pad(now.getMinutes(), 2)
-        this.minutes = pad(now.getHours(), 2)
+        this.hours = pad(now.getHours(), 2)
+        this.minutes = pad(now.getMinutes(), 2)
         this.seconds = pad(now.getSeconds(), 2)
         this.weekday = weekdays[now.getDay()]
       }

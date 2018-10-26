@@ -222,7 +222,7 @@ export default {
         cancel: 'Cancel'
       }).then((data) => {
         this.resource.remove(data.indexOf('removeChildren') !== -1).then( () => {
-          this.$q.notify(name + ' removed !')
+          this.$q.notify('"' + name + '" removed !')
         })
       })
     },

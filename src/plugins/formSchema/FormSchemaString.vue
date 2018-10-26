@@ -54,6 +54,7 @@ export default {
     inputType () {
       if (this.schema.format === 'text') return 'textarea'
       if (this.schema.format === 'email') return 'email'
+      if (this.schema.format === 'password') return 'password'
       return 'text'
     }
   }

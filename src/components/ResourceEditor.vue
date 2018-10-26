@@ -18,7 +18,7 @@
 
     <div>
         <q-btn :loading="loading" :disable="inputError" color="primary" icon="done" :label="create ? 'create' : 'edit'" @click="handler"/>
-        <q-btn color="negative" icon="clear" label="cancel" flat @click="$emit('canceled')"/>
+        <q-btn color="negative" class="q-ml-sm" icon="clear" label="cancel" flat @click="$emit('canceled')"/>
     </div>
 
     <q-inner-loading class="text-center" :visible="!ready">

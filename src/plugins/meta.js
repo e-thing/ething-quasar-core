@@ -16,12 +16,17 @@ function getFromPath (obj, path, delimiter, createIfNotFound) {
     var key = parts[i]
     if (typeof p === 'object' && p !== null) {
 
-      if (typeof p[key] === 'undefined' && createIfNotFound) {
-        p[key] = {}
+      if (typeof p[key] === 'undefined') {
+          if (createIfNotFound) {
+            p[key] = {}
+          } else {
+              console.warn('definition of '+path+' not found')
+          }
       }
 
       p = p[key]
     } else {
+        console.warn('definition of '+path+' not found')
       return
     }
   }

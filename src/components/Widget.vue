@@ -1,7 +1,11 @@
 <template>
-  <div class="widget" :class="{'widget-err': error}" :style="style">
-    <div v-if="error" class="widget-err-layer absolute-center text-center">error</div>
-    <div v-else class="widget-content-layer" :class="inline ? '' : 'fit'">
+  <div class="widget" :class="{'widget-err': hasError}" :style="style">
+    <div v-if="hasError" class="widget-err-layer fit">
+        <div class="absolute-center text-center">
+            {{ error || 'error' }}
+        </div>
+    </div>
+    <div class="widget-content-layer" :class="inline ? '' : 'fit'">
       <template v-if="isDynReg">
         <div ref="dynW"/>
       </template>
@@ -55,6 +59,9 @@ export default {
         }
 
         return style
+      },
+      hasError () {
+        return !!this.error
       }
     },
     mounted() {
@@ -112,10 +119,11 @@ export default {
 .widget
   overflow hidden
   &.widget-err
-    border 1px solid $negative
-    background-color $red-1
+    /* border 1px solid $negative */
+    /* background-color $red-1 */
   & > .widget-err-layer
-    color $negative
+    color white
+    background-color $negative
   & > .widget-content-layer.fit > *
     width: 100%
     height: 100%

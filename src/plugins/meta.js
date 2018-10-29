@@ -427,8 +427,8 @@ export default {
       definitions: localDefinitions,
 
       // returns metadata of any type or resource
-      get: function (type, raw) {
-        return get (this.definitions, type, raw)
+      get: function (type) {
+        return get (this.definitions, type)
       },
 
       // extend the metadata of a given type

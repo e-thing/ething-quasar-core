@@ -8,7 +8,6 @@ import ResourceBatteryChip from './components/ResourceBatteryChip'
 import ResourceEditor from './components/ResourceEditor'
 import ResourceQItem from './components/ResourceQItem'
 import ResourceSelect from './components/ResourceSelect'
-import ResourceWidget from './components/ResourceWidget'
 import Widget from './components/Widget'
 import widgets from './components/widgets'
 
@@ -23,6 +22,5 @@ export {
     ResourceEditor,
     ResourceQItem,
     ResourceSelect,
-    ResourceWidget,
     Widget
 }

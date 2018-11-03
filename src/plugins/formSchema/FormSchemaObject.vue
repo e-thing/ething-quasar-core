@@ -42,15 +42,16 @@ export default {
       var disabledProperties = []
 
       for(let k in schema.properties) {
-        if (!schema.properties[k].readOnly) {
-            if (schema.properties[k].required && requiredProperties.indexOf(k)===-1) {
-                requiredProperties.push(k)
-            }
-        } else {
-          readOnlyProperties.push(k)
-        }
-        if (schema.properties[k]._disabled) {
+        if (!schema.properties[k] || schema.properties[k]._disabled) {
           disabledProperties.push(k)
+        } else {
+          if (!schema.properties[k].readOnly) {
+              if (schema.properties[k].required && requiredProperties.indexOf(k)===-1) {
+                  requiredProperties.push(k)
+              }
+          } else {
+            readOnlyProperties.push(k)
+          }
         }
       }
 

@@ -1,13 +1,13 @@
 <template>
   <div class="column">
-    <div class="col-auto text-center text-faded" v-if="!noHeader">
+    <div class="col-auto text-center text-faded ellipsis" v-if="!noHeader">
       {{ title }}
       <slot name="header"></slot>
     </div>
     <div class="col relative-position">
       <slot></slot>
     </div>
-    <div class="col-auto text-center text-faded" v-if="!noFooter">
+    <div class="col-auto text-center text-faded ellipsis" v-if="!noFooter">
       <slot name="footer"></slot>
     </div>
   </div>

@@ -19,8 +19,9 @@
   "devDependencies": {},
   "scripts": {},
   "dependencies": {
-    "promise.prototype.finally": "^3.1.0",
-    "ething-quasar-dll": "e-thing/ething-quasar-dll#master"
+    "ething-quasar-dll": "e-thing/ething-quasar-dll#master",
+    "intersection-observer": "^0.5.1",
+    "promise.prototype.finally": "^3.1.0"
   },
   "peerDependencies": {
     "ething-js": "^0.1.10",

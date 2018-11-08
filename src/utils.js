@@ -1,6 +1,7 @@
 import { date, format } from 'quasar'
 import EThing from 'ething-js'
 import saveAs_ from 'file-saver'
+export { default } from './VisibilityObserver'
 
 
 /**

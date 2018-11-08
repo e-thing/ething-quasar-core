@@ -347,12 +347,19 @@ function getScript(source, callback) {
 
     script.onload = script.onreadystatechange = function( _, isAbort ) {
         if(isAbort || !script.readyState || /loaded|complete/.test(script.readyState) ) {
-            script.onload = script.onreadystatechange = null;
+            script.onload = script.onreadystatechange = script.onerror = null;
             script = undefined;
 
             if(!isAbort) { if(callback) callback(); }
         }
     };
+
+    script.onerror = function(evt) {
+        script.onload = script.onreadystatechange = script.onerror = null;
+        script = undefined;
+
+        if(callback) callback(true);
+    }
 
     script.src = source;
     prior.parentNode.insertBefore(script, prior);
@@ -372,9 +379,14 @@ function importMeta (self, meta, done) {
     let plugin = plugins[name]
     if (plugin.js_index) {
       pluginPromises.push(new Promise(function(resolve, reject) {
-        getScript(EThing.config.serverUrl + '/api/plugin/' + name + '/index.js', () => {
-          console.log('[meta] plugin ' + name + ' loaded')
-          resolve()
+        getScript(EThing.config.serverUrl + '/api/plugin/' + name + '/index.js', (error) => {
+            if (error) {
+                console.error('[meta] plugin ' + name + ' fail loading')
+                reject()
+            } else {
+                console.log('[meta] plugin ' + name + ' loaded')
+                resolve()
+            }
         })
       }))
     }
@@ -382,7 +394,7 @@ function importMeta (self, meta, done) {
 
   self.plugins = plugins
 
-  Promise.all(pluginPromises).then(() => {
+  Promise.all(pluginPromises).finally(() => {
 
     var serverDefinitions = meta.definitions
 

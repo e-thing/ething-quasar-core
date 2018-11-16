@@ -31,7 +31,8 @@ export default {
     data() {
       return {
         error: false,
-        widgetInstance: null
+        widgetInstance: null,
+        manualDestroy: false
       };
     },
     computed: {
@@ -89,10 +90,18 @@ export default {
         WidgetComponentInstance.$mount(this.$refs.dynW);
 
         this.widgetInstance = WidgetComponentInstance
+        this.manualDestroy = true
       } else {
         this.widgetInstance = this.$refs.staticW
       }
     },
+
+    beforeDestroy () {
+      if (this.manualDestroy && this.widgetInstance) {
+        this.widgetInstance.$destroy()
+      }
+    },
+
     methods: {
       hasContentOverflow () {
         var el = null

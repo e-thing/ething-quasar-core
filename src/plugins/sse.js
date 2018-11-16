@@ -86,7 +86,7 @@ export var SSE = {
 
 		source.onmessage = (event) => {
 			var data = JSON.parse(event.data)
-			this.dispatch(data)
+			EThing.arbo.dispatch(data)
 		}
 
 
@@ -99,38 +99,6 @@ export var SSE = {
       this.source.close()
 		}
 	},
-
-  dispatch (event) {
-    // console.log(event)
-
-    var name = event.name,
-			isResourceEvent = !!event.data.resource,
-			resource,
-			evt = EThing.Event(name, {
-				data: event.data,
-				originalEvent: event
-			});
-
-		if(isResourceEvent){
-			var resourceId = event.data.resource.id;
-
-			if (event.data.resource) {
-				if (name === 'ResourceDeleted') {
-					EThing.arbo.remove(resourceId);
-				} else {
-					EThing.arbo.update(EThing.instanciate(event.data.resource))
-				}
-			}
-
-			resource = EThing.arbo.get(resourceId);
-			if(resource){
-				resource.trigger(evt);
-			}
-
-		}
-
-		EThing.trigger(evt);
-  },
 
 };
 

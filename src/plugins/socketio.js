@@ -21,7 +21,7 @@ eventsSocket.on('disconnect', () => {
 });
 
 eventsSocket.on('*', (event, a) => {
-	console.log('[socketio]', event)
+	// console.log('[socketio]', event)
 	var signal = event.data[1];
 	EThing.arbo.dispatch(JSON.parse(signal))
 })

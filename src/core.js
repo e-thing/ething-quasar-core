@@ -32,10 +32,16 @@ export default {
       EThingUI.settings = evt.data.config
     })
 
+    const eventBus = new Vue();
+
     Object.assign(EThingUI, {
 
         router,
         store,
+
+        getVueInstance () {
+          return this.router.app
+        },
 
         /*
         return the url for opening a resource
@@ -63,7 +69,24 @@ export default {
 
             return settings
           })
-        }
+        },
+
+        /*
+        eventEmitter
+        */
+        on () {
+          return eventBus.$on.apply(eventBus, arguments)
+        },
+        once () {
+          return eventBus.$once.apply(eventBus, arguments)
+        },
+        off () {
+          return eventBus.$off.apply(eventBus, arguments)
+        },
+        emit () {
+          return eventBus.$emit.apply(eventBus, arguments)
+        },
+
 
     })
 

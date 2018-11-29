@@ -18,10 +18,12 @@ export default {
 
 		eventsSocket.on('connect', () => {
 			console.log('[socketio] connected')
+      EThingUI.emit('ui.server.connected');
 		});
 
 		eventsSocket.on('disconnect', () => {
 			console.log('[socketio] disconnected')
+      EThingUI.emit('ui.server.disconnected');
 		});
 
 		eventsSocket.on('*', (event, a) => {

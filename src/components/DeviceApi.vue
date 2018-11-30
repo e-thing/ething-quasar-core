@@ -22,7 +22,7 @@
           </q-alert>
 
           <div class="result q-my-md" v-if="operation.result">
-            <img v-if="operation.resultType === 'image'" :src="operation.result" @load="operation.loading = false" />
+            <img v-if="operation.resultType === 'image'" :src="operation.result" @load="operation.loading = false" @error="operation.loading=false; operation.error='an error occured'; operation.result=null" />
             <audio v-else-if="operation.resultType === 'audio'" controls :src="operation.result" :type="operation.resultContentType" />
             <video v-else-if="operation.resultType === 'video'" controls autoplay :src="operation.result" :type="operation.resultContentType" />
             <object v-else-if="operation.resultType === 'videoflash'" width="425" height="300" class="videoplayer" data="http://releases.flowplayer.org/swf/flowplayer-3.2.18.swf" type="application/x-shockwave-flash">

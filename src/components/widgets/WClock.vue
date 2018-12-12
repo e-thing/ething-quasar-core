@@ -2,9 +2,9 @@
   <div>
     <div class="absolute-center text-center">
       <div class="time">
-          {{ hours }}:{{ minutes }} <small class="text-faded">{{ seconds }}</small>
+          <span class="text-weight-bold">{{ hours }}:{{ minutes }} </span> <small style="filter: brightness(90%);">{{ seconds }}</small>
       </div>
-      <span class="weekday text-faded">
+      <span class="weekday" style="filter: brightness(90%);">
           {{ weekday }}
       </span>
     </div>

@@ -1,7 +1,7 @@
 <template>
   <w-device-layout :resource="resource" v-bind="$attrs">
     <div class="absolute-center">
-      <q-toggle :value="!!value" :disable="reading || writing" @input="toggle" />
+      <q-toggle :value="!!value" :disable="reading || writing" @input="toggle" :color="color" keep-color />
     </div>
   </w-device-layout>
 </template>

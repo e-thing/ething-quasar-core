@@ -8,8 +8,8 @@
         :error="$v.value.$error"
         class="col"
       />
-      <q-btn flat color="faded" icon="search" class="col-auto">
-        <q-popover @show="showHosts" anchor="bottom right" self="top right" fit>
+      <q-btn color="primary" icon="search" class="q-ml-sm col-auto">
+        <q-popover ref="popover" @show="showHosts" anchor="bottom right" self="top right" fit>
           <div style="width: 260px;">
             <div v-if="loading" class="q-ma-md text-center text-faded">
               <div class="q-ma-md">scanning...</div>
@@ -81,12 +81,17 @@ var FormSchemaHost = {
   data () {
     return {
       hosts: [],
-      loading: true
+      loading: true,
+      skipNext: false
     }
   },
 
   methods: {
     showHosts () {
+      if (this.skipNext) {
+        this.skipNext = false
+        return
+      }
       this.refresh()
     },
 
@@ -95,6 +100,9 @@ var FormSchemaHost = {
       refresh(force, (hosts) => {
         this.hosts = hosts
         this.loading = false
+        this.skipNext = true
+        this.$refs.popover.hide()
+        this.$refs.popover.show()
       })
     }
   },

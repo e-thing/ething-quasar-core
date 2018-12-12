@@ -1,12 +1,12 @@
 <template>
   <w-device-layout :resource="resource" v-bind="$attrs">
     <div class="absolute-center">
-      <span class="value">
+      <span class="value" :style="{color: color}">
           {{ value===null ? '?' : value }}
       </span>
-      <span v-if="unit" class="unit">
+      <small v-if="unit" class="unit" style="filter: brightness(90%);">
           {{ unit }}
-      </span>
+      </small>
     </div>
   </w-device-layout>
 </template>
@@ -39,13 +39,3 @@ export default {
 
 }
 </script>
-
-<style lang="stylus" scoped>
-@import '~variables'
-
-.value
-  color $primary
-
-.unit
-  color $blue-4
-</style>

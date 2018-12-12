@@ -44,7 +44,8 @@ export default {
 
         if (this.widgetInstance) {
 
-          style['background-color'] = this.widgetInstance.color || '#FFFFFF'
+          style['background-color'] = this.widgetInstance.bgColor || '#FFFFFF'
+          style['color'] = this.widgetInstance.color || '#027be3'
 
           var metadata = this.widgetInstance.constructor.options.metadata
           if (metadata.minWidth) {

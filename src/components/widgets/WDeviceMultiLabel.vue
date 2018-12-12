@@ -2,7 +2,7 @@
   <w-device-layout :resource="resource" v-bind="$attrs">
     <div class="fit column items-center justify-center">
       <div class="col-auto" v-for="(item, index) in computedItems" :key="index">
-        <span v-if="item.label" class="label">
+        <span v-if="item.label" class="label text-faded">
             {{ item.label }} :
         </span>
         <span class="value" :style="item._style">
@@ -14,9 +14,9 @@
             {{ item.value }}
           </template>
         </span>
-        <span v-if="item.unit" class="unit">
+        <small v-if="item.unit" class="unit" style="filter: brightness(90%);">
             {{ item.unit }}
-        </span>
+        </small>
       </div>
     </div>
   </w-device-layout>
@@ -64,7 +64,7 @@ export default {
             label: '',
             value: undefined,
             unit: null,
-            color: null, // the color of the value
+            color: this.color, // the color of the value
             offset: 0, // add this number to the value
             coefficient: 0, // multiply the value by this number
             map: {}, // map value to another value, if number, the value associated to the closest key is returned
@@ -186,16 +186,3 @@ export default {
 
 }
 </script>
-
-<style lang="stylus" scoped>
-@import '~variables'
-
-.label
-  color $faded
-
-.value
-  color $primary
-
-.unit
-  color $blue-4
-</style>

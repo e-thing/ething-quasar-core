@@ -13,8 +13,14 @@ export default {
   name: 'WWidget',
 
   props: {
-    color: String,
-    default: '#ffffff'
+    color: {
+      type: String,
+      default: '#027be3'
+    },
+    bgColor: {
+      type: String,
+      default: '#ffffff'
+    }
   },
 
   data() {
@@ -44,6 +50,13 @@ export default {
       // a json schema describing the user options
       properties: {
         color: {
+          type: 'string',
+          format: 'color',
+          description: 'The color of the widget',
+          default: '#027be3'
+        },
+        bgColor: {
+          title: 'background color',
           type: 'string',
           format: 'color',
           description: 'The color of the widget\'s background',

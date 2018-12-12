@@ -1,6 +1,6 @@
 import { date, format } from 'quasar'
 import EThing from 'ething-js'
-import saveAs_ from 'file-saver'
+import FileSaver from 'file-saver'
 import VisibilityObserver from './VisibilityObserver'
 
 
@@ -124,5 +124,5 @@ export function saveAs (data, filename) {
     });
   }
 
-  return saveAs_(data, filename || 'data')
+  return FileSaver.saveAs(data, filename || 'data')
 }

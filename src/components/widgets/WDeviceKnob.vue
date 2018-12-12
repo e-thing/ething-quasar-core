@@ -6,9 +6,9 @@
         :min="min"
         :max="max"
         readonly
-        color="primary"
+        :color="color"
       >
-        {{value}} <span class="unit">{{unit}}</span>
+        {{value}} <small class="unit">{{unit}}</small>
       </q-knob>
     </div>
   </w-device-layout>

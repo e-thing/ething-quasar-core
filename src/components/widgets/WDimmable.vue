@@ -6,10 +6,10 @@
         :min="min"
         :max="max"
         :disable="writing"
-        color="primary"
+        :color="color"
         @change="setLevel"
       >
-        {{value}} <span class="unit">{{unit}}</span>
+        {{value}} <small class="unit" style="filter: brightness(90%);">{{unit}}</small>
       </q-knob>
     </div>
   </w-device-layout>

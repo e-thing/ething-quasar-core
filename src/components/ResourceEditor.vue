@@ -71,8 +71,9 @@ export default {
           var res = null
 
           if (this.create) {
-            if (typeof EThing[this.type] !== 'undefined') {
-              res = EThing[this.type].create(Object.assign(def, this.model))
+            var baseType = this.type.split('/').pop()
+            if (typeof EThing[baseType] !== 'undefined') {
+              res = EThing[baseType].create(Object.assign(def, this.model))
             } else {
               res = EThing.Device.create(this.type, Object.assign(def, this.model))
             }

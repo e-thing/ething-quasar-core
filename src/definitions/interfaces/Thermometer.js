@@ -11,6 +11,8 @@ export default {
     }
   },
 
+  mainComponent: 'temperature.knob',
+
   widgets: {
     'temperature.label': {
       extends: WDeviceLabel,

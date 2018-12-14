@@ -228,7 +228,9 @@ function normalize (obj) {
       disableCreation: false,
       dynamic: null,
       data: null,
-      open: null
+      open: null,
+      mainComponent: null,
+      mainComponentAttributes: null
     }, obj)
 
     for (let k in obj.properties) {

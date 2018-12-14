@@ -577,6 +577,20 @@ export default {
                 serie.data = data
 
                 if (this.options.series.indexOf(serie) === -1) {
+                  // is it a boolean stream ?
+                  var logicStream = true
+                  for (var i in data) {
+                    var v = data[i][1]
+                    if (v!=0 && v!=1) {
+                      logicStream = false
+                      break
+                    }
+                  }
+
+                  if (logicStream) {
+                    serie.step = 'left'
+                  }
+
                   // append the serie
                   this.options.series.push(serie)
                 }

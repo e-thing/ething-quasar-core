@@ -1,4 +1,4 @@
-import WSwitch from '../../components/widgets/WSwitch'
+import WDeviceMultiLabel from '../../components/widgets/WDeviceMultiLabel'
 
 export default {
 
@@ -11,18 +11,27 @@ export default {
   },
 
   widgets: {
-    'switch': {
-      extends: WSwitch,
+    'state': {
+      extends: WDeviceMultiLabel,
       props: {
-        attr: {
-          default: 'state',
-        },
-        fn_setter: {
-          default: 'setState',
+        items: {
+          default () {
+            return [{
+              attr: 'state',
+              map: [{
+                key: true,
+                value: 'opened'
+              },{
+                key: false,
+                value: 'closed'
+              }]
+            }]
+          }
         }
       },
       metadata: {
-        description: 'toggle the device'
+        label: 'state',
+        description: 'show the state of the switch',
       }
     }
   }

@@ -8,6 +8,10 @@ export default {
     flow: {
       format: 'ething.flow'
     },
+  },
+
+  open (resource, more) {
+    return '/flow/' + resource.id()
   }
 
 }

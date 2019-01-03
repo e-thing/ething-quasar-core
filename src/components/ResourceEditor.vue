@@ -110,11 +110,11 @@ export default {
             }
           }
           for(let k in meta.properties) {
-            let isRequired = meta.properties[k].required || required.indexOf(k)!==-1
+            let isRequired = meta.properties[k].required===true || required.indexOf(k)!==-1
 
             if (!meta.properties[k].readOnly || isRequired) {
                 properties[k] = meta.properties[k]
-                if (meta.properties[k].required && required.indexOf(k)===-1) {
+                if (meta.properties[k].required===true && required.indexOf(k)===-1) {
                     required.push(k)
                 }
 

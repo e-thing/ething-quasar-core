@@ -46,7 +46,8 @@ export default {
           disabledProperties.push(k)
         } else {
           if (!schema.properties[k].readOnly) {
-              if (schema.properties[k].required && requiredProperties.indexOf(k)===-1) {
+              // todo: warning, required does not work for object since this attribute is already used as array
+              if (schema.properties[k].required===true && requiredProperties.indexOf(k)===-1) {
                   requiredProperties.push(k)
               }
           } else {

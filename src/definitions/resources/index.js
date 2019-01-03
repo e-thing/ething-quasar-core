@@ -3,6 +3,7 @@ import File from './File'
 import Table from './Table'
 import Device from './Device'
 import Rule from './Rule'
+import Flow from './Flow'
 
 export default {
   Resource,
@@ -10,4 +11,5 @@ export default {
   Table,
   Device,
   Rule,
+  Flow,
 }

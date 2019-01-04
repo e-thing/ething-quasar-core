@@ -2,11 +2,7 @@ export default {
 
   properties: {
     device: {
-      id: 'ExecuteDevice.device',
-      format: 'ething.resource',
-      filter: (r) => {
-        return (r instanceof EThing.Device)
-      }
+      id: 'ExecuteDevice.device'
     },
     method: {
       id: 'ExecuteDevice.method',

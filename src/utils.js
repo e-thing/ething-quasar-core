@@ -59,7 +59,7 @@ export function getParameterByName(name, url) {
 
 
 export function dateToString (d) {
-  if (typeof d === 'string') d = new Date(d)
+  if (typeof d === 'string' || typeof d === 'number') d = new Date(d)
   if (!d) {
     return '-'
   }

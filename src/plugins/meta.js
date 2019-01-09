@@ -217,6 +217,7 @@ function normalize (obj) {
     obj = extend(true, {
       color: 'grey',
       icon: 'mdi-help',
+      label: '',
       description: '',
       required: [],
       properties: {},
@@ -440,9 +441,18 @@ export default {
 
       definitions: localDefinitions,
 
+      isDefined: function (type) {
+        return !!getFromPath(this.definitions, type)
+      },
+
       // returns metadata of any type or resource
       get: function (type) {
         return get (this.definitions, type)
+      },
+
+      isSubclass: function (type, base) {
+        var m = this.get(type)
+        return m && m.inheritances.indexOf(base) !== -1
       },
 
       // extend the metadata of a given type

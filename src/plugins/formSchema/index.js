@@ -16,6 +16,7 @@ import FormSchemaEnum from './FormSchemaEnum.vue'
 import FormSchemaDate from './FormSchemaDate.vue'
 import FormSchemaColor from './FormSchemaColor.vue'
 import FormSchemaJson from './FormSchemaJson.vue'
+import FormSchemaEditor from './FormSchemaEditor.vue'
 import FormSchemaOptional from './FormSchemaOptional.vue'
 import FormSchemaMultiType from './FormSchemaMultiType.vue'
 import FormSchemaNumberSlider from './FormSchemaNumberSlider.vue'
@@ -24,9 +25,6 @@ import FormSchemaFile from './FormSchemaFile.vue'
 // extras
 import FormSchemaBluetoothInterface from './FormSchemaBluetoothInterface'
 import FormSchemaCron from './FormSchemaCron'
-import FormSchemaEthingAction from './FormSchemaEthingAction'
-import FormSchemaEthingCondition from './FormSchemaEthingCondition'
-import FormSchemaEthingEvent from './FormSchemaEthingEvent'
 import FormSchemaEthingResource from './FormSchemaEthingResource'
 import FormSchemaHost from './FormSchemaHost'
 import FormSchemaScope from './FormSchemaScope'
@@ -50,6 +48,7 @@ export default {
     Vue.component('FormSchemaDate', FormSchemaDate)
     Vue.component('FormSchemaColor', FormSchemaColor)
     Vue.component('FormSchemaJson', FormSchemaJson)
+    Vue.component('FormSchemaEditor', FormSchemaEditor)
     Vue.component('FormSchemaOptional', FormSchemaOptional)
     Vue.component('FormSchemaMultiType', FormSchemaMultiType)
     Vue.component('FormSchemaNumberSlider', FormSchemaNumberSlider)

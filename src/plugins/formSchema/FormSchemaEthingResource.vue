@@ -41,9 +41,26 @@ var FormSchemaEthingResource = {
     },
     filter () {
       var schema = this.schema
+      var filters = []
       if (schema.filter) {
-        return function (r) {
+        filters.push((r) => {
           return schema.filter.call(schema, r)
+        })
+      }
+      if (schema.must_throw) {
+        filters.push((r) => {
+          var signals = this.$ethingUI.get(r).signals
+          for (var i in signals) {
+            if (this.$ethingUI.isSubclass(signals[i], schema.must_throw)) return true
+          }
+        })
+      }
+      if (filters.length) {
+        return function (r) {
+          for(var i in filters) {
+            if (!filters[i].call(schema, r)) return false
+          }
+          return true
         }
       }
     }

@@ -3,16 +3,22 @@
 
     <small v-if="schema.description" class="form-schema-description">{{ schema.description }}</small>
 
-    <q-field
-      v-for="item in items"
-      :key="item.key"
-      :label="item.schema.title || item.schema.label || item.key"
-      orientation="vertical"
-      class="formField"
-      :class="{formFieldRequired: item.required, 'formFieldError': !!errors[item.key]}"
-    >
-      <form-schema :required="item.required" :schema="item.schema" :model="item.model" :level="level+1" @input="onChildValueChange(item, $event)" @error="onChildErrorChange(item, $event)"/>
-    </q-field>
+    <template v-if="items.length>0">
+        <q-field
+          v-for="item in items"
+          :key="item.key"
+          :label="item.schema.title || item.schema.label || item.key"
+          orientation="vertical"
+          class="formField"
+          :class="{formFieldRequired: item.required, 'formFieldError': !!errors[item.key]}"
+        >
+          <form-schema :required="item.required" :schema="item.schema" :model="item.model" :level="level+1" @input="onChildValueChange(item, $event)" @error="onChildErrorChange(item, $event)"/>
+        </q-field>
+    </template>
+
+    <div v-else>
+        <small class="text-faded">empty</small>
+    </div>
 
     <small class="form-schema-error" v-if="$v.value.$error && $v.value.required">{{ errorMessage }}</small>
 

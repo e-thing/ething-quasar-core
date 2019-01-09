@@ -2,6 +2,7 @@ import { required } from 'vuelidate/lib/validators'
 import jsonPointer from 'json-pointer'
 import { extend } from 'quasar'
 
+
 var definitions = {}
 
 var _registeredForms = []
@@ -115,6 +116,10 @@ var makeForm = function (createElement, schema, model, level, onValueUpdate, onE
       }
       else if (format === 'json') {
         return createElement('form-schema-json', attributes)
+      }
+      else if (/[^\/]+\/[^\/]+/.test(format)) {
+        // mime types
+        return createElement('form-schema-editor', attributes)
       }
 
       return createElement('form-schema-string', attributes)

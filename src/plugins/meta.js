@@ -441,6 +441,22 @@ export default {
 
       definitions: localDefinitions,
 
+      iterate: function (def) {
+        def = def || this.definitions
+
+        var results = {}
+
+        walkThrough(def, (node, _, stop, path) => {
+          if (node['type'] === 'class') {
+            results[path] = node
+            stop()
+          }
+          return node
+        })
+
+        return results
+      },
+
       isDefined: function (type) {
         return !!getFromPath(this.definitions, type)
       },
@@ -451,6 +467,10 @@ export default {
       },
 
       isSubclass: function (type, base) {
+        if (type instanceof EThing.Resource) {
+          type = type.type()
+        }
+        if (type === base) return true
         var m = this.get(type)
         return m && m.inheritances.indexOf(base) !== -1
       },

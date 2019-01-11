@@ -414,6 +414,7 @@ function importMeta (self, meta, done) {
     walkThrough(serverDefinitions, (node, _, stop, path) => {
       if (typeof node['type'] !== 'undefined' || typeof node['allOf'] !== 'undefined') {
         node = resolve(node, serverDefinitions)
+        node._type = path
         stop()
       }
       return node
@@ -429,6 +430,20 @@ function importMeta (self, meta, done) {
   })
 
 }
+
+
+function normType (something) {
+  if(typeof something === 'string') {
+    return something
+  } else if (something instanceof EThing.Resource) {
+    return something.type()
+  } else if(typeof something === 'object' && something!== null && something._type) {
+    return something._type
+  } else {
+    throw Error('invalid type: "'+something+'"')
+  }
+}
+
 
 export default {
   install ({ EThingUI }) {
@@ -458,7 +473,7 @@ export default {
       },
 
       isDefined: function (type) {
-        return !!getFromPath(this.definitions, type)
+        return !!getFromPath(this.definitions, normType(type))
       },
 
       // returns metadata of any type or resource
@@ -467,9 +482,8 @@ export default {
       },
 
       isSubclass: function (type, base) {
-        if (type instanceof EThing.Resource) {
-          type = type.type()
-        }
+        type = normType(type)
+        base = normType(base)
         if (type === base) return true
         var m = this.get(type)
         return m && m.inheritances.indexOf(base) !== -1
@@ -477,10 +491,7 @@ export default {
 
       // extend the metadata of a given type
       extend: function (type, definition) {
-        var obj = type
-        if (typeof type === 'string') {
-          obj = getFromPath(this.definitions, type, /[\.\/]/, true)
-        }
+        var obj = getFromPath(this.definitions, normType(type), /[\.\/]/, true)
         mergeClass(obj, definition)
       },
 

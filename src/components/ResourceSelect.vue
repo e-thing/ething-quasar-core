@@ -4,6 +4,7 @@
    v-on:input="$emit('input', $event)"
    :options="options"
    :multiple="multiple"
+   v-bind="$attrs"
   />
 </template>
 

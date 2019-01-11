@@ -2,7 +2,7 @@
 export default {
 
   properties: {
-    cron_expression: {
+    expression: {
       title: 'when'
     }
   }

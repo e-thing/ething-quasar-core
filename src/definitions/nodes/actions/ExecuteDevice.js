@@ -1,7 +1,7 @@
 export default {
 
   properties: {
-    device: {
+    resource: {
       id: 'ExecuteDevice.device'
     },
     method: {

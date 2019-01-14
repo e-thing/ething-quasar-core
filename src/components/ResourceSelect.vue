@@ -63,11 +63,14 @@ export default {
           }
 
           if (types) {
+            var pok = false
             for(var i in types) {
-              if (!r.isTypeof(types[i])){
-                return false
+              if (r.isTypeof(types[i])){
+                pok = true
+                break
               }
             }
+            if (!pok) return false
           }
 
           if (this.filter) {

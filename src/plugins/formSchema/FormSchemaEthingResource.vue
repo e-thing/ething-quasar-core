@@ -5,8 +5,7 @@
     <resource-select
       :value="castedModel"
       @input="setValue"
-      :filter="filter"
-      :type="types"
+      :filter="computed_filter"
       :multiple="multiple"
       use-id
     />
@@ -31,40 +30,51 @@ var FormSchemaEthingResource = {
   },
 
   computed: {
-    types () {
-      if (this.schema.onlyTypes) {
-        return this.schema.onlyTypes.join(' ')
-      }
-    },
     multiple () {
       return this.schema.type === 'array'
     },
-    filter () {
+    computed_filter () {
       var schema = this.schema
-      var filters = []
-      if (schema.filter) {
-        filters.push((r) => {
-          return schema.filter.call(schema, r)
-        })
-      }
-      if (schema.must_throw) {
-        filters.push((r) => {
-          var signals = this.$ethingUI.get(r).signals
-          for (var i in signals) {
-            if (this.$ethingUI.isSubclass(signals[i], schema.must_throw)) return true
-          }
-        })
-      }
-      if (filters.length) {
-        return function (r) {
-          for(var i in filters) {
-            if (!filters[i].call(schema, r)) return false
-          }
-          return true
-        }
+
+      return (r) => {
+        return this.filter(r, schema)
       }
     }
   },
+
+  methods: {
+    filter (r, schema) {
+      var pok;
+
+      if (schema.must_throw) {
+        pok = false
+        var signals = this.$ethingUI.get(r).signals
+        for (var i in signals) {
+          if (this.$ethingUI.isSubclass(signals[i], schema.must_throw)) {
+            pok = true
+            break
+          }
+        }
+        if (!pok) return false
+      }
+      if (schema.onlyTypes) {
+        pok = false
+        var accepted_types = schema.onlyTypes
+        for(var i in accepted_types) {
+          if (r.isTypeof(accepted_types[i])){
+            pok = true
+            break
+          }
+        }
+        if (!pok) return false
+      }
+      if (schema.filter) {
+        if (!schema.filter.call(schema, r)) return false
+      }
+
+      return true
+    }
+  }
 
 }
 

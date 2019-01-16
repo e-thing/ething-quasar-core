@@ -1,7 +1,7 @@
 <template>
   <div class="widget" :class="{'widget-err': hasError}" :style="style">
     <div v-if="hasError" class="widget-err-layer fit">
-        <div class="absolute-center text-center">
+        <div class="absolute-center text-center ellipsis-3-lines q-caption">
             {{ error || 'error' }}
         </div>
     </div>
@@ -134,6 +134,9 @@ export default {
   & > .widget-err-layer
     color white
     background-color $negative
+    & > div
+      max-width: 100%
+
   & > .widget-content-layer.fit > *
     width: 100%
     height: 100%

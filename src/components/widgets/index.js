@@ -14,6 +14,8 @@ import WCamera from './WCamera'
 import WDimmable from './WDimmable'
 import WGenericSensor from './WGenericSensor'
 import WClock from './WClock'
+import WFlow from './WFlow'
+import WFlowNode from './WFlowNode'
 
 export default {
   WWidget,
@@ -32,5 +34,7 @@ export default {
   WDimmable,
   WGenericSensor,
 
-  WClock
+  WClock,
+  WFlow,
+  WFlowNode
 }

@@ -12,6 +12,11 @@ export default {
 
   open (resource, more) {
     return '/flow/' + resource.id()
+  },
+
+  widgets: {
+    'full': 'WFlow',
+    'single node': 'WFlowNode'
   }
 
 }

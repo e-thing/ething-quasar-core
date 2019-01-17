@@ -32,7 +32,8 @@ export default {
       return {
         error: false,
         widgetInstance: null,
-        manualDestroy: false
+        manualDestroy: false,
+        metadata: null
       };
     },
     computed: {
@@ -47,7 +48,7 @@ export default {
           style['background-color'] = this.widgetInstance.bgColor || '#FFFFFF'
           style['color'] = this.widgetInstance.color || '#027be3'
 
-          var metadata = this.widgetInstance.constructor.options.metadata
+          var metadata = this.metadata
           if (metadata.minWidth) {
             style.minWidth = metadata.minWidth + 'px'
             if (this.inline) {
@@ -64,6 +65,13 @@ export default {
       },
       hasError () {
         return !!this.error
+      },
+      resource () {
+        var resource = null
+        if (this.widgetOptions.resource) {
+          resource = this.$ething.arbo.get(this.widgetOptions.resource)
+        }
+        return resource
       }
     },
     mounted() {
@@ -95,6 +103,12 @@ export default {
       } else {
         this.widgetInstance = this.$refs.staticW
       }
+
+      var metadata = this.widgetInstance.constructor.options.metadata
+      if (typeof metadata === 'function') {
+        metadata = metadata.call(this, this.resource)
+      }
+      this.metadata = metadata
     },
 
     beforeDestroy () {

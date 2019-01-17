@@ -6,12 +6,6 @@ export default {
 
   color: 'grey',
 
-  widgets: {},
-  
-  inheritances: [],
-
-  required: [],
-
   properties: {
     createdBy: {
       format: 'ething.resource',

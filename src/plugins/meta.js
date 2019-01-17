@@ -83,6 +83,9 @@ function resolve(node, definitions) {
   else if (typeof node['allOf'] !== 'undefined') {
     var allOf = node['allOf']
 
+    var _children = []
+    var _inheritances = []
+
     var resolvedNode = {}
 
     for (let i in allOf) {
@@ -95,30 +98,34 @@ function resolve(node, definitions) {
 
       dep = resolve(dep, definitions)
 
-      if (dep['type'] !== 'class') {
+      /*if (dep['type'] !== 'class') {
         return node // do not resolve something else than class !
-      }
+      }*/
 
-      var resolvedInheritances = []
-      resolvedInheritances = resolvedInheritances.concat(resolvedNode.inheritances || [])
       if (name !== null) {
-        resolvedInheritances.push(name)
+        _inheritances.push(name)
       }
-      resolvedInheritances = resolvedInheritances.concat(dep.inheritances || [])
+      _inheritances = _inheritances.concat(dep._inheritances || [])
 
       mergeClass(resolvedNode, dep)
 
-      // do not inherit the folowing attributes
-      resolvedNode.inheritances = resolvedInheritances
+      if (name !== null) {
+        _children.push(name)
+      }
+
+      // do not inherit
       resolvedNode.virtual = false
 
     }
 
-    var node = extend(true, {}, node)
-    delete node.allOf
-    node.type = 'class'
+    var copy = extend(true, {}, node)
+    delete copy.allOf
+    //copy.type = 'class'
 
-    mergeClass(resolvedNode, node)
+    mergeClass(resolvedNode, copy)
+
+    resolvedNode._children = _children
+    resolvedNode._inheritances = _inheritances
 
     return resolvedNode
 
@@ -225,7 +232,8 @@ function normalize (obj) {
       signals: [],
       virtual: false,
       widgets: {},
-      inheritances: [],
+      _inheritances: [],
+      _children: [],
       disableCreation: false,
       dynamic: null,
       data: null,
@@ -456,20 +464,25 @@ export default {
 
       definitions: localDefinitions,
 
-      iterate: function (def) {
-        def = def || this.definitions
+      iterate: function (def, cb) {
+        if (!cb && typeof def === 'function') {
+            cb = def
+            def = null
+        }
 
-        var results = {}
+        if (typeof def === 'string') {
+            def = getFromPath(this.definitions, def)
+        }
+
+        def = def || this.definitions
 
         walkThrough(def, (node, _, stop, path) => {
           if (node['type'] === 'class') {
-            results[path] = node
+            cb(node._type)
             stop()
           }
           return node
         })
-
-        return results
       },
 
       isDefined: function (type) {
@@ -486,7 +499,7 @@ export default {
         base = normType(base)
         if (type === base) return true
         var m = this.get(type)
-        return m && m.inheritances.indexOf(base) !== -1
+        return m && m._inheritances.indexOf(base) !== -1
       },
 
       // extend the metadata of a given type

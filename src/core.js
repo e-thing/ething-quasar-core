@@ -22,9 +22,9 @@ export default {
         }
       }
       if (handler) handler.call(current, err, vm, info)
-      else console.log(err)
+      else console.error(err)
     }
-    
+
 
     var router = opts.router
     var store = opts.store

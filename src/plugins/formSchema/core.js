@@ -1,9 +1,8 @@
 import { required } from 'vuelidate/lib/validators'
-import jsonPointer from 'json-pointer'
 import { extend } from 'quasar'
 
 
-var definitions = {}
+var _definitionsHandlers = []
 
 var _registeredForms = []
 
@@ -28,7 +27,13 @@ var resolveRef = function (schema) {
   if (typeof schema['$ref'] === 'string') {
     var copySchema = Object.assign({}, schema)
     delete copySchema['$ref']
-    schema = resolve(extend(true, copySchema, jsonPointer.get(definitions, schema['$ref'].replace(/^#/, ''))))
+    var ref = schema['$ref']
+    var resolvedSchema = null
+    for (var i in _definitionsHandlers) {
+      resolvedSchema = _definitionsHandlers[i](ref)
+      if (typeof resolvedSchema === 'object' && resolvedSchema!==null) break
+    }
+    schema = resolve(extend(true, copySchema, resolvedSchema))
   }
 
   return schema
@@ -392,12 +397,16 @@ var FormComponent = {
 }
 
 
+function addDefinitionsHandler (handler) {
+  _definitionsHandlers.push(handler)
+}
+
 
 export {
   makeForm,
   FormComponent,
   registerForm,
   unregisterForm,
-  definitions,
+  addDefinitionsHandler,
   resolve
 }

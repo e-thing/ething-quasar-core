@@ -6,7 +6,7 @@ export default {
 
   properties: {
     flow: {
-      format: 'ething.flow'
+      readOnly: true
     },
   },
 

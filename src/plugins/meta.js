@@ -5,6 +5,7 @@ import EThing from 'ething-js'
 import localDefinitions from '../definitions'
 import * as formSchemaCore from './formSchema/core'
 import { extend } from 'quasar'
+import { linearize } from 'c3-linearization'
 
 
 function getFromPath (obj, path, delimiter, createIfNotFound) {
@@ -66,27 +67,13 @@ function walkThrough (obj, ref, fn, path) {
   return obj
 }
 
-function resolve(node, definitions) {
-  if (typeof node['$ref'] === 'string') {
-    var ref = node['$ref']
-
-    if (/^#\//.test(ref)) {
-      ref = ref.substr(2)
-
-      return resolve(getFromPath(definitions, ref), definitions)
-
-    } else {
-      console.warn('[meta] invalid JSON reference: ' + ref)
-      return {}
-    }
-  }
-  else if (typeof node['allOf'] !== 'undefined') {
+function reshape(node) {
+  if (typeof node['allOf'] !== 'undefined') {
     var allOf = node['allOf']
 
-    var _children = []
-    var _inheritances = []
+    var _bases = []
 
-    var resolvedNode = {}
+    var reshapedNode = {}
 
     for (let i in allOf) {
       let dep = allOf[i]
@@ -94,44 +81,47 @@ function resolve(node, definitions) {
 
       if (typeof dep['$ref'] === 'string') {
         name = dep['$ref'].substr(2)
+        _bases.push(name)
+      } else {
+        mergeClass(reshapedNode, dep)
       }
-
-      dep = resolve(dep, definitions)
-
-      /*if (dep['type'] !== 'class') {
-        return node // do not resolve something else than class !
-      }*/
-
-      if (name !== null) {
-        _inheritances.push(name)
-      }
-      _inheritances = _inheritances.concat(dep._inheritances || [])
-
-      mergeClass(resolvedNode, dep)
-
-      if (name !== null) {
-        _children.push(name)
-      }
-
-      // do not inherit
-      resolvedNode.virtual = false
 
     }
 
     var copy = extend(true, {}, node)
     delete copy.allOf
-    //copy.type = 'class'
 
-    mergeClass(resolvedNode, copy)
+    mergeClass(reshapedNode, copy)
 
-    resolvedNode._children = _children
-    resolvedNode._inheritances = _inheritances
+    reshapedNode._bases = _bases
 
-    return resolvedNode
-
+    return reshapedNode
   } else {
-    return node
+    node._bases = node._bases || []
   }
+
+  return node
+}
+
+function compile(mro, definitions) {
+  var compiled = {}
+  if (!mro) return compiled
+  var mro_ = mro.slice().reverse()
+  var last = mro_.pop()
+
+  mro_.forEach( path => {
+    mergeClass(compiled, getFromPath(definitions, path))
+  })
+
+  // do not inherit the following
+  delete compiled.virtual
+  delete compiled.mainComponent
+  delete compiled.mainComponentAttributes
+  delete compiled._mro
+  delete compiled._bases
+
+  mergeClass(compiled, getFromPath(definitions, last))
+  return compiled
 }
 
 function mergeFunction (a, b) {
@@ -232,8 +222,6 @@ function normalize (obj) {
       signals: [],
       virtual: false,
       widgets: {},
-      _inheritances: [],
-      _children: [],
       disableCreation: false,
       dynamic: null,
       data: null,
@@ -318,8 +306,9 @@ function get (definitions, type) {
     }
   }
 
-  // generate schema
+  // compile
   var m = getFromPath(definitions, type) || {}
+  m = compile(m._mro || [], definitions)
 
   // dynamic
   if (resource) {
@@ -409,20 +398,35 @@ function importMeta (self, meta, done) {
 
     var serverDefinitions = meta.definitions
 
-    // merge with locals
-    walkThrough(serverDefinitions, self.definitions, (node, local, stop, path) => {
-      if (typeof node['type'] !== 'undefined' || typeof node['allOf'] !== 'undefined') {
-        node = mergeClass(node, local)
+    // reshape
+    walkThrough(serverDefinitions, (node, _, stop, path) => {
+      if (node['type'] === 'class' || typeof node['allOf'] !== 'undefined') {
+        node = reshape(node)
+        node._type = path
         stop()
       }
       return node
     })
 
-    // resolve references
+    // compute MRO
+    var flat_deps = {}
     walkThrough(serverDefinitions, (node, _, stop, path) => {
-      if (typeof node['type'] !== 'undefined' || typeof node['allOf'] !== 'undefined') {
-        node = resolve(node, serverDefinitions)
-        node._type = path
+      if (node['type'] === 'class') {
+        flat_deps[path] = node._bases || []
+        stop()
+      }
+      return node
+    })
+    var mros = linearize(flat_deps, { reverse: true, python: true })
+    for (var path in mros) {
+      var node = getFromPath(serverDefinitions, path)
+      node._mro = mros[path]
+    }
+
+    // merge with locals
+    walkThrough(serverDefinitions, self.definitions, (node, local, stop, path) => {
+      if (node['type'] === 'class') {
+        node = mergeClass(node, local)
         stop()
       }
       return node
@@ -430,6 +434,7 @@ function importMeta (self, meta, done) {
 
     self.definitions = serverDefinitions
 
+    // TODO: replace by formSchemaCore.definitionsHandler = (id) => {...}
     extend(formSchemaCore.definitions, self.definitions)
 
     if (done)
@@ -499,13 +504,21 @@ export default {
         base = normType(base)
         if (type === base) return true
         var m = this.get(type)
-        return m && m._inheritances.indexOf(base) !== -1
+        return m && m._mro.indexOf(base) !== -1
       },
 
       // extend the metadata of a given type
       extend: function (type, definition) {
-        var obj = getFromPath(this.definitions, normType(type), /[\.\/]/, true)
+        type = normType(type)
+        var obj = getFromPath(this.definitions, type, /[\.\/]/, true)
         mergeClass(obj, definition)
+        // remove from cache any dependencies
+        Object.keys(cached_meta_types).forEach(key => {
+          var n = cached_meta_types[key]
+          if (n._mro.indexOf(type) !== -1) {
+            delete cached_meta_types[key]
+          }
+        })
       },
 
       // store informations about loaded plugins

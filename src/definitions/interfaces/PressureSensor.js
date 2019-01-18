@@ -10,6 +10,8 @@ export default {
     }
   },
 
+  mainComponent: 'pressure.label',
+
   widgets: {
     'pressure.label': {
       extends: WDeviceLabel,

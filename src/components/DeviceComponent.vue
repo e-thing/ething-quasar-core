@@ -15,9 +15,7 @@
 export default {
     name: 'DeviceComponent',
 
-    props: {
-      device: {}
-    },
+    props: ['device', 'component', 'componentAttr'],
 
     data() {
       return {
@@ -41,9 +39,15 @@ export default {
     mounted() {
       if (!this.computedDevice) return
 
-      var meta = this.$ethingUI.get(this.computedDevice)
-      var component = meta.mainComponent
-      var componentAttr = meta.mainComponentAttributes
+      var meta=this.$ethingUI.get(this.computedDevice), component, componentAttr;
+
+      if (!this.component) {
+        component = meta.mainComponent
+        componentAttr = meta.mainComponentAttributes
+      } else {
+        component = this.component
+        componentAttr = this.componentAttr
+      }
 
       if (typeof component == 'string') {
         component = [component]

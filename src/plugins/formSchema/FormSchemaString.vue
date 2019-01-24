@@ -1,15 +1,13 @@
 <template>
-  <div class="form-schema-string">
-    <small v-if="!inlined && schema.description" class="form-schema-description">{{ schema.description }}</small>
+  <form-schema-layout class="form-schema-string">
     <q-input
       :type="inputType"
-      v-bind:value="castedModel"
-      v-on:input="setValue"
-      :error="$v.value.$error"
-      :after="[{icon: 'mdi-alert',error: true}]"
+      :value="c_value"
+      v-on:input="c_value = $event"
+      :error="!!error"
+      :class="inlined ? 'inline' : ''"
     />
-    <small class="form-schema-error" v-if="!inlined && $v.value.$error">{{ errorMessage }}</small>
-  </div>
+  </form-schema-layout>
 </template>
 
 <script>
@@ -27,21 +25,23 @@ export default {
 
     var validators = {}
 
-    if (typeof this.schema.minLength === 'number') {
-      validators.minLength = minLength(this.schema.minLength)
+    if (typeof this.c_schema.minLength === 'number') {
+      validators.minLength = minLength(this.c_schema.minLength)
+      console.log(minLength)
+      console.log(validators.minLength)
     }
-    if (typeof this.schema.maxLength === 'number') {
-      validators.maxLength = maxLength(this.schema.maxLength)
+    if (typeof this.c_schema.maxLength === 'number') {
+      validators.maxLength = maxLength(this.c_schema.maxLength)
     }
-    if (typeof this.schema.pattern === 'string') {
-      validators.regex = regex(this.schema.pattern)
+    if (typeof this.c_schema.pattern === 'string') {
+      validators.regex = regex(this.c_schema.pattern)
     }
-    if (this.schema.format === 'email') {
+    if (this.c_schema.format === 'email') {
       validators.email = email
     }
 
     return {
-      value: validators
+      c_value: validators
     }
   },
 
@@ -53,9 +53,9 @@ export default {
 
   computed: {
     inputType () {
-      if (this.schema.format === 'text') return 'textarea'
-      if (this.schema.format === 'email') return 'email'
-      if (this.schema.format === 'password') return 'password'
+      if (this.c_schema.format === 'text') return 'textarea'
+      if (this.c_schema.format === 'email') return 'email'
+      if (this.c_schema.format === 'password') return 'password'
       return 'text'
     }
   }
@@ -63,8 +63,3 @@ export default {
 }
 
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-
-</style>

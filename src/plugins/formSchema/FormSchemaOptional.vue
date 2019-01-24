@@ -1,15 +1,13 @@
 <template>
-  <div class="form-schema-optional" :class="{indent: level}">
-
-    <small v-if="schema.description" class="form-schema-description">{{ schema.description }}</small>
+  <form-schema-layout class="form-schema-optional" :class="{indent: level}">
 
     <div>
       <q-toggle v-model="enabled" label="enable"/>
     </div>
 
-    <form-schema ref="sub" v-if="enabled" required :schema="filteredSchema" :model="cachedValue" :level="level" @input="onChildValueChange" @error="setError"/>
+    <form-schema ref="sub" v-if="enabled" required :schema="filteredSchema" :value="cachedValue" :level="level" @input="onChildValueChange" @error="$emit('error', $event)"/>
 
-  </div>
+  </form-schema-layout>
 </template>
 
 <script>
@@ -25,18 +23,18 @@ export default {
   computed: {
     filteredSchema () {
 
-      var copySchema = Object.assign({}, this.schema)
+      var copySchema = Object.assign({}, this.c_schema)
       delete copySchema.anyOf
       delete copySchema.description
 
       // remove the type==null schema
-      var anyOf = this.schema.anyOf.filter(item => item.type !== 'null')
+      var anyOf = this.c_schema.anyOf.filter(item => item.type !== 'null')
       if (anyOf.length == 1) {
         copySchema = extend(true, copySchema, anyOf[0])
       } else {
         copySchema.anyOf = anyOf
       }
-      
+
       return copySchema
     }
   },
@@ -49,18 +47,18 @@ export default {
   },
 
   watch: {
-    model () {
+    c_value () {
       this.refreshFromModel()
     },
 
     enabled (val) {
       this.$nextTick(() => {
         if (val) {
-          this.setValue(this.$refs['sub'].value)
-          this.setError(this.$refs['sub'].error)
+          this.c_value = this.$refs['sub'].c_value
+          this.$emit('error', this.$refs['sub'].error)
         } else {
-          this.setValue(null)
-          this.setError(false)
+          this.c_value = null
+          this.$emit('error', false)
         }
       })
     }
@@ -68,15 +66,15 @@ export default {
 
   methods: {
     refreshFromModel () {
-      this.enabled = this.model !== null && typeof this.model !== 'undefined'
+      this.enabled = this.c_value !== null && typeof this.c_value !== 'undefined'
       if (this.enabled) {
-        this.cachedValue = this.model
+        this.cachedValue = this.c_value
       }
     },
 
     onChildValueChange (val) {
       this.cachedValue = val
-      this.setValue(val)
+      this.c_value = val
     }
   },
 
@@ -87,8 +85,3 @@ export default {
 }
 
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-
-</style>

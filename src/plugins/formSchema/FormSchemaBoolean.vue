@@ -1,9 +1,7 @@
 <template>
-  <div class="form-schema-boolean">
-    <small v-if="!inlined && schema.description" class="form-schema-description">{{ schema.description }}</small>
-    <q-toggle :class="inlined ? 'q-mr-sm' : 'block'" v-bind:value="!!model" v-on:input="setValue" :error="$v.value.$error"/>
-    <small class="form-schema-error" v-if="$v.value.$error">{{ errorMessage }}</small>
-  </div>
+  <form-schema-layout class="form-schema-boolean">
+    <q-toggle :class="inlined ? '' : 'block'" v-bind:value="!!c_value" v-on:input="c_value = $event" :error="!!error"/>
+  </form-schema-layout>
 </template>
 
 <script>
@@ -14,14 +12,6 @@ export default {
   name: 'FormSchemaBoolean',
 
   mixins: [FormComponent],
-
-  props: ['model']
-
 }
 
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-
-</style>

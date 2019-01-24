@@ -1,13 +1,11 @@
 <template>
-  <div class="form-schema-enum">
-    <small v-if="!inlined && schema.description" class="form-schema-description">{{ schema.description }}</small>
+  <form-schema-layout class="form-schema-enum">
     <q-select
-      v-bind:value="model" v-on:input="setValue"
+      v-bind:value="c_value" v-on:input="c_value = $event"
       :options="selectOptions"
-      :error="$v.value.$error"
+      :error="!!error"
     />
-    <small class="form-schema-error" v-if="!inlined && $v.value.$error">{{ errorMessage }}</small>
-  </div>
+  </form-schema-layout>
 </template>
 
 <script>
@@ -21,8 +19,8 @@ export default {
 
   computed: {
     selectOptions () {
-      var enumLabels = this.mutableSchema.enumLabels || []
-      return (this.mutableSchema.enum || []).map( (v, i) => {
+      var enumLabels = this.c_schema.enumLabels || []
+      return (this.c_schema.enum || []).map( (v, i) => {
         return {
             label: i<enumLabels.length ? enumLabels[i] : String(v),
             value: v
@@ -34,8 +32,3 @@ export default {
 }
 
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-
-</style>

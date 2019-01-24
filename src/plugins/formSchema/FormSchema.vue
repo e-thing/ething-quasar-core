@@ -1,42 +1,26 @@
 <script>
 
-import { makeForm, FormComponent } from './core'
+import { makeForm } from './core'
 
 export default {
   name: 'FormSchema',
 
-  mixins: [FormComponent],
+  props: {
+    value:{}
+  },
 
   render: function (createElement) {
-    var self = this
-    return makeForm(createElement, this.schema, this.model, this.level, function (newValue) {
-      self.setValue(newValue)
-    }, function (newValue) {
-      self.setError(newValue)
-    }, {
-      required: this.required,
-      inline: this.inlined
+
+    return makeForm(createElement, Object.assign({value:this.value}, this.$attrs), {
+      'input': (val) => {
+        this.$emit('input', val)
+      },
+      'error': (val) => {
+        this.$emit('error', val)
+      }
     })
-  },
+  }
 
 }
 
 </script>
-
-<style lang="stylus">
-@import '~variables'
-
-.form-schema-description
-    margin-bottom 8px
-    display inline-block
-    color $faded
-
-.form-schema-error
-  color $negative
-
-pad-width = 20px
-
-.indent
-  margin-left: pad-width
-
-</style>

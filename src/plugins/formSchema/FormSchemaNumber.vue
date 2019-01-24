@@ -1,16 +1,13 @@
 <template>
-  <div class="form-schema-number">
-    <!--<input type="number" v-bind:value="model" v-on:input="value = $event.target.value"/>-->
-    <small v-if="!inlined && schema.description" class="form-schema-description">{{ schema.description }}</small>
-    <q-input 
+  <form-schema-layout class="form-schema-number">
+    <q-input
       type="number"
-      v-bind:value="castedModel"
-      v-on:input="setValue" 
-      :error="$v.value.$error" 
-      :after="[{icon: 'mdi-alert',error: true}]"
+      :value="c_value"
+      v-on:input="c_value = $event"
+      :error="!!error"
+      :class="inlined ? 'inline' : ''"
     />
-    <small class="form-schema-error" v-if="!inlined && $v.value.$error">{{ errorMessage }}</small>
-  </div>
+  </form-schema-layout>
 </template>
 
 <script>
@@ -22,15 +19,6 @@ export default {
   name: 'FormSchemaNumber',
 
   mixins: [FormComponent],
-  
-  data () {
-    return {
-      after: [{
-        icon: 'mdi-alert',
-        error: true
-      }]
-    }
-  },
 
   validations () {
 
@@ -38,15 +26,15 @@ export default {
 
     // todo : multipleOf , exclusiveMaximum , exclusiveMinimum
 
-    if (typeof this.schema.minimum === 'number') {
-      validators.minValue = minValue(this.schema.minimum)
+    if (typeof this.c_schema.minimum === 'number') {
+      validators.minValue = minValue(this.c_schema.minimum)
     }
-    if (typeof this.schema.maximum === 'number') {
-      validators.maxValue = maxValue(this.schema.maximum)
+    if (typeof this.c_schema.maximum === 'number') {
+      validators.maxValue = maxValue(this.c_schema.maximum)
     }
 
     return {
-      value: validators
+      c_value: validators
     }
   },
 
@@ -59,8 +47,3 @@ export default {
 }
 
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-
-</style>

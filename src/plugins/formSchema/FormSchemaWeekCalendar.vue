@@ -1,9 +1,8 @@
 <template>
-  <div class="form-schema-week-calendar">
-    <small v-if="schema.description" class="form-schema-description">{{ schema.description }}</small>
+  <form-schema-layout class="form-schema-week-calendar">
 
-    <div v-if="value && value.length">
-      <q-item dense v-for="(item, index) in value" :key="index">
+    <div v-if="c_value && c_value.length">
+      <q-item dense v-for="(item, index) in c_value" :key="index">
         <q-item-side icon="schedule"/>
         <q-item-main>
           <q-item-tile label>{{ toString(item) }}</q-item-tile>
@@ -39,7 +38,7 @@
         </div>
       </div>
     </modal>
-  </div>
+  </form-schema-layout>
 </template>
 
 <script>
@@ -56,7 +55,7 @@ var FormSchemaWeekCalendar = {
 
   data () {
     return {
-      days: this.fromValue(this.model),
+      days: this.fromValue(this.c_value),
       selectMode: true,
       modal: false
     }
@@ -116,7 +115,7 @@ var FormSchemaWeekCalendar = {
 
       // console.log(selections)
 
-      this.setValue(selections)
+      this.c_value = selections
     },
 
     inSelection (selections, weekDay, hour) {

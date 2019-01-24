@@ -4,6 +4,7 @@
 
 import * as core from './core'
 import FormSchema from './FormSchema.vue'
+import FormSchemaLayout from './FormSchemaLayout.vue'
 
 // builtins
 import FormSchemaObject from './FormSchemaObject.vue'
@@ -41,6 +42,7 @@ export default {
     EThingUI.form = core
 
     Vue.component('FormSchema', FormSchema)
+    Vue.component('FormSchemaLayout', FormSchemaLayout)
 
     Vue.component('FormSchemaObject', FormSchemaObject)
     Vue.component('FormSchemaArray', FormSchemaArray)

@@ -1,11 +1,10 @@
 <template>
-  <div class="form-schema-file">
-    <small v-if="schema.description" class="form-schema-description">{{ schema.description }}</small>
+  <form-schema-layout class="form-schema-file">
 
     <div>
       <span class="q-mr-md relative-position overflow-hidden">
         <q-icon name="add" color="primary"/> add file
-        <input ref="file" type="file" class="file-input absolute-full cursor-pointer" @change="__add" :accept="schema.accept">
+        <input ref="file" type="file" class="file-input absolute-full cursor-pointer" @change="__add" :accept="c_schema.accept">
       </span>
 
       <small v-for="(file, index) in files" :key="index" class="text-faded">
@@ -13,10 +12,7 @@
       </small>
     </div>
 
-    <small class="form-schema-error" v-if="$v.value.$error">{{ errorMessage }}</small>
-    <small class="form-schema-error" v-if="typeof error === 'string'">{{ error }}</small>
-
-  </div>
+  </form-schema-layout>
 </template>
 
 <script>
@@ -52,12 +48,12 @@ export default {
           this.convert(file, (content) => {
             this.$nextTick(() => {
               file.__converting = false
-              this.setValue(content)
+              this.c_value = content
             })
           }, (msg) => {
             this.files = []
-            this.setError(String(msg))
-            this.setValue(undefined)
+            this.$emit('error', String(msg))
+            this.c_value = undefined
           })
 
           return file
@@ -69,7 +65,7 @@ export default {
     convert (file, done, error) {
 
       const _done = (content) => {
-        var converter = this.schema._converter
+        var converter = this.c_schema._converter
         if (typeof converter === 'function') {
           try {
             converter.call(this, file, content, done, error)
@@ -81,7 +77,7 @@ export default {
         }
       }
 
-      if (this.schema.format === 'base64') {
+      if (this.c_schema.format === 'base64') {
         let fileReader = new FileReader()
         fileReader.onloadend = (e) => {
           const content = fileReader.result
@@ -89,7 +85,7 @@ export default {
           _done(parts[1])
         }
         fileReader.readAsDataURL(file)
-      } else if (this.schema.format === 'text') {
+      } else if (this.c_schema.format === 'text') {
         let fileReader = new FileReader()
         fileReader.onloadend = (e) => {
           const content = fileReader.result

@@ -1,12 +1,11 @@
 <template>
-  <div class="form-schema-bluetooth-interface">
-    <small v-if="schema.description" class="form-schema-description">{{ schema.description }}</small>
+  <form-schema-layout class="form-schema-bluetooth-interface">
     <div class="row">
       <q-input
         type="number"
-        v-bind:value="castedModel"
-        v-on:input="setValue"
-        :error="$v.value.$error"
+        v-bind:value="c_value"
+        v-on:input="c_value = $event"
+        :error="!!error"
         class="col"
       />
       <q-btn flat color="faded" icon="search" class="col-auto">
@@ -19,7 +18,7 @@
             <div v-else-if="interfaces.length===0" class="q-ma-md text-faded">no bluetooth interface detected</div>
             <q-list separator link v-else>
               <q-btn flat color="faded" icon="refresh" label="refresh" @click="refresh()"/>
-              <q-item v-close-overlay v-for="(hci, index) in interfaces" :key="index" @click.native="setValue(parseIntFromHci(hci.hci))">
+              <q-item v-close-overlay v-for="(hci, index) in interfaces" :key="index" @click.native="c_value = parseIntFromHci(hci.hci)">
                 <q-item-main>
                   <q-item-tile label>{{ hci.hci }}</q-item-tile>
                   <q-item-tile sublabel v-if="hci.address">mac: {{ hci.address }}</q-item-tile>
@@ -33,8 +32,7 @@
         </q-popover>
       </q-btn>
     </div>
-    <small class="form-schema-error" v-if="$v.value.$error">{{ errorMessage }}</small>
-  </div>
+  </form-schema-layout>
 </template>
 
 <script>

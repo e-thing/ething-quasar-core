@@ -1,19 +1,16 @@
 <template>
-  <div class="form-schema-cron">
-    <small v-if="schema.description" class="form-schema-description">{{ schema.description }}</small>
+  <form-schema-layout class="form-schema-cron">
 
-    <q-btn flat color="primary" icon="edit" :label="castedModel ? 'change' : 'set'" @click="editing = true" />
+    <q-btn flat color="primary" icon="edit" :label="c_value ? 'change' : 'set'" @click="editing = true" />
 
     <div>{{ readableExp }}</div>
 
-    <small class="form-schema-error" v-if="$v.value.$error">{{ errorMessage }}</small>
-
     <modal v-model="editing" title="Cron editor" icon="event" @valid="apply">
 
-      <cron :value="castedModel" @input="editedExp = $event" class="q-ma-md"/>
+      <cron :value="c_value" @input="editedExp = $event" class="q-ma-md"/>
 
     </modal>
-  </div>
+  </form-schema-layout>
 </template>
 
 <script>
@@ -41,14 +38,14 @@ var FormSchemaCron = {
 
   computed: {
     readableExp () {
-      return this.castedModel ? cronstrue.toString(this.castedModel) : ""
+      return this.c_value ? cronstrue.toString(this.c_value) : ""
     }
   },
 
   methods: {
     apply () {
       this.editing = false
-      this.setValue(this.editedExp)
+      this.c_value = this.editedExp
     }
   }
 

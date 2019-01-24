@@ -1,10 +1,7 @@
 <template>
-  <div class="form-schema-json">
-    <!--<input type="text" v-bind:value="model" v-on:input="value = $event.target.value"/>-->
-    <small class="form-schema-description text-faded">{{ schema.description }}</small>
-    <codemirror ref='cm' v-bind:value="formattedModel" :options="cmOption" v-on:input="parseJson"></codemirror>
-
-  </div>
+  <form-schema-layout class="form-schema-json">
+    <codemirror ref='cm' v-bind:value="formattedModel" :options="cmOption" v-on:input="formattedModel = $event"></codemirror>
+  </form-schema-layout>
 </template>
 
 <script>
@@ -53,8 +50,21 @@ export default {
 
   computed: {
 
-    formattedModel () {
-      return this.schema.type === 'string' ? this.castedModel : JSON.stringify(this.castedModel, null, 4)
+    formattedModel: {
+      get () {
+        return this.c_schema.type === 'string' ? this.c_value : JSON.stringify(this.c_value, null, 4)
+      },
+      set (val) {
+        if (this.c_schema.type !== 'string') {
+          try {
+            val = JSON.parse(val)
+          } catch (e) {
+            val = undefined
+          }
+        }
+
+        this.c_value = val
+      }
     }
   },
 
@@ -82,21 +92,6 @@ export default {
         },
         viewportMargin: Infinity
       },
-    }
-  },
-
-  methods: {
-    parseJson (val) {
-
-      if (this.schema.type !== 'string') {
-        try {
-          val = JSON.parse(val)
-        } catch (e) {
-          val = null
-        }
-      }
-
-      this.setValue(val)
     }
   }
 }

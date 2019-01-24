@@ -1,7 +1,5 @@
 <template>
-  <div class="form-schema-array" :class="{indent: level}">
-
-    <small v-if="schema.description" class="form-schema-description">{{ schema.description }}</small>
+  <form-schema-layout class="form-schema-array">
 
     <div>
       <q-btn flat size="md"
@@ -28,7 +26,6 @@
           @click="moveItem(key, 'up')"
           icon="arrow_drop_up"
           class="col-auto"
-          flat
           v-if="key > 0"
         />
 
@@ -37,7 +34,6 @@
           @click="moveItem(key, 'down')"
           icon="arrow_drop_down"
           class="col-auto"
-          flat
           v-if="key < items.length -1"
         />
 
@@ -60,15 +56,13 @@
 
     </div>
 
-    <small class="form-schema-error" v-if="$v.value.$error">{{ errorMessage }}</small>
-
     <modal v-model="edit.show" title="Add item" icon="add" :valid-btn-disable="edit.error" valid-btn-label="Add" @valid="onEditDone">
 
-      <form-schema :schema="schema.items || {}" v-model="edit.model" @error="edit.error = $event"/>
+      <form-schema :schema="schema.items || {}" :value="edit.model" @input="edit.model = $event" @error="edit.error = $event"/>
 
     </modal>
 
-  </div>
+  </form-schema-layout>
 </template>
 
 <script>
@@ -102,45 +96,45 @@ export default {
 
     var validators = {}
 
-    if (typeof this.schema.minItems === 'number') {
-      validators.minLength = minLength(this.schema.minItems)
+    if (typeof this.c_schema.minItems === 'number') {
+      validators.minLength = minLength(this.c_schema.minItems)
     }
 
-    if (typeof this.schema.maxItems === 'number') {
-      validators.maxLength = maxLength(this.schema.maxItems)
+    if (typeof this.c_schema.maxItems === 'number') {
+      validators.maxLength = maxLength(this.c_schema.maxItems)
     }
 
     return {
-      value: validators
+      c_value: validators
     }
   },
 
   methods: {
     refreshFromModel () {
-      this.items = (this.model || []).map(v => {
+      this.items = (this.c_value || []).map(v => {
         return {
-          schema: this.schema.items || {}
+          schema: this.c_schema.items || {}
         }
       })
     },
 
     getLabel (key) {
-      var _userLabel = this.schema._label
+      var _userLabel = this.c_value._label
       if (typeof _userLabel === 'string')
         return _userLabel
       if (typeof _userLabel === 'function')
-        return _userLabel.call(this, key, this.value[key])
+        return _userLabel.call(this, key, this.c_value[key])
 
       // auto
-      if ( ['string', 'boolean', 'integer', 'int', 'long', 'number', 'float', 'double'].indexOf(this.schema.items.type) !== -1) {
-        return String(this.value[key])
+      if ( ['string', 'boolean', 'integer', 'int', 'long', 'number', 'float', 'double'].indexOf(this.c_schema.items.type) !== -1) {
+        return String(this.c_value[key])
       }
 
       return 'item #' + key
     },
 
     getModel (key) {
-      return Array.isArray(this.model) && key < this.model.length ? this.model[key] : undefined
+      return Array.isArray(this.c_value) && key < this.c_value.length ? this.c_value[key] : undefined
     },
 
     addItem () {
@@ -148,51 +142,42 @@ export default {
       this.edit.model = undefined
       this.edit.show = true
       /*this.items.push({
-        schema: this.schema.items || {}
+        schema: this.c_schema.items || {}
       })*/
     },
 
     onEditDone () {
-      var a = (this.value || []).slice()
       if (this.edit.key === -1) {
-        a.push(this.edit.model)
+        this.c_value.push(this.edit.model)
       } else {
-        a[this.edit.key] = this.edit.model
+        this.$set(this.c_value, this.edit.key, this.edit.model)
       }
-      this.setValue(a)
       this.edit.show = false
     },
 
     removeItem (key) {
       this.items.splice(key, 1)
-
-      var a = (this.value || []).slice()
-      a.splice(key, 1)
-      this.setValue(a)
+      this.c_value.splice(key, 1)
     },
 
     moveItem (key, dir) {
-      var a = (this.value || []).slice()
-      var rm = a.splice(key, 1)
-      a.splice(key+(dir==='up' ? -1 : 1), 0, rm[0])
-      this.setValue(a)
+      var rm = this.c_value.splice(key, 1)
+      this.c_value.splice(key+(dir==='up' ? -1 : 1), 0, rm[0])
     },
 
     editItem (key) {
       this.edit.key = key
-      this.edit.model = this.model[key]
+      this.edit.model = this.c_value[key]
       this.edit.show = true
     },
 
     onChildValueChange (key, val) {
-      var a = (this.value || []).slice()
-      a[key] = val
-      this.setValue(a)
+      this.$set(this.c_value, key, val)
     },
 
     onChildErrorChange (key, val) {
       this.items[key].error = val
-      this.setError(Object.values(this.items).some(item => item.error))
+      this.$emit('error', Object.values(this.items).some(item => item.error))
     }
   },
 

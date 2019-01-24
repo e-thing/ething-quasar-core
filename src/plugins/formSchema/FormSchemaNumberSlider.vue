@@ -1,18 +1,15 @@
 <template>
-  <div class="form-schema-number-slider">
-    <!--<input type="number" v-bind:value="model" v-on:input="value = $event.target.value"/>-->
-    <small v-if="schema.description" class="form-schema-description">{{ schema.description }}</small>
+  <form-schema-layout class="form-schema-number-slider">
     <q-slider
-      :value="castedModel"
-      @input="setValue"
-      :error="$v.value.$error"
-      :min="schema.minimum"
-      :max="schema.maximum"
-      :step="schema.multipleOf"
+      :value="c_value"
+      @input="c_value = $event"
+      :error="!!error"
+      :min="c_schema.minimum"
+      :max="c_schema.maximum"
+      :step="c_schema.multipleOf"
       label-always
     />
-    <small class="form-schema-error" v-if="$v.value.$error">{{ errorMessage }}</small>
-  </div>
+  </form-schema-layout>
 </template>
 
 <script>
@@ -27,8 +24,3 @@ export default {
 }
 
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-
-</style>

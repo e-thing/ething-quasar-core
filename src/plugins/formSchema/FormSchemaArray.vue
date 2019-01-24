@@ -1,7 +1,5 @@
 <template>
-  <div class="form-schema-array" :class="{indent: level}">
-
-    <small v-if="schema.description" class="form-schema-description">{{ schema.description }}</small>
+  <form-schema-layout class="form-schema-array" :class="{indent: level}">
 
     <div>
       <q-btn flat size="md"
@@ -26,15 +24,30 @@
           icon="delete"
           style="vertical-align: middle"
         />
+
+        <q-btn flat size="sm"
+          color="secondary"
+          @click="moveItem(key, 'up')"
+          label="up"
+          icon="arrow_drop_up"
+          v-if="key > 0"
+        />
+
+        <q-btn flat size="sm"
+          color="secondary"
+          @click="moveItem(key, 'down')"
+          label="down"
+          icon="arrow_drop_down"
+          v-if="key < items.length -1"
+        />
+
       </div>
 
-      <form-schema :schema="item.schema" :model="getModel(key)" :level="level+1" @input="onChildValueChange(key, $event)" @error="onChildErrorChange(key, $event)"/>
+      <form-schema :schema="item.schema" :value="getModel(key)" :level="level+1" @input="onChildValueChange(key, $event)" @error="onChildErrorChange(key, $event)"/>
 
     </div>
 
-    <small class="form-schema-error" v-if="$v.value.$error">{{ errorMessage }}</small>
-
-  </div>
+  </form-schema-layout>
 </template>
 
 <script>
@@ -53,47 +66,52 @@ export default {
   },
 
   watch: {
-    model () {
+    c_value () {
       this.refreshFromModel()
     }
   },
 
   methods: {
     refreshFromModel () {
-      this.items = (this.model || []).map(v => {
+      this.items = (this.c_value || []).map(v => {
         return {
-          schema: this.schema.items || {}
+          schema: this.c_schema.items || {}
         }
       })
     },
 
     getModel (key) {
-      return Array.isArray(this.model) && key < this.model.length ? this.model[key] : undefined
+      return Array.isArray(this.c_value) && key < this.c_value.length ? this.c_value[key] : undefined
     },
 
     addItem () {
       this.items.push({
-        schema: this.schema.items || {}
+        schema: this.c_schema.items || {}
       })
     },
 
     removeItem (key) {
       this.items.splice(key, 1)
+      this.c_value.splice(key, 1)
+    },
 
-      var a = (this.value || []).slice()
-      a.splice(key, 1)
-      this.setValue(a)
+    moveItem (key, dir) {
+      var rmitem = this.items.splice(key, 1)
+      var rm = this.c_value.splice(key, 1)
+      this.items.splice(key+(dir==='up' ? -1 : 1), 0, rmitem[0])
+      this.c_value.splice(key+(dir==='up' ? -1 : 1), 0, rm[0])
     },
 
     onChildValueChange (key, val) {
-      var a = (this.value || []).slice()
-      a[key] = val
-      this.setValue(a)
+      this.$set(this.c_value, key, val)
     },
 
     onChildErrorChange (key, val) {
-      this.items[key].error = val
-      this.setError(Object.values(this.items).some(item => item.error))
+      this.$set(this.items[key], 'error', val)
+      /*this.$set(this.items, key, Object.assign({}, this.items[key], {
+        error: val
+      }))*/
+      this.$emit('error', Object.values(this.items).some(item => item.error))
     }
   },
 
@@ -105,8 +123,3 @@ export default {
 }
 
 </script>
-
-<style lang="stylus">
-@import '~variables'
-
-</style>

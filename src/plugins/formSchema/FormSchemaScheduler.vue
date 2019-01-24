@@ -1,15 +1,14 @@
 <template>
-  <div class="form-schema-scheduler">
-    <small v-if="schema.description" class="form-schema-description">{{ schema.description }}</small>
+  <form-schema-layout class="form-schema-scheduler">
 
-    <div v-if="value && value.length">
-      <q-item dense v-for="(item, index) in value" :key="index">
+    <div v-if="c_value && c_value.length">
+      <q-item dense v-for="(item, index) in c_value" :key="index">
         <q-item-side icon="schedule"/>
         <q-item-main>
           <q-item-tile label>{{ toString(item) }}</q-item-tile>
         </q-item-main>
         <q-item-side right>
-          <q-btn icon="delete" round flat dense color="negative" @click="value.splice(index, 1)"/>
+          <q-btn icon="delete" round flat dense color="negative" @click="c_value.splice(index, 1)"/>
         </q-item-side>
       </q-item>
     </div>
@@ -30,7 +29,7 @@
       <form-schema :schema="itemSchema" v-model="itemModel" @error="itemError = $event"/>
 
     </modal>
-  </div>
+  </form-schema-layout>
 </template>
 
 <script>
@@ -106,7 +105,7 @@ var FormSchemaScheduler = {
                 enum: monthDays,
                 dependencies: {
                   'FormSchemaScheduler.mode': function (mode, self, node) {
-                    self.$set(self.parent().mutableSchema.properties.monthday, '_disabled', mode !== 'monthly')
+                    self.$set(self.parent().c_schema.properties.monthday, '_disabled', mode !== 'monthly')
                   }
                 }
               },
@@ -116,7 +115,7 @@ var FormSchemaScheduler = {
                 enumLabels: weekDays,
                 dependencies: {
                   'FormSchemaScheduler.mode': function (mode, self, node) {
-                    self.$set(self.parent().mutableSchema.properties.weekday, '_disabled', mode !== 'weekly')
+                    self.$set(self.parent().c_schema.properties.weekday, '_disabled', mode !== 'weekly')
                   }
                 }
               },
@@ -137,7 +136,7 @@ var FormSchemaScheduler = {
                 enum: monthDays,
                 dependencies: {
                   'FormSchemaScheduler.mode': function (mode, self, node) {
-                    self.$set(self.parent().mutableSchema.properties.monthday, '_disabled', mode !== 'monthly')
+                    self.$set(self.parent().c_schema.properties.monthday, '_disabled', mode !== 'monthly')
                   }
                 }
               },
@@ -147,7 +146,7 @@ var FormSchemaScheduler = {
                 enumLabels: weekDays,
                 dependencies: {
                   'FormSchemaScheduler.mode': function (mode, self, node) {
-                    self.$set(self.parent().mutableSchema.properties.weekday, '_disabled', mode !== 'weekly')
+                    self.$set(self.parent().c_schema.properties.weekday, '_disabled', mode !== 'weekly')
                   }
                 }
               },
@@ -169,7 +168,7 @@ var FormSchemaScheduler = {
     toString,
 
     add () {
-      var items = this.value ? this.value.slice(0) : []
+      var items = this.c_value ? this.c_value.slice(0) : []
       var item = extend(true, {}, this.itemModel)
 
       var startTime = new Date(item.start.time)
@@ -183,7 +182,7 @@ var FormSchemaScheduler = {
       item.end['minute'] = startTime.getMinutes()
 
       items.push(item)
-      this.setValue(items)
+      this.c_value = items
 
       this.modal = false
     }

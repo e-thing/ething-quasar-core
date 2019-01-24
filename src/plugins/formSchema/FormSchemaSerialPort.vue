@@ -1,11 +1,10 @@
 <template>
-  <div class="form-schema-serial-port">
-    <small v-if="schema.description" class="form-schema-description">{{ schema.description }}</small>
+  <form-schema-layout class="form-schema-serial-port">
     <div class="row">
       <q-input
-        v-bind:value="castedModel"
-        v-on:input="setValue"
-        :error="$v.value.$error"
+        v-bind:value="c_value"
+        v-on:input="c_value = $event"
+        :error="!!error"
         class="col"
       />
       <q-btn flat color="faded" icon="search" class="col-auto">
@@ -18,7 +17,7 @@
             <div v-else-if="ports.length===0" class="q-ma-md text-faded">no serial port found</div>
             <q-list separator link v-else>
               <q-btn flat color="faded" icon="refresh" label="refresh" @click="refresh()"/>
-              <q-item v-close-overlay v-for="(port, index) in ports" :key="index" @click.native="setValue(port.device)">
+              <q-item v-close-overlay v-for="(port, index) in ports" :key="index" @click.native="c_value = port.device">
                 <q-item-main>
                   <q-item-tile label>{{ port.device }}</q-item-tile>
                   <q-item-tile sublabel v-if="port.product">product: {{ port.product }}</q-item-tile>
@@ -31,8 +30,7 @@
         </q-popover>
       </q-btn>
     </div>
-    <small class="form-schema-error" v-if="$v.value.$error">{{ errorMessage }}</small>
-  </div>
+  </form-schema-layout>
 </template>
 
 <script>

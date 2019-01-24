@@ -1,8 +1,5 @@
 <template>
-  <div class="form-schema-multi-type">
-
-    <small v-if="schema.description" class="form-schema-description">{{ schema.description }}</small>
-
+  <form-schema-layout class="form-schema-multi-type">
 
     <q-select
       stack-label="type"
@@ -10,9 +7,9 @@
       :options="selectOptions"
     />
 
-    <form-schema v-if="isValid" ref="child" :required="required" :schema="computedSchema" :model="cachedValue" :level="level" @input="onChildValueChange" @error="setError"/>
+    <form-schema v-if="isValid" ref="child" :required="required" :schema="computedSchema" :value="cachedValue" :level="level" @input="onChildValueChange" @error="c_value = $event"/>
 
-  </div>
+  </form-schema-layout>
 </template>
 
 <script>
@@ -64,7 +61,7 @@ export default {
   },
 
   watch: {
-    model () {
+    c_value () {
       this.refreshFromModel()
     },
   },
@@ -76,23 +73,23 @@ export default {
 
       this.$nextTick(() => {
         if (this.$refs['child']) {
-          this.setValue(this.$refs['child'].value)
-          this.setError(this.$refs['child'].error)
+          this.c_value = this.$refs['child'].value
+          this.$emit('error', this.$refs['child'].error)
         }
       })
 
     },
 
     refreshFromModel () {
-      var jsType = typeof this.model
+      var jsType = typeof this.c_value
 
-      if (jsType === 'object' && Array.isArray(this.model)) {
+      if (jsType === 'object' && Array.isArray(this.c_value)) {
         jsType = 'array'
       }
 
       if (this.types.indexOf(jsType) !== -1) {
         this.type = jsType
-        this.cachedValue = this.model
+        this.cachedValue = this.c_value
       } else {
         this.type = this.types[0]
       }
@@ -100,7 +97,7 @@ export default {
 
     onChildValueChange (val) {
       this.cachedValue = val
-      this.setValue(val)
+      this.c_value = val
     }
   },
 
@@ -111,8 +108,3 @@ export default {
 }
 
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-
-</style>

@@ -1,7 +1,8 @@
 import { required } from 'vuelidate/lib/validators'
 import { extend } from 'quasar'
+import FormSchemaLayout from './FormSchemaLayout'
 
-const customRequired = (v) => v !== undefined && v !== null
+//const customRequired = (v) => v !== undefined && v !== null
 
 var _definitionsHandlers = []
 
@@ -11,7 +12,7 @@ var registerForm = function (component, test) {
 
   _registeredForms.push({
     component,
-    test
+    test: test || component.rule
   })
 
 }
@@ -22,6 +23,10 @@ var unregisterForm = function (component) {
   })
   if (index !== -1)
     _registeredForms.splice(index, 1)
+}
+
+function clone(obj) {
+  return extend(true, {}, obj)
 }
 
 var resolveRef = function (schema) {
@@ -56,24 +61,19 @@ var resolve = function (schema) {
   return resolveAllOf(resolveRef(schema))
 }
 
-var makeForm = function (createElement, schema, model, level, onValueUpdate, onErrorUpdate, props) {
+var makeForm = function (createElement, props, on) {
 
-  schema = resolve(schema)
+  var schema = props.schema = resolve(props.schema)
+
+  //console.log('SCHEMA', JSON.stringify(schema, null, 2))
+  //console.log('MODEL', JSON.stringify(props.value, null, 2))
 
   var attributes = {
-    props: Object.assign({
-      schema,
-      model,
-      level
-    }, props),
-    on: {
-      'input': onValueUpdate,
-      'error': onErrorUpdate,
-    }
+    props,
+    on
   }
 
-  // console.log(schema)
-  // console.log(model)
+  var type = schema.type
 
   if (Array.isArray(schema.anyOf)) {
     var nullItems = schema.anyOf.filter(item => item.type === 'null')
@@ -96,7 +96,7 @@ var makeForm = function (createElement, schema, model, level, onValueUpdate, onE
   if (Array.isArray(schema.enum)) {
     return createElement('form-schema-enum', attributes)
   }
-  
+
   if (Array.isArray(schema.oneOf)) {
     var pass=true
     schema.oneOf.forEach(s => {
@@ -104,8 +104,6 @@ var makeForm = function (createElement, schema, model, level, onValueUpdate, onE
     })
     if (pass) return createElement('form-schema-oneof', attributes)
   }
-
-  var type = schema.type
 
   switch (type) {
     case 'object':
@@ -165,140 +163,158 @@ var makeForm = function (createElement, schema, model, level, onValueUpdate, onE
 }
 
 var FormComponent = {
-  model: {
-    prop: 'model',
-    event: 'input'
+
+  components: {
+    FormSchemaLayout
   },
 
   props: {
-    schema: {
-      type: Object,
-      required: true
+    inline: {
+      default: false
     },
-    model: {},
+    value: {},
+    schema: {},
+    required: {},
     level: {
       type: Number,
       default: 0
     },
-    required: Boolean,
-    inline: Boolean,
-    
-    definitions: { // todo
-      type: Object,
-      default () {
-        return {}
-      }
-    }
   },
 
-  validations () {
+  data () {
     return {
-      value: this.required ? { required: customRequired } : {}
+      id: this.schema.id || (this.schema.type + '-' + parseInt(Math.random()*10000)),
+      formSchemaNode: true
+    	//c_schema: clone(this.schema) // do not alter the parent schema
     }
-  },
+	},
 
-  data: function () {
-    return {
-      value: typeof this.model != 'undefined' ? this.cast(this.model) : this.model,
-      error: false,
-      mutableSchema: extend(true, {}, this.schema)
+  watch:{
+    /*schema : {
+      handler (value, oldValue) { // deep watch ?
+        this.log('watch schema', value, oldValue)
+        this.c_schema = clone(value) // do not alter the parent schema
+      },
+      immediate: true,
+      deep: true
+    },*/
+    c_value : {
+      handler(value, oldValue) {
+        this.log('watch c_value', value, oldValue)
+        /*if (typeof value === 'undefined' && typeof this.c_schema.default !== 'undefined') {
+          this.$nextTick(() => { // delay or some bugs may arrise
+            this.log('set default from watch', this.c_schema.default)
+            this.c_value = this.c_schema.default
+          })
+        } else {*/
+          this.$v.c_value.$touch()
+        //}
+      },
+      immediate: true
+    },
+    /*'$v.$error' : {
+      handler (value, oldValue) {
+        if (value !== oldValue)
+          this.$emit('error', value)
+      },
+      immediate: true
+    },*/
+    error : {
+      handler (value, oldValue) {
+        this.log('watch error', value, oldValue)
+        this.$emit('error', value)
+      },
+      immediate: true
     }
   },
 
   computed: {
+
     inlined () {
       return this.inline || this.schema['$inline']
     },
-    
-    castedModel () {
-      return typeof this.model != 'undefined' ? this.cast(this.model) : this.model
+
+    c_schema () {
+      return clone(this.schema)
     },
 
-    errorMessage () {
-      if (typeof this.$v.value.required != 'undefined' && !this.$v.value.required) {
+  	c_value: {
+    	get(){
+        this.log('c_value.get', this.value)
+        if (typeof this.value !== 'undefined')
+          return this.cast(this.value)
+        return this.value // undefined
+      },
+      set(val){
+        this.log('c_value.set', val)
+        this.$emit('input', val)
+      },
+      cache: false
+    },
+    error () {
+      this.log('compute error', this.$v.c_value.$error)
+      if (!this.$v.c_value.$error) return false
+
+      if (typeof this.$v.c_value.required != 'undefined' && !this.$v.c_value.required) {
         return 'Field is required'
       }
-      if (typeof this.$v.value.minLength != 'undefined' && !this.$v.value.minLength) {
-        return 'must have minimum ' + this.$v.value.$params.minLength.min + ' characters'
+      if (typeof this.$v.c_value.minLength != 'undefined' && !this.$v.c_value.minLength) {
+        return 'must have minimum ' + this.$v.c_value.$params.minLength.min + ' characters'
       }
-      if (typeof this.$v.value.maxLength != 'undefined' && !this.$v.value.maxLength) {
-        return 'must have maximum ' + this.$v.value.$params.maxLength.max + ' characters'
+      if (typeof this.$v.c_value.maxLength != 'undefined' && !this.$v.c_value.maxLength) {
+        return 'must have maximum ' + this.$v.c_value.$params.maxLength.max + ' characters'
       }
-      if (typeof this.$v.value.minValue != 'undefined' && !this.$v.value.minValue) {
-        return 'must be greater than or equal to ' + this.$v.value.$params.minValue.min
+      if (typeof this.$v.c_value.minValue != 'undefined' && !this.$v.c_value.minValue) {
+        return 'must be greater than or equal to ' + this.$v.c_value.$params.minValue.min
       }
-      if (typeof this.$v.value.maxValue != 'undefined' && !this.$v.value.maxValue) {
-        return 'must be lower than or equal to ' + this.$v.value.$params.maxValue.max
+      if (typeof this.$v.c_value.maxValue != 'undefined' && !this.$v.c_value.maxValue) {
+        return 'must be lower than or equal to ' + this.$v.c_value.$params.maxValue.max
       }
-      if (typeof this.$v.value.between != 'undefined' && !this.$v.value.between) {
-        return 'must be between ' + this.$v.value.$params.between.min + ' and ' + this.$v.value.$params.between.max
+      if (typeof this.$v.c_value.between != 'undefined' && !this.$v.c_value.between) {
+        return 'must be between ' + this.$v.c_value.$params.between.min + ' and ' + this.$v.c_value.$params.between.max
       }
-      if (typeof this.$v.value.alpha != 'undefined' && !this.$v.value.alpha) {
+      if (typeof this.$v.c_value.alpha != 'undefined' && !this.$v.c_value.alpha) {
         return 'Accepts only alphabet characters'
       }
-      if (typeof this.$v.value.alphaNum != 'undefined' && !this.$v.value.alphaNum) {
+      if (typeof this.$v.c_value.alphaNum != 'undefined' && !this.$v.c_value.alphaNum) {
         return 'Accepts only alphanumerics'
       }
-      if (typeof this.$v.value.numeric != 'undefined' && !this.$v.value.numeric) {
+      if (typeof this.$v.c_value.numeric != 'undefined' && !this.$v.c_value.numeric) {
         return 'Accepts only numerics'
       }
-      if (typeof this.$v.value.email != 'undefined' && !this.$v.value.email) {
+      if (typeof this.$v.c_value.email != 'undefined' && !this.$v.c_value.email) {
         return 'Accepts only valid email addresses'
       }
-      if (typeof this.$v.value.ipAddress != 'undefined' && !this.$v.value.ipAddress) {
+      if (typeof this.$v.c_value.ipAddress != 'undefined' && !this.$v.c_value.ipAddress) {
         return 'Accepts only valid IPv4 addresses in dotted decimal notation like 127.0.0.1'
       }
-      if (typeof this.$v.value.macAddress != 'undefined' && !this.$v.value.macAddress) {
+      if (typeof this.$v.c_value.macAddress != 'undefined' && !this.$v.c_value.macAddress) {
         return 'Accepts only valid MAC addresses like 00:ff:11:22:33:44:55'
       }
-      if (typeof this.$v.value.url != 'undefined' && !this.$v.value.url) {
+      if (typeof this.$v.c_value.url != 'undefined' && !this.$v.c_value.url) {
         return 'Accepts only URLs'
       }
-      if (typeof this.$v.value.regex != 'undefined' && !this.$v.value.regex) {
-        return 'Does not match the pattern `' + this.$v.value.$params.regex.pattern + '`'
+      if (typeof this.$v.c_value.regex != 'undefined' && !this.$v.c_value.regex) {
+        return 'Does not match the pattern `' + this.$v.c_value.$params.regex.pattern + '`'
       }
 
       return 'Invalid value'
     }
   },
 
-  watch: {
-    /*value: function (val, oldVal) {
-      console.log(this.$options.name + ' value ' + oldVal + ' changed to ' + val)
-      this.$emit('input', val)
-    },*/
-    /*error: function (val) {
-      console.log(this.$options.name + ' error ' + val)
-      this.$emit('error', val)
-    },*/
-    '$v.$error' : {
-      handler (value, oldValue) {
-        if (value !== oldValue)
-          this.setError(value)
-      },
-      immediate: true
-    }
-  },
-
   methods: {
-    setValue (val) {
-      this.value = val
-      this.$v.value.$touch()
-      if (typeof this.value != 'undefined'){
-        // console.log(this.$options.name, 'setValue', val)
-        this.$emit('input', val)
-      }
+  	cast (val) {
+    	return val
     },
-    setError (val) {
-      this.error = val
-      this.$emit('error', val)
+    log () {
+      var args = Array.prototype.slice.call(arguments)
+      args.unshift('['+this.id+']')
+      console.log.apply(console, args)
     },
-    cast (model) {
-      return model
-    },
+    // search
     parent () {
       var p = this.$parent
-      while (p && (!p._isWrapper || p._isWrapper())) {
+      while (p && (!p.formSchemaNode)) {
         p = p.$parent
       }
       return p
@@ -318,10 +334,9 @@ var FormComponent = {
     _children (node) {
       var ret = []
 
-      var _ch = node.$children
       for (var i in node.$children) {
         let c = node.$children[i]
-        if (c._isWrapper && !c._isWrapper()) {
+        if (c.formSchemaNode) {
           ret.push(c)
         } else {
           ret = ret.concat(this._children(c))
@@ -371,26 +386,44 @@ var FormComponent = {
           return n
       }
     },
-    _isWrapper () {
-      return this.$options.name === 'FormSchema'
-    },
     _is (id) {
-      return this.schema.id === id && !this._isWrapper()
+      return this.schema.id === id
+    }
+  },
+
+  validations () {
+    return {
+      c_value: this.required ? { required } : {}
     }
   },
 
   mounted () {
-    
-    if (this.schema.dependencies && !this._isWrapper()) {
+    this.log('mounting component')
 
-      for (let id in this.schema.dependencies) {
-        let callback = this.schema.dependencies[id]
+    if (typeof this.c_value === 'undefined' && typeof this.c_schema.default !== 'undefined') {
+      //this.$nextTick(() => { // delay or some bugs may arrise
+        this.log('set default on mounted', this.c_schema.default)
+        this.c_value = this.c_schema.default
+        // this.$v.c_value.$touch() will be triggered when setting c_value
+      //})
+    } else {
+      this.$v.c_value.$touch()
+    }
+
+    // handle dependencies
+    if (this.c_schema.dependencies) {
+
+      for (let id in this.c_schema.dependencies) {
+        let callback = this.c_schema.dependencies[id]
         let node = this.find(id)
+        this.log('find node', id)
         if (node && callback) {
           node.$on('input', val => {
-            callback(val, this, node)
+            this.$nextTick(() => { // delay or some bugs may arrise
+              callback.call(this, val, this, node)
+            })
           })
-          callback(node.value, this, node)
+          callback.call(this, node.c_value, this, node)
         } else {
           if (!node) {
             console.warn('[form-schema] node with id ""' + id + '" not found for ' + this.$options.name)
@@ -400,16 +433,10 @@ var FormComponent = {
 
     }
 
-    if (typeof this.model === 'undefined' && typeof this.schema.default !== 'undefined') {
-      console.log('set default:', this.schema.default)
-      this.setValue(this.cast(this.schema.default))
-    } else if (this.value !== this.model) {
-      this.setValue(this.value)
-    } else {
-      // the model is defined and not casted, no need to update the model
-      this.$v.value.$touch()
-    }
-  }
+    /*setTimeout(() => {
+    	this.c_schema.description = 'world'
+    }, 2000)*/
+	}
 }
 
 

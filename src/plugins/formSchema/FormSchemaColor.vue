@@ -1,9 +1,7 @@
 <template>
-  <div class="form-schema-color">
-    <small v-if="schema.description" class="form-schema-description">{{ schema.description }}</small>
-    <q-color :value="castedModel" v-on:input="setValue" :error="$v.value.$error" format-model="hex" :style="{'border-bottom': '4px solid '+castedModel}" hide-underline/>
-    <small class="form-schema-error" v-if="$v.value.$error">{{ errorMessage }}</small>
-  </div>
+  <form-schema-layout class="form-schema-color">
+    <q-color :value="c_value" v-on:input="c_value = $event" :error="!!error" format-model="hex" :style="{'border-bottom': '4px solid '+c_value}" hide-underline/>
+  </form-schema-layout>
 </template>
 
 <script>
@@ -11,13 +9,9 @@
 import { FormComponent } from './core'
 
 export default {
-  name: 'FormSchemaDate',
+  name: 'FormSchemaColor',
 
   mixins: [FormComponent],
-
-  props: {
-    model: String
-  },
 
   methods: {
     cast (model) {
@@ -27,8 +21,3 @@ export default {
 }
 
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-
-</style>

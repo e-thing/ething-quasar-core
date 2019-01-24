@@ -1,10 +1,7 @@
 <template>
-  <div class="form-schema-editor">
-    <!--<input type="text" v-bind:value="model" v-on:input="value = $event.target.value"/>-->
-    <small class="form-schema-description text-faded">{{ schema.description }}</small>
-    <codemirror ref='cm' v-bind:value="castedModel || ''" :options="cmOption" v-on:input="setValue"></codemirror>
-
-  </div>
+  <form-schema-layout class="form-schema-editor">
+    <codemirror ref='cm' v-bind:value="c_value || ''" :options="cmOption" v-on:input="c_value = $event"></codemirror>
+  </form-schema-layout>
 </template>
 
 <script>
@@ -34,7 +31,7 @@ export default {
   data () {
     return {
       cmOption: {
-        mode: this.schema.format, //'application/json',
+        mode: this.c_schema.format, //'application/json',
         tabSize: 4,
         styleActiveLine: true,
         lineNumbers: true,

@@ -1,17 +1,16 @@
 <template>
-  <div class="form-schema-oneof">
-    <small v-if="!inlined && schema.description" class="form-schema-description">{{ schema.description }}</small>
-    
+  <form-schema-layout class="form-schema-oneof">
+
     <div :class="inlined ? 'row' : ''">
       <q-select
         v-model="typeIndex"
         :options="selectOptions"
         :class="inlined?(valueSchema ? 'col-auto' : 'col-12'):''"
       />
-      <form-schema :class="inlined?'col':''" :inline="inlined" :key="typeIndex" v-if="valueSchema" :level="level+1" :schema="valueSchema" :model="value_" required @input="onValueChange($event)" @error="setError($event)"/>
+      <form-schema :class="inlined?'col':''" :inline="inlined" :key="typeIndex" v-if="valueSchema" :level="level+1" :schema="valueSchema" :value="value_" required @input="onValueChange($event)" @error="$emit('error',$event)"/>
     </div>
-    
-  </div>
+
+  </form-schema-layout>
 </template>
 
 <script>
@@ -35,7 +34,7 @@ export default {
     typeIndex (val) {
       this.onChange()
     },
-    castedModel: {
+    c_value: {
       handler (model) {
         if (!model) return
         var value = model.value
@@ -43,8 +42,8 @@ export default {
           this.value_ = value
         }
         var type = model.type
-        for(var i in this.schema.oneOf) {
-          if (this.schema.oneOf[i].properties.type.const === type){
+        for(var i in this.c_schema.oneOf) {
+          if (this.c_schema.oneOf[i].properties.type.const === type){
             this.typeIndex = parseInt(i)
             return
           }
@@ -56,7 +55,7 @@ export default {
 
   computed: {
     selectOptions () {
-      return this.schema.oneOf.map((s, index) => {
+      return this.c_schema.oneOf.map((s, index) => {
         return {
           label: s.properties.type.label || s.properties.type.const,
           value: index
@@ -65,11 +64,11 @@ export default {
     },
     typeName () {
       if (this.typeIndex === null) return
-      return this.schema.oneOf[this.typeIndex].properties.type.const
+      return this.c_schema.oneOf[this.typeIndex].properties.type.const
     },
     valueSchema () {
       if (this.typeIndex === null) return
-      return this.schema.oneOf[this.typeIndex].properties.value
+      return this.c_schema.oneOf[this.typeIndex].properties.value
     },
     hasValue () {
       return !!this.valueSchema
@@ -91,7 +90,7 @@ export default {
       if (this.hasValue) {
         v.value = val
       }
-      this.setValue(v)
+      this.c_value = v
     }
   }
 

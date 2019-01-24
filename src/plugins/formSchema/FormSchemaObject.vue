@@ -1,28 +1,26 @@
 <template>
-  <div class="form-schema-object" :class="{indent: level}">
-
-    <small v-if="schema.description" class="form-schema-description">{{ schema.description }}</small>
+  <form-schema-layout class="form-schema-object">
 
     <template v-if="items.length>0">
-        <q-field
-          v-for="item in items"
-          :key="item.key"
-          :label="item.schema.title || item.schema.label || item.key"
-          orientation="vertical"
-          class="formField"
-          :class="{formFieldRequired: item.required, 'formFieldError': !!errors[item.key]}"
-        >
-          <form-schema :required="item.required" :schema="item.schema" :model="item.model" :level="level+1" @input="onChildValueChange(item, $event)" @error="onChildErrorChange(item, $event)"/>
-        </q-field>
+      <div
+        v-for="item in items"
+        :key="item.key"
+        class="form-schema-object-item"
+        :class="{'form-schema-object-item-required': item.required, 'form-schema-object-item-error': !!errors[item.key]}"
+        :style="{display: inlined ? 'inline' : 'block'}"
+      >
+        <div class="form-schema-object-item-title" :style="{display: inlined ? 'inline' : 'block'}">
+          {{ item.schema.title || item.schema.label || item.key }}
+        </div>
+        <form-schema :required="item.required" :inline="inlined" :schema="item.schema" :value="item.model" :level="level+1" @input="onChildValueChange(item, $event)" @error="onChildErrorChange(item, $event)"/>
+      </div>
     </template>
 
     <div v-else>
         <small class="text-faded">empty</small>
     </div>
 
-    <small class="form-schema-error" v-if="$v.value.$error && $v.value.required">{{ errorMessage }}</small>
-
-  </div>
+  </form-schema-layout>
 </template>
 
 <script>
@@ -42,7 +40,7 @@ export default {
 
   computed: {
     items () {
-      var schema = this.mutableSchema
+      var schema = this.c_schema
       var requiredProperties = schema.required || []
       var readOnlyProperties = []
       var disabledProperties = []
@@ -86,7 +84,7 @@ export default {
         }
       })
       if (errorsDirty) {
-        this.setError(Object.values(this.errors).some(err => err))
+        this.$emit('error', Object.values(this.errors).some(err => err))
       }
 
       return keyOrdered.map(key => {
@@ -94,7 +92,7 @@ export default {
           key,
           schema: schema.properties[key],
           required:  requiredProperties.indexOf(key) !== -1,
-          model: (this.model || {})[key]
+          model: (this.c_value || {})[key]
         }
       })
     }
@@ -102,14 +100,12 @@ export default {
 
   methods: {
     onChildValueChange (item, val) {
-      var o = Object.assign({}, this.value)
-      o[item.key] = val
-      this.setValue(o)
+      this.$set(this.c_value, item.key, val)
     },
 
     onChildErrorChange (item, val) {
       this.$set(this.errors, item.key, val)
-      this.setError(Object.values(this.errors).some(err => err))
+      this.$emit('error', Object.values(this.errors).some(err => err))
     }
   }
 
@@ -118,23 +114,23 @@ export default {
 
 </script>
 
-<style lang="stylus">
+<style lang="stylus" scoped>
 @import '~variables'
 
 verticalMargin = 16px
 
-.formField
-    margin-top verticalMargin
-    margin-bottom verticalMargin
+.form-schema-object-item
+  margin-top verticalMargin
+  margin-bottom verticalMargin
 
-.formFieldRequired
-    & > div > .q-field-label > .q-field-label-inner:after
-        content '*'
-        color $negative
-        margin-left 8px
+  &.form-schema-object-item-required
+      .form-schema-object-item-title:after
+          content '*'
+          color $negative
+          margin-left 8px
 
-.formFieldError
-  & > div > .q-field-label > .q-field-label-inner
-    color $negative
+  &.form-schema-object-item-error
+    .form-schema-object-item-title
+      color $negative
 
 </style>

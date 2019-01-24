@@ -1,18 +1,14 @@
 <template>
-  <div class="form-schema-ething-resource">
-    <small v-if="schema.description" class="form-schema-description">{{ schema.description }}</small>
-
+  <form-schema-layout class="form-schema-ething-resource">
     <resource-select
-      :value="castedModel"
-      @input="setValue"
+      :value="c_value"
+      @input="c_value = $event"
       :filter="computed_filter"
       :multiple="multiple"
       use-id
       :create-types="createTypes"
     />
-
-    <small class="form-schema-error" v-if="$v.value.$error">{{ errorMessage }}</small>
-  </div>
+  </form-schema-layout>
 </template>
 
 <script>
@@ -32,10 +28,10 @@ var FormSchemaEthingResource = {
 
   computed: {
     multiple () {
-      return this.schema.type === 'array'
+      return this.c_schema.type === 'array'
     },
     computed_filter () {
-      var schema = this.schema
+      var schema = this.c_schema
 
       return (r) => {
         return this.filter(r, schema)
@@ -43,14 +39,14 @@ var FormSchemaEthingResource = {
     },
     createTypes () {
       var r = []
-      if (this.schema.onlyTypes) {
-        r = r.concat(this.schema.onlyTypes)
+      if (this.c_schema.onlyTypes) {
+        r = r.concat(this.c_schema.onlyTypes)
       }
-      if (this.schema.must_throw) {
+      if (this.c_schema.must_throw) {
         // find all class that emits the signal
         this.$ethingUI.iterate('resources', (resourceClsName) => {
           var resourceCls = this.$ethingUI.get(resourceClsName)
-          if (resourceCls.signals.indexOf(this.schema.must_throw) !== -1) {
+          if (resourceCls.signals.indexOf(this.c_schema.must_throw) !== -1) {
             r.push(resourceClsName)
           }
         })

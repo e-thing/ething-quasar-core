@@ -1,16 +1,14 @@
 <template>
-  <div class="form-schema-scope">
-    <small v-if="schema.description" class="form-schema-description">{{ schema.description }}</small>
+  <form-schema-layout class="form-schema-scope">
     <q-select
       multiple
       :display-value="formattedModel.length ? formattedModel.join(' ') : 'none'"
       v-bind:value="formattedModel"
-      v-on:input="formatValue"
+      v-on:input="formattedModel = $event"
       :options="selectOptions"
-      :error="$v.value.$error"
+      :error="!!error"
     />
-    <small class="form-schema-error" v-if="$v.value.$error">{{ errorMessage }}</small>
-  </div>
+  </form-schema-layout>
 </template>
 
 <script>
@@ -42,17 +40,16 @@ var FormSchemaScope = {
   },
 
   computed: {
-    formattedModel () {
-      return (this.model || '').split(' ').filter(v => v.length)
+    formattedModel: {
+      get () {
+        return (this.c_value || '').split(' ').filter(v => v.length)
+      },
+      set (val) {
+        val = val.join(' ')
+        this.c_value = val
+      }
     }
   },
-
-  methods: {
-    formatValue (val) {
-      val = val.join(' ')
-      this.setValue(val)
-    }
-  }
 
 }
 

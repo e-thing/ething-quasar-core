@@ -1,18 +1,14 @@
 <template>
-  <div class="form-schema-ething-flow-node">
-    <small v-if="schema.description" class="form-schema-description">{{ schema.description }}</small>
-
+  <form-schema-layout class="form-schema-ething-flow-node">
     <flow-node-select
-      :value="castedModel"
-      @input="setValue"
+      :value="c_value"
+      @input="c_value = $event"
       :filter="computed_filter"
       :multiple="multiple"
       :flow="flow"
       use-id
     />
-
-    <small class="form-schema-error" v-if="$v.value.$error">{{ errorMessage }}</small>
-  </div>
+  </form-schema-layout>
 </template>
 
 <script>
@@ -32,17 +28,17 @@ var FormSchemaEthingFlowNode = {
 
   computed: {
     multiple () {
-      return this.schema.type === 'array'
+      return this.c_schema.type === 'array'
     },
     computed_filter () {
-      var schema = this.schema
+      var schema = this.c_schema
 
       return (flow, node) => {
         return this.filter(flow, node, schema)
       }
     },
     flow () {
-      return this.schema._flow
+      return this.c_schema._flow
     }
   },
 

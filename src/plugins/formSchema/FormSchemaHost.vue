@@ -1,11 +1,10 @@
 <template>
-  <div class="form-schema-host">
-    <small v-if="schema.description" class="form-schema-description">{{ schema.description }}</small>
+  <form-schema-layout class="form-schema-host">
     <div class="row">
       <q-input
-        v-bind:value="castedModel"
-        v-on:input="setValue"
-        :error="$v.value.$error"
+        v-bind:value="c_value"
+        v-on:input="c_value = $event"
+        :error="!!error"
         class="col"
       />
       <q-btn color="primary" icon="search" class="q-ml-sm col-auto">
@@ -18,7 +17,7 @@
             <div v-else-if="hosts.length===0" class="q-ma-md text-faded">no host detected</div>
             <q-list separator link v-else>
               <q-btn flat color="faded" icon="refresh" label="refresh" @click="refresh(true)"/>
-              <q-item v-close-overlay v-for="(host, index) in hosts" :key="index" @click.native="setValue(host.hostname || host.ip)">
+              <q-item v-close-overlay v-for="(host, index) in hosts" :key="index" @click.native="c_value = host.hostname || host.ip">
                 <q-item-main>
                   <q-item-tile label>{{ host.hostname || host.ip }}</q-item-tile>
                   <q-item-tile sublabel v-if="host.mac">mac: {{ host.mac }}</q-item-tile>
@@ -30,8 +29,7 @@
         </q-popover>
       </q-btn>
     </div>
-    <small class="form-schema-error" v-if="$v.value.$error">{{ errorMessage }}</small>
-  </div>
+  </form-schema-layout>
 </template>
 
 <script>
@@ -122,8 +120,3 @@ registerForm(FormSchemaHost, schema => {
 export default FormSchemaHost
 
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-
-</style>

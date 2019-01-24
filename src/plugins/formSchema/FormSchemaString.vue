@@ -1,13 +1,14 @@
 <template>
   <div class="form-schema-string">
-    <small v-if="schema.description" class="form-schema-description">{{ schema.description }}</small>
+    <small v-if="!inlined && schema.description" class="form-schema-description">{{ schema.description }}</small>
     <q-input
       :type="inputType"
       v-bind:value="castedModel"
       v-on:input="setValue"
       :error="$v.value.$error"
+      :after="[{icon: 'mdi-alert',error: true}]"
     />
-    <small class="form-schema-error" v-if="$v.value.$error">{{ errorMessage }}</small>
+    <small class="form-schema-error" v-if="!inlined && $v.value.$error">{{ errorMessage }}</small>
   </div>
 </template>
 

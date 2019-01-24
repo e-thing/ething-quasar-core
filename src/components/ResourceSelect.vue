@@ -5,6 +5,7 @@
    :options="options"
    :multiple="multiple"
    v-bind="$attrs"
+   :after="after"
   />
 </template>
 
@@ -20,7 +21,9 @@ export default {
       filter: {},
       value: {},
       useId: Boolean,
-      multiple: Boolean
+      multiple: Boolean,
+      disableCreate: Boolean,
+      createTypes: Array
     },
 
     data () {
@@ -105,8 +108,38 @@ export default {
             sublabel: createdByArr.length ? createdByArr.reverse().map(r => r.basename()).join(' -> ') : undefined
           }
         })
+      },
+      
+      computedCreateTypes () {
+        if (this.createTypes) {
+          return this.createTypes
+        } else if (this.type) {
+          return this.type.split(/[ ;,]+/)
+        } else {
+          return []
+        }
+      },
+      
+      after () {
+        if (this.disableCreate || this.computedCreateTypes.length==0) return []
+        return [
+          {
+            icon: 'add',
+            handler: () => {
+              this.openCreateModal()
+            }
+          }
+        ]
       }
     },
+    
+    methods: {
+      openCreateModal () {
+        this.$ethingUI.createModal({
+          types: this.computedCreateTypes
+        })
+      }
+    }
 
 
 }

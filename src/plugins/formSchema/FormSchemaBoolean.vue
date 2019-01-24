@@ -1,9 +1,7 @@
 <template>
   <div class="form-schema-boolean">
-    <small v-if="schema.description" class="form-schema-description">{{ schema.description }}</small>
-    <div>
-      <q-toggle v-bind:value="model" v-on:input="setValue" :error="$v.value.$error"/>
-    </div>
+    <small v-if="!inlined && schema.description" class="form-schema-description">{{ schema.description }}</small>
+    <q-toggle :class="inlined ? 'q-mr-sm' : 'block'" v-bind:value="!!model" v-on:input="setValue" :error="$v.value.$error"/>
     <small class="form-schema-error" v-if="$v.value.$error">{{ errorMessage }}</small>
   </div>
 </template>
@@ -17,9 +15,7 @@ export default {
 
   mixins: [FormComponent],
 
-  props: {
-    model: Boolean
-  }
+  props: ['model']
 
 }
 

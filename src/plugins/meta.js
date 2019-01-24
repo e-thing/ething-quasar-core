@@ -292,6 +292,12 @@ function get (definitions, type) {
   if (type instanceof EThing.Resource) {
     resource = type
     type = type.type()
+  } else if(typeof type === 'object' && type!== null && type._type) {
+    type = type._type
+  }
+  
+  if (typeof type !== 'string') {
+    throw 'type must be a string'
   }
 
   // check in cache first
@@ -434,8 +440,9 @@ function importMeta (self, meta, done) {
 
     self.definitions = serverDefinitions
 
-    // TODO: replace by formSchemaCore.definitionsHandler = (id) => {...}
-    extend(formSchemaCore.definitions, self.definitions)
+    formSchemaCore.addDefinitionsHandler(ref => {
+      return self.get(ref.replace(/^#/, ''))
+    })
 
     if (done)
       done(self)

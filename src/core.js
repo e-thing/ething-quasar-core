@@ -12,13 +12,15 @@ export default {
   install (EThingUI, Vue, opts) {
 
     Vue.config.errorHandler = function (err, vm, info)  {
-      let handler, current = vm
-      if (vm.$options.errorHandler) {
-      	handler = vm.$options.errorHandler
-      } else {
-      	while (current.$parent) {
-        	current = current.$parent
-        	if (handler = current.$options.errorHandler) break
+      let handler=null, current = vm
+      if (vm) {
+        if (vm.$options.errorHandler) {
+          handler = vm.$options.errorHandler
+        } else {
+          while (current.$parent) {
+            current = current.$parent
+            if (handler = current.$options.errorHandler) break
+          }
         }
       }
       if (handler) handler.call(current, err, vm, info)

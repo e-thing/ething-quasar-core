@@ -1,5 +1,15 @@
 <template>
-  <q-modal ref="modal" class="column" :value="value" @input="$emit('input', $event)" v-bind="$attrs" :content-css="contentCss" @show="$emit('show', $event)">
+  <q-modal
+    ref="modal" 
+    class="column" 
+    :value="value" 
+    @input="$emit('input', $event)" 
+    v-bind="$attrs" 
+    :content-css="contentCss" 
+    @show="$emit('show', $event)"
+    @escape-key="$emit('cancel')"
+    @dismiss="$emit('cancel')"
+  >
     <q-modal-layout
       header-class="no-shadow"
       footer-class="no-shadow"
@@ -19,7 +29,7 @@
           v-if="!$attrs['no-esc-dismiss']"
           flat round dense
           icon="close"
-          @click="hide"
+          @click="onCloseBtnClick"
         />
       </q-toolbar>
 
@@ -146,6 +156,10 @@ export default {
       },
       onBtnClick (btn) {
         btn.onclick.call(this)
+      },
+      onCloseBtnClick () {
+        this.$emit('cancel')
+        this.hide()
       },
 
       hide () {

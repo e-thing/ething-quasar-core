@@ -14,7 +14,8 @@ export default {
     }, function (newValue) {
       self.setError(newValue)
     }, {
-      required: this.required
+      required: this.required,
+      inline: this.inlined
     })
   },
 

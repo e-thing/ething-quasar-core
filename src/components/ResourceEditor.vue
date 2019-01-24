@@ -8,19 +8,6 @@
 
     <form-schema :schema="schema" v-model="model" @error="inputError = $event" class="q-mb-xl"/>
 
-    <q-alert
-        v-if="error"
-        type="negative"
-        class="q-mb-xl"
-    >
-      {{ String(error) }}
-    </q-alert>
-
-    <div>
-        <q-btn :loading="loading" :disable="inputError" color="primary" icon="done" :label="create ? 'create' : 'edit'" @click="handler"/>
-        <q-btn color="negative" class="q-ml-sm" icon="clear" label="cancel" flat @click="$emit('canceled')"/>
-    </div>
-
     <q-inner-loading class="text-center" :visible="!ready">
       <div class="q-pa-lg text-primary">loading...</div>
       <q-spinner-oval color="primary" size="50px" />
@@ -58,15 +45,22 @@ export default {
             schema: parse.schema,
             model: parse.model,
             meta: parse.meta,
-            loading: false,
-            error: null,
             ready: false
         }
     },
+    
+    watch: {
+      inputError(err) {
+        this.$emit('error', err)
+      }
+    },
 
     methods: {
-        handler () {
-          this.loading = true
+        submit () {
+          if (this.inputError) {
+            return Promise.reject('form error')
+          }
+          
           var def = {}
           var res = null
 
@@ -80,14 +74,8 @@ export default {
           } else {
             res = this.resource.set(Object.assign(def, this.model))
           }
-
-          res.then((r) => {
-              this.$emit('done', r)
-          }).catch((err) => {
-              this.error = err
-          }).finally(() => {
-              this.loading = false
-          })
+          
+          return res
         },
 
         getSchemaModel (onReady) {

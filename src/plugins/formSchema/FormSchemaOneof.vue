@@ -1,17 +1,16 @@
 <template>
-  <div class="form-schema-ething-flow-descriptor">
-    <small v-if="schema.description" class="form-schema-description">{{ schema.description }}</small>
+  <div class="form-schema-oneof">
+    <small v-if="!inlined && schema.description" class="form-schema-description">{{ schema.description }}</small>
     
-    <div class="row">
+    <div :class="inlined ? 'row' : ''">
       <q-select
         v-model="typeIndex"
         :options="selectOptions"
-        :class="valueSchema ? 'col-auto' : 'col-12'"
+        :class="inlined?(valueSchema ? 'col-auto' : 'col-12'):''"
       />
-      <form-schema class="col" inline v-if="valueSchema" :schema="valueSchema" :model="value_" required @input="onValueChange($event)" @error="setError($event)"/>
+      <form-schema :class="inlined?'col':''" :inline="inlined" :key="typeIndex" v-if="valueSchema" :level="level+1" :schema="valueSchema" :model="value_" required @input="onValueChange($event)" @error="setError($event)"/>
     </div>
-
-    <small class="form-schema-error" v-if="error">{{ errorMessage }}</small>
+    
   </div>
 </template>
 
@@ -20,23 +19,20 @@
 import { FormComponent, registerForm } from './core'
 
 
-var FormSchemaEthingFlowDescriptor = {
-  name: 'FormSchemaEthingFlowDescriptor',
+export default {
+  name: 'FormSchemaEthingOneof',
 
   mixins: [FormComponent],
 
   data () {
     return {
-      typeIndex: null,
+      typeIndex: 0,
       value_: undefined
     }
   },
 
   watch: {
-    typeIndex () {
-      this.onChange()
-    },
-    value_ () {
+    typeIndex (val) {
       this.onChange()
     },
     castedModel: {
@@ -62,7 +58,7 @@ var FormSchemaEthingFlowDescriptor = {
     selectOptions () {
       return this.schema.oneOf.map((s, index) => {
         return {
-          label: s.properties.type.label,
+          label: s.properties.type.label || s.properties.type.const,
           value: index
         }
       })
@@ -82,29 +78,23 @@ var FormSchemaEthingFlowDescriptor = {
 
   methods: {
     onValueChange (val) {
-      this.value_ = val
+      this.onChange()
     },
     onChange () {
+      var val = this.value_
+      this.value_ = undefined
       var type = this.typeName
       if (!type) return
       var v = {
         type
       }
       if (this.hasValue) {
-        v.value = this.value_
+        v.value = val
       }
       this.setValue(v)
     }
   }
 
 }
-
-registerForm(FormSchemaEthingFlowDescriptor, schema => {
-  if (schema.format === 'ething.flow.descriptor') {
-    return true
-  }
-})
-
-export default FormSchemaEthingFlowDescriptor
 
 </script>

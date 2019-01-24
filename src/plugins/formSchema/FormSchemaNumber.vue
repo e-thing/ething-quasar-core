@@ -1,9 +1,15 @@
 <template>
   <div class="form-schema-number">
     <!--<input type="number" v-bind:value="model" v-on:input="value = $event.target.value"/>-->
-    <small v-if="schema.description" class="form-schema-description">{{ schema.description }}</small>
-    <q-input type="number" v-bind:value="castedModel" v-on:input="setValue" :error="$v.value.$error"/>
-    <small class="form-schema-error" v-if="$v.value.$error">{{ errorMessage }}</small>
+    <small v-if="!inlined && schema.description" class="form-schema-description">{{ schema.description }}</small>
+    <q-input 
+      type="number"
+      v-bind:value="castedModel"
+      v-on:input="setValue" 
+      :error="$v.value.$error" 
+      :after="[{icon: 'mdi-alert',error: true}]"
+    />
+    <small class="form-schema-error" v-if="!inlined && $v.value.$error">{{ errorMessage }}</small>
   </div>
 </template>
 
@@ -16,6 +22,15 @@ export default {
   name: 'FormSchemaNumber',
 
   mixins: [FormComponent],
+  
+  data () {
+    return {
+      after: [{
+        icon: 'mdi-alert',
+        error: true
+      }]
+    }
+  },
 
   validations () {
 

@@ -8,6 +8,7 @@
       :filter="computed_filter"
       :multiple="multiple"
       use-id
+      :create-types="createTypes"
     />
 
     <small class="form-schema-error" v-if="$v.value.$error">{{ errorMessage }}</small>
@@ -39,6 +40,22 @@ var FormSchemaEthingResource = {
       return (r) => {
         return this.filter(r, schema)
       }
+    },
+    createTypes () {
+      var r = []
+      if (this.schema.onlyTypes) {
+        r = r.concat(this.schema.onlyTypes)
+      }
+      if (this.schema.must_throw) {
+        // find all class that emits the signal
+        this.$ethingUI.iterate('resources', (resourceClsName) => {
+          var resourceCls = this.$ethingUI.get(resourceClsName)
+          if (resourceCls.signals.indexOf(this.schema.must_throw) !== -1) {
+            r.push(resourceClsName)
+          }
+        })
+      }
+      return r
     }
   },
 

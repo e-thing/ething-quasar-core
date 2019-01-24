@@ -7,8 +7,8 @@ import FormSchema from './FormSchema.vue'
 
 // builtins
 import FormSchemaObject from './FormSchemaObject.vue'
-//import FormSchemaArray from './FormSchemaArray.vue'
-import FormSchemaArray from './FormSchemaArrayModal.vue'
+import FormSchemaArray from './FormSchemaArray.vue'
+import FormSchemaArrayModal from './FormSchemaArrayModal.vue'
 import FormSchemaString from './FormSchemaString.vue'
 import FormSchemaNumber from './FormSchemaNumber.vue'
 import FormSchemaBoolean from './FormSchemaBoolean.vue'
@@ -21,13 +21,14 @@ import FormSchemaOptional from './FormSchemaOptional.vue'
 import FormSchemaMultiType from './FormSchemaMultiType.vue'
 import FormSchemaNumberSlider from './FormSchemaNumberSlider.vue'
 import FormSchemaFile from './FormSchemaFile.vue'
+import FormSchemaOneof from './FormSchemaOneof.vue'
+
 
 // extras
 import FormSchemaBluetoothInterface from './FormSchemaBluetoothInterface'
 import FormSchemaCron from './FormSchemaCron'
 import FormSchemaEthingResource from './FormSchemaEthingResource'
 import FormSchemaEthingFlowNode from './FormSchemaEthingFlowNode'
-import FormSchemaEthingFlowDescriptor from './FormSchemaEthingFlowDescriptor'
 import FormSchemaHost from './FormSchemaHost'
 import FormSchemaScope from './FormSchemaScope'
 import FormSchemaSerialPort from './FormSchemaSerialPort'
@@ -43,6 +44,7 @@ export default {
 
     Vue.component('FormSchemaObject', FormSchemaObject)
     Vue.component('FormSchemaArray', FormSchemaArray)
+    Vue.component('FormSchemaArrayModal', FormSchemaArrayModal)
     Vue.component('FormSchemaString', FormSchemaString)
     Vue.component('FormSchemaNumber', FormSchemaNumber)
     Vue.component('FormSchemaBoolean', FormSchemaBoolean)
@@ -55,6 +57,7 @@ export default {
     Vue.component('FormSchemaMultiType', FormSchemaMultiType)
     Vue.component('FormSchemaNumberSlider', FormSchemaNumberSlider)
     Vue.component('FormSchemaFile', FormSchemaFile)
+    Vue.component('FormSchemaOneof', FormSchemaOneof)
 
     Vue.config.optionMergeStrategies.validations = Vue.config.optionMergeStrategies.data
 

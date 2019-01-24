@@ -1,6 +1,7 @@
 import { required } from 'vuelidate/lib/validators'
 import { extend } from 'quasar'
 
+const customRequired = (v) => v !== undefined && v !== null
 
 var _definitionsHandlers = []
 
@@ -95,6 +96,14 @@ var makeForm = function (createElement, schema, model, level, onValueUpdate, onE
   if (Array.isArray(schema.enum)) {
     return createElement('form-schema-enum', attributes)
   }
+  
+  if (Array.isArray(schema.oneOf)) {
+    var pass=true
+    schema.oneOf.forEach(s => {
+      if (!(s.properties && s.properties.type && s.properties.type.const)) pass=false
+    })
+    if (pass) return createElement('form-schema-oneof', attributes)
+  }
 
   var type = schema.type
 
@@ -104,7 +113,7 @@ var makeForm = function (createElement, schema, model, level, onValueUpdate, onE
       return createElement('form-schema-object', attributes)
     case 'array':
       if ((typeof schema.items === 'object' && schema.items!== null) || typeof schema.items === 'undefined') {
-        return createElement('form-schema-array', attributes)
+        return createElement(schema['$modal'] ? 'form-schema-array-modal' : 'form-schema-array', attributes)
       }
       if (Array.isArray(schema.items)) {
         // todo tupple https://spacetelescope.github.io/understanding-json-schema/reference/array.html
@@ -172,7 +181,9 @@ var FormComponent = {
       default: 0
     },
     required: Boolean,
-    definitions: {
+    inline: Boolean,
+    
+    definitions: { // todo
       type: Object,
       default () {
         return {}
@@ -182,7 +193,7 @@ var FormComponent = {
 
   validations () {
     return {
-      value: this.required ? { required } : {}
+      value: this.required ? { required: customRequired } : {}
     }
   },
 
@@ -195,6 +206,10 @@ var FormComponent = {
   },
 
   computed: {
+    inlined () {
+      return this.inline || this.schema['$inline']
+    },
+    
     castedModel () {
       return typeof this.model != 'undefined' ? this.cast(this.model) : this.model
     },
@@ -365,7 +380,7 @@ var FormComponent = {
   },
 
   mounted () {
-
+    
     if (this.schema.dependencies && !this._isWrapper()) {
 
       for (let id in this.schema.dependencies) {
@@ -386,6 +401,7 @@ var FormComponent = {
     }
 
     if (typeof this.model === 'undefined' && typeof this.schema.default !== 'undefined') {
+      console.log('set default:', this.schema.default)
       this.setValue(this.cast(this.schema.default))
     } else if (this.value !== this.model) {
       this.setValue(this.value)

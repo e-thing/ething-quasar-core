@@ -7,6 +7,7 @@ import socketio from './plugins/socketio.js'
 import widget from './plugins/widget.js'
 import highlightjs from './plugins/highlightjs.js'
 import vuelidate from './plugins/vuelidate.js'
+import modal from './plugins/modal.js'
 
 export {
     formSchema,
@@ -16,5 +17,6 @@ export {
     socketio,
     widget,
     highlightjs,
-    vuelidate
+    vuelidate,
+    modal
 }

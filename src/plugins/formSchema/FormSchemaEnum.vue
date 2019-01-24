@@ -1,12 +1,12 @@
 <template>
   <div class="form-schema-enum">
-    <small v-if="schema.description" class="form-schema-description">{{ schema.description }}</small>
+    <small v-if="!inlined && schema.description" class="form-schema-description">{{ schema.description }}</small>
     <q-select
       v-bind:value="model" v-on:input="setValue"
       :options="selectOptions"
       :error="$v.value.$error"
     />
-    <small class="form-schema-error" v-if="$v.value.$error">{{ errorMessage }}</small>
+    <small class="form-schema-error" v-if="!inlined && $v.value.$error">{{ errorMessage }}</small>
   </div>
 </template>
 

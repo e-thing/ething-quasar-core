@@ -1,5 +1,5 @@
 <template>
-  <div class="form-schema-layout" :style="{display: inlined ? 'inline' : 'block'}" :class="{indent: level}">
+  <div class="form-schema-layout" :style="{display: inlined ? 'inline' : 'block'}">
     <small
       style="display: block;"
       v-if="!inlined && schema.description"
@@ -46,7 +46,7 @@ export default {
 
 </script>
 
-<style lang="stylus">
+<style lang="stylus" scoped>
 @import '~variables'
 
 .form-schema-description
@@ -56,10 +56,5 @@ export default {
 
 .form-schema-error
   color $negative
-
-pad-width = 20px
-
-.indent
-  margin-left: pad-width
 
 </style>

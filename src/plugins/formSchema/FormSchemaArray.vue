@@ -2,49 +2,57 @@
   <form-schema-layout class="form-schema-array" :class="{indent: level}">
 
     <div>
-      <q-btn flat size="md"
+      <q-btn outline dense
         @click="addItem"
         label="Add item"
         icon="add"
+        size="xs"
+        color="grey"
+        class="q-mb-xs"
       />
     </div>
 
-    <div
-      v-for="(item, key) in items"
-      :key="key"
-      class="formField"
-    >
-      <div>
-        <span class="q-field-label" style="vertical-align: middle">#{{ key }}</span>
+    <div class="form-schema-array-content">
+      <div
+        v-for="(item, key) in items"
+        :key="key"
+        class="form-schema-array-item"
+      >
+        <div class="form-schema-array-item-header">
+          <!--<span class="q-field-label q-field-label-inner" style="vertical-align: middle">#{{ key }}</span>-->
 
-        <q-btn flat size="sm"
-          color="negative"
-          @click="removeItem(key)"
-          label="remove"
-          icon="delete"
-          style="vertical-align: middle"
-        />
+          <q-btn size="xs"
+            color="negative"
+            @click="removeItem(key)"
+            label="remove"
+            icon="delete"
+            style="vertical-align: middle"
+          />
 
-        <q-btn flat size="sm"
-          color="secondary"
-          @click="moveItem(key, 'up')"
-          label="up"
-          icon="arrow_drop_up"
-          v-if="key > 0"
-        />
+          <q-btn flat size="sm"
+            color="secondary"
+            @click="moveItem(key, 'up')"
+            label="up"
+            icon="arrow_drop_up"
+            v-if="key > 0"
+          />
 
-        <q-btn flat size="sm"
-          color="secondary"
-          @click="moveItem(key, 'down')"
-          label="down"
-          icon="arrow_drop_down"
-          v-if="key < items.length -1"
-        />
+          <q-btn flat size="sm"
+            color="secondary"
+            @click="moveItem(key, 'down')"
+            label="down"
+            icon="arrow_drop_down"
+            v-if="key < items.length -1"
+          />
+
+        </div>
+
+        <form-schema inline :schema="item.schema" :value="getModel(key)" :level="level+1" @input="onChildValueChange(key, $event)" @error="onChildErrorChange(key, $event)"/>
 
       </div>
-
-      <form-schema :schema="item.schema" :value="getModel(key)" :level="level+1" @input="onChildValueChange(key, $event)" @error="onChildErrorChange(key, $event)"/>
-
+      <div class="form-schema-array-bottom-padding relative-position" style="height: 48px;">
+        <small v-if="!c_value || !c_value.length" class="absolute-center faded">empty</small>
+      </div>
     </div>
 
   </form-schema-layout>
@@ -123,3 +131,21 @@ export default {
 }
 
 </script>
+
+<style lang="stylus" scoped>
+@import '~variables'
+
+.form-schema-array-bottom-padding
+  background-color $grey-3
+
+.form-schema-array-item
+  border-bottom 1px solid $light
+  padding $space-base
+
+.form-schema-array-content
+  border 1px solid $light
+
+.form-schema-array-item-header
+  margin-bottom $space-base
+
+</style>

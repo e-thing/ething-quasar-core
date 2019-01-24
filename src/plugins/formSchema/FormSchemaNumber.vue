@@ -5,7 +5,6 @@
       :value="c_value"
       v-on:input="c_value = $event"
       :error="!!error"
-      :class="inlined ? 'inline' : ''"
     />
   </form-schema-layout>
 </template>

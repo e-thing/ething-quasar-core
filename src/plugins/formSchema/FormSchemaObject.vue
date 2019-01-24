@@ -1,5 +1,5 @@
 <template>
-  <form-schema-layout class="form-schema-object">
+  <form-schema-layout class="form-schema-object" :class="{indent: level}"">
 
     <template v-if="items.length>0">
       <div
@@ -9,8 +9,9 @@
         :class="{'form-schema-object-item-required': item.required, 'form-schema-object-item-error': !!errors[item.key]}"
         :style="{display: inlined ? 'inline' : 'block'}"
       >
-        <div class="form-schema-object-item-title" :style="{display: inlined ? 'inline' : 'block'}">
+        <div class="form-schema-object-item-title q-field-label q-field-label-inner" :style="{display: inlined ? 'inline' : 'block'}">
           {{ item.schema.title || item.schema.label || item.key }}
+          <small v-if="!inlined && !item.required">(optional)</small>
         </div>
         <form-schema :required="item.required" :inline="inlined" :schema="item.schema" :value="item.model" :level="level+1" @input="onChildValueChange(item, $event)" @error="onChildErrorChange(item, $event)"/>
       </div>
@@ -118,6 +119,10 @@ export default {
 @import '~variables'
 
 verticalMargin = 16px
+pad-width = 20px
+
+.indent
+  margin-left: pad-width
 
 .form-schema-object-item
   margin-top verticalMargin
@@ -132,5 +137,6 @@ verticalMargin = 16px
   &.form-schema-object-item-error
     .form-schema-object-item-title
       color $negative
+
 
 </style>

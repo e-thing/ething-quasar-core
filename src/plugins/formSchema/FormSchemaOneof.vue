@@ -37,10 +37,7 @@ export default {
     c_value: {
       handler (model) {
         if (!model) return
-        var value = model.value
-        if (typeof value !== 'undefined' && value !==null) {
-          this.value_ = value
-        }
+        this.value_ = model.value
         var type = model.type
         for(var i in this.c_schema.oneOf) {
           if (this.c_schema.oneOf[i].properties.type.const === type){
@@ -77,11 +74,10 @@ export default {
 
   methods: {
     onValueChange (val) {
-      this.onChange()
+      this.onChange(val)
     },
-    onChange () {
-      var val = this.value_
-      this.value_ = undefined
+    onChange (val) {
+      this.value_ = val
       var type = this.typeName
       if (!type) return
       var v = {

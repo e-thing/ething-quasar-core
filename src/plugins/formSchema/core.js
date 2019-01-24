@@ -170,7 +170,7 @@ var FormComponent = {
 
   props: {
     inline: {
-      default: false
+      default: "inherit"
     },
     value: {},
     schema: {},
@@ -200,7 +200,7 @@ var FormComponent = {
     },*/
     c_value : {
       handler(value, oldValue) {
-        this.log('watch c_value', value, oldValue)
+        this.log('watch c_value', value, 'prev', oldValue)
         /*if (typeof value === 'undefined' && typeof this.c_schema.default !== 'undefined') {
           this.$nextTick(() => { // delay or some bugs may arrise
             this.log('set default from watch', this.c_schema.default)
@@ -231,7 +231,16 @@ var FormComponent = {
   computed: {
 
     inlined () {
-      return this.inline || this.schema['$inline']
+      var v = this.inline
+      if (v==='') v = true // prop without value : <... inline />
+      if (typeof this.schema['$inline'] !== 'undefined')
+        v = typeof this.schema['$inline']
+      if (v==='inherit') {
+        var parent = this.parent()
+        return parent ? parent.inlined : false
+      }
+
+      return !!v
     },
 
     c_schema () {

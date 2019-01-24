@@ -5,7 +5,6 @@
       :value="c_value"
       v-on:input="c_value = $event"
       :error="!!error"
-      :class="inlined ? 'inline' : ''"
     />
   </form-schema-layout>
 </template>
@@ -27,8 +26,6 @@ export default {
 
     if (typeof this.c_schema.minLength === 'number') {
       validators.minLength = minLength(this.c_schema.minLength)
-      console.log(minLength)
-      console.log(validators.minLength)
     }
     if (typeof this.c_schema.maxLength === 'number') {
       validators.maxLength = maxLength(this.c_schema.maxLength)

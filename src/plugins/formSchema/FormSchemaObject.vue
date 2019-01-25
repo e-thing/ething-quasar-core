@@ -28,6 +28,20 @@
 
 import { FormComponent } from './core'
 
+
+/*
+options
+$order: string[] // order the properties according to the given list
+properties.$readOnly: boolean // if true, this property will be skipped
+properties.$disabled: boolean // if true, this property will be skipped
+properties.$required: boolean // if true, this property will be considered as required
+*/
+
+
+function isObject(obj) {
+  return typeof obj === 'object' && obj!==null
+}
+
 export default {
   name: 'FormSchemaObject',
 
@@ -47,12 +61,12 @@ export default {
       var disabledProperties = []
 
       for(let k in schema.properties) {
-        if (!schema.properties[k] || schema.properties[k]._disabled) {
+        if (!schema.properties[k] || schema.properties[k]['$disabled']) {
           disabledProperties.push(k)
         } else {
-          if (!schema.properties[k].readOnly) {
+          if (!schema.properties[k]['$readOnly']) {
               // todo: warning, required does not work for object since this attribute is already used as array
-              if (schema.properties[k].required===true && requiredProperties.indexOf(k)===-1) {
+              if (schema.properties[k]['$required'] && requiredProperties.indexOf(k)===-1) {
                   requiredProperties.push(k)
               }
           } else {
@@ -65,9 +79,9 @@ export default {
           return requiredProperties.indexOf(k)===-1 && readOnlyProperties.indexOf(k)===-1
       })).filter(k => disabledProperties.indexOf(k)===-1 && !!schema.properties[k])
 
-      if (schema.order) {
-        for (var i = schema.order.length; i>0; i--) {
-          var key = schema.order[i - 1]
+      if (schema['$order']) {
+        for (var i = schema['$order'].length; i>0; i--) {
+          var key = schema['$order'][i - 1]
           var index = keyOrdered.indexOf(key)
           if (index !== -1) {
             keyOrdered.splice(index, 1)
@@ -101,7 +115,13 @@ export default {
 
   methods: {
     onChildValueChange (item, val) {
-      this.$set(this.c_value, item.key, val)
+      if (isObject(this.c_value)) {
+        this.$set(this.c_value, item.key, val)
+      } else {
+        var o = {}
+        o[item.key] = val
+        this.c_value = o
+      }
     },
 
     onChildErrorChange (item, val) {

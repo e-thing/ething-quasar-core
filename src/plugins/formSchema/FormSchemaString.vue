@@ -3,7 +3,7 @@
     <q-input
       :type="inputType"
       :value="c_value"
-      v-on:input="c_value = $event"
+      @input="c_value = $event"
       :error="!!error"
     />
   </form-schema-layout>

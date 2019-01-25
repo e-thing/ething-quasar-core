@@ -144,6 +144,7 @@ export default {
 
 .form-schema-array-content
   border 1px solid $light
+  border-radius 3px
 
 .form-schema-array-item-header
   margin-bottom $space-base

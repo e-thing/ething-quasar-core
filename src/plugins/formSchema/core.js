@@ -1,9 +1,20 @@
 import { required } from 'vuelidate/lib/validators'
 import { extend } from 'quasar'
 import FormSchemaLayout from './FormSchemaLayout'
+import Vue from './vue'
 //import { required } from './validators'
 
 //const customRequired = (v) => v !== undefined && v !== null
+
+
+/*
+options:
+$widget: string
+$inline: boolean | 'inherit'
+*/
+
+
+var debug = false
 
 var _definitionsHandlers = []
 
@@ -13,7 +24,8 @@ var registerForm = function (component, test) {
 
   _registeredForms.push({
     component,
-    test: test || component.rule
+    test: test || component.rule,
+    name: component.name ? formatWidgetName(component.name) : ''
   })
 
 }
@@ -43,6 +55,10 @@ function clone(obj) {
         }
     }
     return temp;
+}
+
+function formatWidgetName(name) {
+  return name.replace(/[_\.\-]/, '').toLowerCase().replace(/^formschema/, '')
 }
 
 var resolveRef = function (schema) {
@@ -87,6 +103,25 @@ var makeForm = function (createElement, props, on) {
   var attributes = {
     props,
     on
+  }
+
+  var widgetName = schema['$widget']
+  if (widgetName) {
+    var formattedWidgetName = formatWidgetName(widgetName)
+    // registered components
+    for (let i in _registeredForms) {
+      let item = _registeredForms[i]
+      if (item.name && item.name == formattedWidgetName) {
+        return createElement(item.component, attributes)
+      }
+    }
+    // core components
+    for (var name in Vue.options.components) {
+      if (formattedWidgetName == formatWidgetName(name)) {
+        return createElement(name, attributes)
+      }
+    }
+    console.warn('[form] widget not found: ' + widgetName)
   }
 
   var type = schema.type
@@ -203,26 +238,39 @@ var FormComponent = {
   data () {
     return {
       id: this.schema.id || (this.schema.type + '-' + parseInt(Math.random()*10000)),
-      formSchemaNode: true
-    	//c_schema: clone(this.schema) // do not alter the parent schema
+    	c_schema: null,
+      formSchemaNode: true,
+      //formSchemaDirty: 0,
+      formSchemaCache: undefined
     }
 	},
 
   watch:{
-    /*schema : {
+    schema : {
       handler (value, oldValue) { // deep watch ?
-        this.log('watch schema', value, oldValue)
-        this.c_schema = clone(value) // do not alter the parent schema
+        if (debug) this.log('watch schema', clone(value))
+        this.c_schema = extend(true, {}, value) // do not alter the parent schema
       },
       immediate: true,
       deep: true
-    },*/
+    },
+    value : {
+      handler(value, oldValue) {
+        if (debug) this.log('watch value')
+        if (typeof this.formSchemaCache !== 'undefined') {
+          //this.formSchemaDirty--;
+          this.formSchemaCache = undefined
+          if (debug) this.log('clear cache')
+        }
+      },
+      immediate: true
+    },
     c_value : {
       handler(value, oldValue) {
-        this.log('watch c_value', clone(value), 'prev', clone(oldValue))
+        if (debug) this.log('watch c_value', clone(value), 'prev', clone(oldValue))
         /*if (typeof value === 'undefined' && typeof this.c_schema.default !== 'undefined') {
           this.$nextTick(() => { // delay or some bugs may arrise
-            this.log('set default from watch', this.c_schema.default)
+            if (debug) this.log('set default from watch', this.c_schema.default)
             this.c_value = this.c_schema.default
           })
         } else {*/
@@ -240,7 +288,7 @@ var FormComponent = {
     },*/
     error : {
       handler (value, oldValue) {
-        this.log('watch error', clone(value), 'prev', clone(oldValue))
+        if (debug) this.log('watch error', clone(value), 'prev', clone(oldValue))
         this.$emit('error', value)
       },
       immediate: true
@@ -262,25 +310,32 @@ var FormComponent = {
       return !!v
     },
 
-    c_schema () {
+    /*c_schema () {
       return extend(true, {}, this.schema)
-    },
+    },*/
 
   	c_value: {
     	get(){
-        this.log('c_value.get', clone(this.value))
+        //if (this.formSchemaDirty>0) {
+        if (typeof this.formSchemaCache !== 'undefined') {
+          if (debug) this.log('c_value.get (cache)', clone(this.formSchemaCache))
+          return this.formSchemaCache
+        }
+        if (debug) this.log('c_value.get', clone(this.value))
         if (typeof this.value !== 'undefined')
           return this.cast(this.value)
         return this.value // undefined
       },
       set(val){
-        this.log('c_value.set', clone(val))
+        if (debug) this.log('c_value.set', clone(val))
+        //this.formSchemaDirty++;
+        this.formSchemaCache = val;
         this.$emit('input', val)
       },
       cache: true
     },
     error () {
-      this.log('compute error', this.$v.c_value.$error)
+      if (debug) this.log('compute error', this.$v.c_value.$error)
       if (!this.$v.c_value.$error) return false
 
       if (typeof this.$v.c_value.required != 'undefined' && !this.$v.c_value.required) {
@@ -334,6 +389,7 @@ var FormComponent = {
   	cast (val) {
     	return val
     },
+    getDefault () {},
     log () {
       var args = Array.prototype.slice.call(arguments)
       args.unshift('['+this.id+']')
@@ -420,22 +476,35 @@ var FormComponent = {
   },
 
   validations () {
-    this.log('validations', this.required)
+    if (debug) this.log('validations', this.required)
     return {
       c_value: this.required ? { required: required } : {}
     }
   },
 
   mounted () {
-    this.log('mounting component')
+    if (debug) this.log('mounting component')
 
-    if (typeof this.c_value === 'undefined' && typeof this.c_schema.default !== 'undefined') {
-      this.$nextTick(() => { // delay or some bugs may arrise
-        this.log('set default on mounted', this.c_schema.default)
-        this.c_value = this.c_schema.default
-        // this.$v.c_value.$touch() will be triggered when setting c_value
-      })
-    } else {
+    var skipTouch = false
+
+    if (typeof this.c_value === 'undefined') {
+      var def = undefined;
+      if (typeof this.c_schema.default !== 'undefined') {
+        def = this.c_schema.default
+      } else {
+        def = this.getDefault()
+      }
+      if (typeof def !== 'undefined') {
+        skipTouch = true
+        this.$nextTick(() => { // delay or some bugs may arrise
+          if (debug) this.log('set default on mounted', def)
+          this.c_value = def
+          // this.$v.c_value.$touch() will be triggered when setting c_value
+        })
+      }
+    }
+
+    if (!skipTouch) {
       this.$v.c_value.$touch()
     }
 
@@ -445,7 +514,7 @@ var FormComponent = {
       for (let id in this.c_schema.dependencies) {
         let callback = this.c_schema.dependencies[id]
         let node = this.find(id)
-        this.log('find node', id)
+        if (debug) this.log('find node', id)
         if (node && callback) {
           node.$on('input', val => {
             this.$nextTick(() => { // delay or some bugs may arrise

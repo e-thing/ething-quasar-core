@@ -6,7 +6,7 @@ export default {
 
   properties: {
     flow: {
-      readOnly: true
+      '$readOnly': true
     },
   },
 

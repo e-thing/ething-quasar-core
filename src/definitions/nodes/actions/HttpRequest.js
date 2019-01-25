@@ -1,7 +1,7 @@
 export default {
 
   properties: {
-    
+
     method: {
         id: 'HttpRequest.method'
     },
@@ -9,11 +9,11 @@ export default {
       format: 'text',
       dependencies: {
         'HttpRequest.method': function (method, self, node) {
-          self.$set(self.parent().mutableSchema.properties.body, '_disabled', ['POST', 'PUT', 'PATCH'].indexOf(method) === -1)
+          self.$set(self.parent().mutableSchema.properties.body, '$disabled', ['POST', 'PUT', 'PATCH'].indexOf(method) === -1)
         }
       }
     },
-    
+
   }
 
 }

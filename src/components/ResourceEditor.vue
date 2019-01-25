@@ -48,7 +48,7 @@ export default {
             ready: false
         }
     },
-    
+
     watch: {
       inputError(err) {
         this.$emit('error', err)
@@ -60,7 +60,7 @@ export default {
           if (this.inputError) {
             return Promise.reject('form error')
           }
-          
+
           var def = {}
           var res = null
 
@@ -74,7 +74,7 @@ export default {
           } else {
             res = this.resource.set(Object.assign(def, this.model))
           }
-          
+
           return res
         },
 
@@ -98,11 +98,11 @@ export default {
             }
           }
           for(let k in meta.properties) {
-            let isRequired = meta.properties[k].required===true || required.indexOf(k)!==-1
+            let isRequired = meta.properties[k]['$required'] || required.indexOf(k)!==-1
 
-            if (!meta.properties[k].readOnly || isRequired) {
+            if (!meta.properties[k]['$readOnly'] || isRequired) {
                 properties[k] = meta.properties[k]
-                if (meta.properties[k].required===true && required.indexOf(k)===-1) {
+                if (meta.properties[k]['$required'] && required.indexOf(k)===-1) {
                     required.push(k)
                 }
 
@@ -134,7 +134,7 @@ export default {
                   type: 'object',
                   required,
                   properties,
-                  order: [
+                  '$order': [
                     'name'
                   ]
               },
@@ -167,7 +167,7 @@ export default {
                 type: 'binary',
                 format: 'text',
                 accept: '.json,.csv',
-                _converter: function (file, data, done, error) {
+                '$converter': function (file, data, done, error) {
 
                   const _done = (d) => {
                     if (!Array.isArray(d))

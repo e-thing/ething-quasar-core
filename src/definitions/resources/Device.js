@@ -11,10 +11,10 @@ export default {
 
   properties: {
     battery: {
-      readOnly: true
+      '$readOnly': true
     },
     connected: {
-      readOnly: true
+      '$readOnly': true
     },
 
     lastSeenDate: {

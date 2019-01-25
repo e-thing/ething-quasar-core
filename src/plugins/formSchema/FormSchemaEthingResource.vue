@@ -16,6 +16,12 @@
 import ResourceSelect from '../../components/ResourceSelect'
 import { FormComponent, registerForm } from './core'
 
+/*
+options
+$filter: f(resource) => boolean // filter the resources to display
+$must_throw: string // display only resources that emits the given signal
+$onlyTypes: string[] // display only resources that are subclass of the given types
+*/
 
 var FormSchemaEthingResource = {
   name: 'FormSchemaEthingResource',
@@ -39,14 +45,14 @@ var FormSchemaEthingResource = {
     },
     createTypes () {
       var r = []
-      if (this.c_schema.onlyTypes) {
-        r = r.concat(this.c_schema.onlyTypes)
+      if (this.c_schema['$onlyTypes']) {
+        r = r.concat(this.c_schema['$onlyTypes'])
       }
-      if (this.c_schema.must_throw) {
+      if (this.c_schema['$must_throw']) {
         // find all class that emits the signal
         this.$ethingUI.iterate('resources', (resourceClsName) => {
           var resourceCls = this.$ethingUI.get(resourceClsName)
-          if (resourceCls.signals.indexOf(this.c_schema.must_throw) !== -1) {
+          if (resourceCls.signals.indexOf(this.c_schema['$must_throw']) !== -1) {
             r.push(resourceClsName)
           }
         })
@@ -59,20 +65,20 @@ var FormSchemaEthingResource = {
     filter (r, schema) {
       var pok;
 
-      if (schema.must_throw) {
+      if (schema['$must_throw']) {
         pok = false
         var signals = this.$ethingUI.get(r).signals
         for (var i in signals) {
-          if (this.$ethingUI.isSubclass(signals[i], schema.must_throw)) {
+          if (this.$ethingUI.isSubclass(signals[i], schema['$must_throw'])) {
             pok = true
             break
           }
         }
         if (!pok) return false
       }
-      if (schema.onlyTypes) {
+      if (schema['$onlyTypes']) {
         pok = false
-        var accepted_types = schema.onlyTypes
+        var accepted_types = schema['$onlyTypes']
         for(var i in accepted_types) {
           if (r.isTypeof(accepted_types[i])){
             pok = true
@@ -81,8 +87,8 @@ var FormSchemaEthingResource = {
         }
         if (!pok) return false
       }
-      if (schema.filter) {
-        if (!schema.filter.call(schema, r)) return false
+      if (schema['$filter']) {
+        if (!schema['$filter'].call(schema, r)) return false
       }
 
       return true

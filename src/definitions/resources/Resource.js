@@ -9,10 +9,10 @@ export default {
   properties: {
     createdBy: {
       format: 'ething.resource',
-      readOnly: true
+      '$readOnly': true
     },
     data: {
-      readOnly: true
+      '$readOnly': true
     },
 
     modifiedDate: {

@@ -33,8 +33,8 @@ export default {
               description: 'the input/output node to display',
               type: 'string',
               format: 'ething.flow.node',
-              _flow: flow,
-              filter (flow_, node) {
+              '$flow': flow,
+              '$filter': function (flow_, node) {
                 return EThingUI.isSubclass(node.type, 'nodes/inputs/Input') || EThingUI.isSubclass(node.type, 'nodes/outputs/Output')
               }
             }

@@ -105,17 +105,17 @@ var FormSchemaScheduler = {
                 enum: monthDays,
                 dependencies: {
                   'FormSchemaScheduler.mode': function (mode, self, node) {
-                    self.$set(self.parent().c_schema.properties.monthday, '_disabled', mode !== 'monthly')
+                    self.$set(self.parent().c_schema.properties.monthday, '$disabled', mode !== 'monthly')
                   }
                 }
               },
               weekday: {
                 label: 'week day',
                 enum: [1, 2, 3, 4, 5, 6, 7],
-                enumLabels: weekDays,
+                '$labels': weekDays,
                 dependencies: {
                   'FormSchemaScheduler.mode': function (mode, self, node) {
-                    self.$set(self.parent().c_schema.properties.weekday, '_disabled', mode !== 'weekly')
+                    self.$set(self.parent().c_schema.properties.weekday, '$disabled', mode !== 'weekly')
                   }
                 }
               },
@@ -136,17 +136,17 @@ var FormSchemaScheduler = {
                 enum: monthDays,
                 dependencies: {
                   'FormSchemaScheduler.mode': function (mode, self, node) {
-                    self.$set(self.parent().c_schema.properties.monthday, '_disabled', mode !== 'monthly')
+                    self.$set(self.parent().c_schema.properties.monthday, '$disabled', mode !== 'monthly')
                   }
                 }
               },
               weekday: {
                 label: 'week day',
                 enum: [1, 2, 3, 4, 5, 6, 7],
-                enumLabels: weekDays,
+                '$labels': weekDays,
                 dependencies: {
                   'FormSchemaScheduler.mode': function (mode, self, node) {
-                    self.$set(self.parent().c_schema.properties.weekday, '_disabled', mode !== 'weekly')
+                    self.$set(self.parent().c_schema.properties.weekday, '$disabled', mode !== 'weekly')
                   }
                 }
               },

@@ -21,6 +21,10 @@ import { FormComponent } from './core'
 import { format } from 'quasar'
 const { humanStorageSize } = format
 
+/*
+options
+$converter: f(file, data, done, error) // handler to convert/check the content of the file
+*/
 
 export default {
   name: 'FormSchemaFile',
@@ -65,7 +69,7 @@ export default {
     convert (file, done, error) {
 
       const _done = (content) => {
-        var converter = this.c_schema._converter
+        var converter = this.c_schema['$converter']
         if (typeof converter === 'function') {
           try {
             converter.call(this, file, content, done, error)

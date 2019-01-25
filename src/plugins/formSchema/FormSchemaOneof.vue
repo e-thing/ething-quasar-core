@@ -78,6 +78,16 @@ export default {
       return this.c_schema.oneOf[this.subtypeindex].properties.value
     },
 
+  },
+
+  methods: {
+    getDefault () {
+      try {
+        return {
+          type: this.c_schema.oneOf[0].properties.type.const
+        }
+      } catch (e) {}
+    }
   }
 
 }

@@ -17,6 +17,12 @@ import FlowNodeSelect from '../../components/FlowNodeSelect'
 import { FormComponent, registerForm } from './core'
 
 
+/*
+options
+$flow: id | Resource // a flow instance, only the nodes for that flow will be listed
+$filter: f(flow, node) => boolean // filter the displayed nodes
+*/
+
 var FormSchemaEthingFlowNode = {
   name: 'FormSchemaEthingFlowNode',
 
@@ -38,14 +44,15 @@ var FormSchemaEthingFlowNode = {
       }
     },
     flow () {
-      return this.c_schema._flow
+      return this.c_schema['$flow']
     }
   },
 
   methods: {
     filter (flow, node, schema) {
-      if (schema.filter) {
-        if (!schema.filter.call(schema, flow, node)) return false
+      var filter = schema['$filter']
+      if (filter) {
+        if (!filter.call(schema, flow, node)) return false
       }
       return true
     }

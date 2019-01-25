@@ -129,13 +129,13 @@ pad-width = 20px
   margin-bottom verticalMargin
 
   &.form-schema-object-item-required
-      .form-schema-object-item-title:after
+    & > .form-schema-object-item-title:after
           content '*'
           color $negative
           margin-left 8px
 
   &.form-schema-object-item-error
-    .form-schema-object-item-title
+    & > .form-schema-object-item-title
       color $negative
 
 

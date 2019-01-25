@@ -1,6 +1,7 @@
 import { required } from 'vuelidate/lib/validators'
 import { extend } from 'quasar'
 import FormSchemaLayout from './FormSchemaLayout'
+//import { required } from './validators'
 
 //const customRequired = (v) => v !== undefined && v !== null
 
@@ -26,7 +27,22 @@ var unregisterForm = function (component) {
 }
 
 function clone(obj) {
-  return extend(true, {}, obj)
+    if (obj === null || typeof (obj) !== 'object' || 'isActiveClone' in obj)
+        return obj;
+
+    if (obj instanceof Date)
+        var temp = new obj.constructor(); //or new Date(obj);
+    else
+        var temp = obj.constructor();
+
+    for (var key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+            obj['isActiveClone'] = null;
+            temp[key] = clone(obj[key]);
+            delete obj['isActiveClone'];
+        }
+    }
+    return temp;
 }
 
 var resolveRef = function (schema) {
@@ -174,7 +190,10 @@ var FormComponent = {
     },
     value: {},
     schema: {},
-    required: {},
+    required: {
+      type: Boolean,
+      default: false
+    },
     level: {
       type: Number,
       default: 0
@@ -200,7 +219,7 @@ var FormComponent = {
     },*/
     c_value : {
       handler(value, oldValue) {
-        this.log('watch c_value', value, 'prev', oldValue)
+        this.log('watch c_value', clone(value), 'prev', clone(oldValue))
         /*if (typeof value === 'undefined' && typeof this.c_schema.default !== 'undefined') {
           this.$nextTick(() => { // delay or some bugs may arrise
             this.log('set default from watch', this.c_schema.default)
@@ -221,7 +240,7 @@ var FormComponent = {
     },*/
     error : {
       handler (value, oldValue) {
-        this.log('watch error', value, oldValue)
+        this.log('watch error', clone(value), 'prev', clone(oldValue))
         this.$emit('error', value)
       },
       immediate: true
@@ -244,21 +263,21 @@ var FormComponent = {
     },
 
     c_schema () {
-      return clone(this.schema)
+      return extend(true, {}, this.schema)
     },
 
   	c_value: {
     	get(){
-        this.log('c_value.get', this.value)
+        this.log('c_value.get', clone(this.value))
         if (typeof this.value !== 'undefined')
           return this.cast(this.value)
         return this.value // undefined
       },
       set(val){
-        this.log('c_value.set', val)
+        this.log('c_value.set', clone(val))
         this.$emit('input', val)
       },
-      cache: false
+      cache: true
     },
     error () {
       this.log('compute error', this.$v.c_value.$error)
@@ -401,8 +420,9 @@ var FormComponent = {
   },
 
   validations () {
+    this.log('validations', this.required)
     return {
-      c_value: this.required ? { required } : {}
+      c_value: this.required ? { required: required } : {}
     }
   },
 
@@ -410,11 +430,11 @@ var FormComponent = {
     this.log('mounting component')
 
     if (typeof this.c_value === 'undefined' && typeof this.c_schema.default !== 'undefined') {
-      //this.$nextTick(() => { // delay or some bugs may arrise
+      this.$nextTick(() => { // delay or some bugs may arrise
         this.log('set default on mounted', this.c_schema.default)
         this.c_value = this.c_schema.default
         // this.$v.c_value.$touch() will be triggered when setting c_value
-      //})
+      })
     } else {
       this.$v.c_value.$touch()
     }

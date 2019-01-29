@@ -55,7 +55,7 @@ export default {
         if (this.type) {
           types = this.type.split(/[ ;,]+/)
         }
-        return this.$store.getters['ething/filter']( r => {
+        return this.$ething.arbo.find( r => {
 
           if (notTypes) {
             for(var i in notTypes) {
@@ -109,7 +109,7 @@ export default {
           }
         })
       },
-      
+
       computedCreateTypes () {
         if (this.createTypes) {
           return this.createTypes
@@ -119,7 +119,7 @@ export default {
           return []
         }
       },
-      
+
       after () {
         if (this.disableCreate || this.computedCreateTypes.length==0) return []
         return [
@@ -132,7 +132,7 @@ export default {
         ]
       }
     },
-    
+
     methods: {
       openCreateModal () {
         this.$ethingUI.createModal({

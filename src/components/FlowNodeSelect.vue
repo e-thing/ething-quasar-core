@@ -50,7 +50,7 @@ export default {
 
         var nodes = []
 
-        this.$store.getters['ething/filter'](r => r instanceof EThing.Flow).forEach(flow => {
+        this.$ething.arbo.find(r => r instanceof EThing.Flow).forEach(flow => {
           if (this.computedFlow && flow.id() !== this.computedFlow.id()) return
 
           flow.attr('flow').nodes.forEach(node => {

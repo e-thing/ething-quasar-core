@@ -6,7 +6,7 @@
 
 <script>
 
-import { FormComponent } from './core'
+import { FormComponent } from '../core'
 
 import { codemirror, CodeMirror } from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
@@ -18,6 +18,10 @@ import 'codemirror/mode/python/python.js'
 import 'codemirror/addon/edit/matchbrackets.js'
 import 'codemirror/addon/edit/closebrackets.js'
 
+/*
+options
+$lang: string // mime or langage
+*/
 
 export default {
   name: 'FormSchemaEditor',
@@ -31,7 +35,7 @@ export default {
   data () {
     return {
       cmOption: {
-        mode: this.c_schema.format, //'application/json',
+        mode: this.c_schema['$lang'] || 'text', //'application/json',
         tabSize: 4,
         styleActiveLine: true,
         lineNumbers: true,

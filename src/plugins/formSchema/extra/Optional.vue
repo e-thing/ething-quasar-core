@@ -12,7 +12,7 @@
 
 <script>
 
-import { FormComponent } from './core'
+import { FormComponent } from '../core'
 import { extend } from 'quasar'
 
 export default {
@@ -81,6 +81,16 @@ export default {
   mounted () {
     this.refreshFromModel()
   },
+
+  rule (schema) {
+    if (Array.isArray(schema.anyOf)) {
+      var nullItems = schema.anyOf.filter(item => item.type === 'null')
+      if (nullItems.length > 0 && nullItems.length < schema.anyOf.length) {
+        return true
+      }
+      // todo: form-schema-anyof
+    }
+  }
 
 }
 

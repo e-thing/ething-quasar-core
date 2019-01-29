@@ -67,14 +67,14 @@ export default {
       properties: {
         color: {
           type: 'string',
-          format: 'color',
+          '$component': 'color',
           description: 'The color of the widget',
           default: '#027be3'
         },
         bgColor: {
           title: 'background color',
           type: 'string',
-          format: 'color',
+          '$component': 'color',
           description: 'The color of the widget\'s background',
           default: '#ffffff'
         }

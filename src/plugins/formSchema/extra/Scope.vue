@@ -13,10 +13,10 @@
 
 <script>
 
-import { FormComponent, registerForm } from './core'
+import { FormComponent } from '../core'
 
 
-var FormSchemaScope = {
+export default {
   name: 'FormSchemaScope',
 
   mixins: [FormComponent],
@@ -52,14 +52,6 @@ var FormSchemaScope = {
   },
 
 }
-
-registerForm(FormSchemaScope, schema => {
-  if (schema.format === 'scope') {
-    return true
-  }
-})
-
-export default FormSchemaScope
 
 </script>
 

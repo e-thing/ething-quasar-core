@@ -13,8 +13,8 @@
 
 <script>
 
-import ResourceSelect from '../../components/ResourceSelect'
-import { FormComponent, registerForm } from './core'
+import ResourceSelect from '../../../components/ResourceSelect'
+import { FormComponent } from '../core'
 
 /*
 options
@@ -23,7 +23,7 @@ $must_throw: string // display only resources that emits the given signal
 $onlyTypes: string[] // display only resources that are subclass of the given types
 */
 
-var FormSchemaEthingResource = {
+export default {
   name: 'FormSchemaEthingResource',
 
   mixins: [FormComponent],
@@ -96,14 +96,6 @@ var FormSchemaEthingResource = {
   }
 
 }
-
-registerForm(FormSchemaEthingResource, schema => {
-  if (schema.format === 'ething.resource') {
-    return true
-  }
-})
-
-export default FormSchemaEthingResource
 
 </script>
 

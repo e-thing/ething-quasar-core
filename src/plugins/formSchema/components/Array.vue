@@ -60,7 +60,7 @@
 
 <script>
 
-import { FormComponent } from './core'
+import { FormComponent } from '../core'
 
 export default {
   name: 'FormSchemaArray',
@@ -125,8 +125,11 @@ export default {
 
   mounted () {
     this.refreshFromModel()
-  }
+  },
 
+  rule (schema) {
+    return schema.type === 'array'
+  }
 
 }
 

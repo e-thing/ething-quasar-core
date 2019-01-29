@@ -711,10 +711,10 @@ export default {
       var resource = null
 
       if (typeof this.preferences === 'string') {
-        resource = this.$store.getters['ething/get'](this.preferences)
+        resource = this.$ething.arbo.get(this.preferences)
       }
       if (this.preferences instanceof this.$ething.Table) {
-        resource = this.$store.getters['ething/get'](this.preferences.id())
+        resource = this.$ething.arbo.get(this.preferences.id())
       }
 
       if (resource) {

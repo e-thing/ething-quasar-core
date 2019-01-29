@@ -17,7 +17,7 @@
 
 <script>
 
-import { FormComponent } from './core'
+import { FormComponent } from '../core'
 import { format } from 'quasar'
 const { humanStorageSize } = format
 
@@ -81,7 +81,13 @@ export default {
         }
       }
 
-      if (this.c_schema.format === 'base64') {
+      if (this.c_schema.format === 'data-url') {
+        let fileReader = new FileReader()
+        fileReader.onloadend = (e) => {
+          _done(fileReader.result)
+        }
+        fileReader.readAsDataURL(file)
+      } else if (this.c_schema.format === 'base64') {
         let fileReader = new FileReader()
         fileReader.onloadend = (e) => {
           const content = fileReader.result
@@ -92,14 +98,17 @@ export default {
       } else if (this.c_schema.format === 'text') {
         let fileReader = new FileReader()
         fileReader.onloadend = (e) => {
-          const content = fileReader.result
-          _done(content)
+          _done(fileReader.result)
         }
         fileReader.readAsText(file)
       } else {
         _done(file)
       }
     }
+  },
+
+  rule (schema) {
+    return schema.type === 'string' && ['data-url', 'base64'].indexOf(schema.format) !== -1
   }
 
 }

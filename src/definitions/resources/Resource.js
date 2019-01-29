@@ -1,4 +1,3 @@
-import FormSchemaEthingResource from '../../plugins/formSchema/FormSchemaEthingResource'
 import { date } from 'quasar'
 
 export default {
@@ -8,7 +7,7 @@ export default {
 
   properties: {
     createdBy: {
-      format: 'ething.resource',
+      '$component': 'ething.resource',
       '$readOnly': true
     },
     data: {

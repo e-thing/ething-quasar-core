@@ -36,10 +36,10 @@
 <script>
 
 import EThing from 'ething-js'
-import { FormComponent, registerForm } from './core'
+import { FormComponent } from '../core'
 
 
-var FormSchemaSerialPort = {
+export default {
   name: 'FormSchemaSerialPort',
 
   mixins: [FormComponent],
@@ -73,14 +73,5 @@ var FormSchemaSerialPort = {
   }
 
 }
-
-
-registerForm(FormSchemaSerialPort, schema => {
-  if (schema.format === 'serial') {
-    return true
-  }
-})
-
-export default FormSchemaSerialPort
 
 </script>

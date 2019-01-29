@@ -15,12 +15,12 @@
 
 <script>
 
-import { FormComponent, registerForm } from './core'
-import Cron from '../../components/Cron'
+import { FormComponent } from '../core'
+import Cron from '../../../components/Cron'
 import cronstrue from 'cronstrue'
 
 
-var FormSchemaCron = {
+export default {
   name: 'FormSchemaCron',
 
   mixins: [FormComponent],
@@ -50,15 +50,6 @@ var FormSchemaCron = {
   }
 
 }
-
-
-registerForm(FormSchemaCron, schema => {
-  if (schema.format === 'cron') {
-    return true
-  }
-})
-
-export default FormSchemaCron
 
 
 </script>

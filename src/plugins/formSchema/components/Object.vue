@@ -26,7 +26,7 @@
 
 <script>
 
-import { FormComponent } from './core'
+import { FormComponent } from '../core'
 
 
 /*
@@ -128,8 +128,11 @@ export default {
       this.$set(this.errors, item.key, val)
       this.$emit('error', Object.values(this.errors).some(err => err))
     }
-  }
+  },
 
+  rule (schema) {
+    return schema.type === 'object' || typeof schema.properties === 'object'
+  }
 
 }
 

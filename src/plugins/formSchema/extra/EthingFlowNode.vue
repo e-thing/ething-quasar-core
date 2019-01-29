@@ -13,8 +13,8 @@
 
 <script>
 
-import FlowNodeSelect from '../../components/FlowNodeSelect'
-import { FormComponent, registerForm } from './core'
+import FlowNodeSelect from '../../../components/FlowNodeSelect'
+import { FormComponent } from '../core'
 
 
 /*
@@ -23,7 +23,7 @@ $flow: id | Resource // a flow instance, only the nodes for that flow will be li
 $filter: f(flow, node) => boolean // filter the displayed nodes
 */
 
-var FormSchemaEthingFlowNode = {
+export default {
   name: 'FormSchemaEthingFlowNode',
 
   mixins: [FormComponent],
@@ -59,13 +59,5 @@ var FormSchemaEthingFlowNode = {
   }
 
 }
-
-registerForm(FormSchemaEthingFlowNode, schema => {
-  if (schema.format === 'ething.flow.node') {
-    return true
-  }
-})
-
-export default FormSchemaEthingFlowNode
 
 </script>

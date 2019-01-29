@@ -35,7 +35,7 @@
 <script>
 
 import EThing from 'ething-js'
-import { FormComponent, registerForm } from './core'
+import { FormComponent } from '../core'
 
 
 var hosts = []
@@ -71,7 +71,7 @@ function refresh (force, cb) {
 
 }
 
-var FormSchemaHost = {
+export default {
   name: 'FormSchemaHost',
 
   mixins: [FormComponent],
@@ -110,13 +110,5 @@ var FormSchemaHost = {
   }
 
 }
-
-registerForm(FormSchemaHost, schema => {
-  if (schema.format === 'host') {
-    return true
-  }
-})
-
-export default FormSchemaHost
 
 </script>

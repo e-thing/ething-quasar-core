@@ -1,7 +1,7 @@
 import { required } from 'vuelidate/lib/validators'
 import { extend } from 'quasar'
 import FormSchemaLayout from './FormSchemaLayout'
-import Vue from './vue'
+import Vue from 'vue'
 //import { required } from './validators'
 
 //const customRequired = (v) => v !== undefined && v !== null
@@ -9,7 +9,7 @@ import Vue from './vue'
 
 /*
 options:
-$widget: string
+$component: string
 $inline: boolean | 'inherit'
 */
 
@@ -18,14 +18,16 @@ var debug = false
 
 var _definitionsHandlers = []
 
+var coreComponents = []
+
 var _registeredForms = []
 
 var registerForm = function (component, test) {
 
   _registeredForms.push({
     component,
-    test: test || component.rule,
-    name: component.name ? formatWidgetName(component.name) : ''
+    test: test,
+    name: component.name ? formatComponentName(component.name) : ''
   })
 
 }
@@ -57,8 +59,36 @@ function clone(obj) {
     return temp;
 }
 
-function formatWidgetName(name) {
-  return name.replace(/[_\.\-]/, '').toLowerCase().replace(/^formschema/, '')
+function formatComponentName(name) {
+  return name.replace(/[_\.\-]/g, '').toLowerCase().replace(/^formschema/, '')
+}
+
+function checkRule(component, schema, test) {
+  var rule = null
+
+  if (typeof test === 'function') {
+    rule = test
+  } else {
+    rule = getRuleFromComponent(component)
+  }
+
+  if (typeof rule === 'function') {
+    try {
+      return rule(schema)
+    } catch(e) {}
+  }
+}
+
+function getRuleFromComponent (component) {
+  if (typeof component.rule !== 'undefined') return component.rule
+
+  if (Array.isArray(component.mixins)) {
+    for (var i in component.mixins) {
+      var base = component.mixins[i]
+      var rule = getRuleFromComponent(base)
+      if (rule) return rule
+    }
+  }
 }
 
 var resolveRef = function (schema) {
@@ -94,123 +124,56 @@ var resolve = function (schema) {
 }
 
 var makeForm = function (createElement, props, on) {
-
   var schema = props.schema = resolve(props.schema)
 
   //console.log('SCHEMA', JSON.stringify(schema, null, 2))
   //console.log('MODEL', JSON.stringify(props.value, null, 2))
 
-  var attributes = {
+  let attributes = {
     props,
     on
   }
 
-  var widgetName = schema['$widget']
-  if (widgetName) {
-    var formattedWidgetName = formatWidgetName(widgetName)
-    // registered components
-    for (let i in _registeredForms) {
-      let item = _registeredForms[i]
-      if (item.name && item.name == formattedWidgetName) {
-        return createElement(item.component, attributes)
-      }
-    }
-    // core components
-    for (var name in Vue.options.components) {
-      if (formattedWidgetName == formatWidgetName(name)) {
-        return createElement(name, attributes)
-      }
-    }
-    console.warn('[form] widget not found: ' + widgetName)
-  }
+  var componentName = schema['$component']
+  var formattedComponentName = componentName ? formatComponentName(componentName) : undefined
+  var rulePass = false
 
-  var type = schema.type
-
-  if (Array.isArray(schema.anyOf)) {
-    var nullItems = schema.anyOf.filter(item => item.type === 'null')
-    if (nullItems.length > 0 && nullItems.length < schema.anyOf.length) {
-      return createElement('form-schema-optional', attributes)
-    }
-    // todo: form-schema-anyof
-  }
-
+  // registered components
   for (let i in _registeredForms) {
     let item = _registeredForms[i]
-    if (item.test) {
-      let result = item.test(schema)
-      if (result) {
-        return createElement(item.component, attributes)
-      }
+    
+    if (componentName && item.name && item.name === formattedComponentName) {
+      return createElement(item.component, attributes)
+    }
+    if (rulePass===false && checkRule(item.component, schema, item.test)) {
+      rulePass = item.component
+      if (!componentName) break
     }
   }
 
-  if (Array.isArray(schema.enum)) {
-    return createElement('form-schema-enum', attributes)
+  // core components
+  for (var i in coreComponents) {
+    var component = coreComponents[i]
+    var componentName_ = component.name
+    if (componentName && formattedComponentName === formatComponentName(componentName_)) {
+      return createElement(component, attributes)
+    }
+    if (rulePass===false && checkRule(component, schema)) {
+      rulePass = component
+      if (!componentName) break
+    }
   }
 
-  if (Array.isArray(schema.oneOf)) {
-    var pass=true
-    schema.oneOf.forEach(s => {
-      if (!(s.properties && s.properties.type && s.properties.type.const)) pass=false
-    })
-    if (pass) return createElement('form-schema-oneof', attributes)
+  if (componentName) {
+    console.warn('[form] component not found: ' + componentName)
   }
 
-  switch (type) {
-    case 'object':
-    case 'class':
-      return createElement('form-schema-object', attributes)
-    case 'array':
-      if ((typeof schema.items === 'object' && schema.items!== null) || typeof schema.items === 'undefined') {
-        return createElement(schema['$modal'] ? 'form-schema-array-modal' : 'form-schema-array', attributes)
-      }
-      if (Array.isArray(schema.items)) {
-        // todo tupple https://spacetelescope.github.io/understanding-json-schema/reference/array.html
-      }
-      break
-    case 'string':
-      var format = schema.format
-
-      if (format === 'date-time' || format === 'date' || format === 'time') {
-        return createElement('form-schema-date', attributes)
-      }
-      else if (format === 'color') {
-        return createElement('form-schema-color', attributes)
-      }
-      else if (format === 'json') {
-        return createElement('form-schema-json', attributes)
-      }
-      else if (/[^\/]+\/[^\/]+/.test(format)) {
-        // mime types
-        return createElement('form-schema-editor', attributes)
-      }
-
-      return createElement('form-schema-string', attributes)
-    case 'number':
-    case 'integer':
-    case 'int':
-    case 'long':
-    case 'double':
-    case 'float':
-      if (typeof schema.minimum === 'number' && typeof schema.maximum === 'number' && typeof schema.multipleOf === 'number') {
-        return createElement('form-schema-number-slider', attributes)
-      }
-      return createElement('form-schema-number', attributes)
-    case 'boolean':
-    case 'bool':
-      return createElement('form-schema-boolean', attributes)
-    case 'json':
-      return createElement('form-schema-json', attributes)
-    case 'binary':
-      return createElement('form-schema-file', attributes)
-
+  if (rulePass !== false) {
+    return createElement(rulePass, attributes)
   }
 
-  if (typeof type === 'undefined') {
-    return createElement('form-schema-multi-type', attributes)
-  }
+  console.error('unable to render the schema', Object.assign({}, schema))
 
-  console.error('unable to render the schema', schema)
 }
 
 var FormComponent = {
@@ -496,11 +459,9 @@ var FormComponent = {
       }
       if (typeof def !== 'undefined') {
         skipTouch = true
-        this.$nextTick(() => { // delay or some bugs may arrise
-          if (debug) this.log('set default on mounted', def)
-          this.c_value = def
-          // this.$v.c_value.$touch() will be triggered when setting c_value
-        })
+        if (debug) this.log('set default on mounted', def)
+        this.c_value = def
+        // this.$v.c_value.$touch() will be triggered when setting c_value
       }
     }
 
@@ -549,5 +510,6 @@ export {
   registerForm,
   unregisterForm,
   addDefinitionsHandler,
-  resolve
+  resolve,
+  coreComponents
 }

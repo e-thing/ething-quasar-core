@@ -1,5 +1,5 @@
 <template>
-  <form-schema-layout class="form-schema-array">
+  <form-schema-layout class="form-schema-array-modal">
 
     <div>
       <q-btn flat size="md"
@@ -67,11 +67,11 @@
 
 <script>
 
-import { FormComponent } from './core'
+import { FormComponent } from '../core'
 import { minLength, maxLength } from 'vuelidate/lib/validators'
 
 export default {
-  name: 'FormSchemaArray',
+  name: 'FormSchemaArrayModal',
 
   mixins: [FormComponent],
 

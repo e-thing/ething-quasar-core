@@ -34,7 +34,7 @@
 
 <script>
 
-import { FormComponent, registerForm } from './core'
+import { FormComponent } from '../core'
 import { extend } from 'quasar'
 
 
@@ -72,7 +72,7 @@ function dateSuffix (dayOfMounth) {
 }
 
 
-var FormSchemaScheduler = {
+export default {
   name: 'FormSchemaScheduler',
 
   mixins: [FormComponent],
@@ -188,13 +188,5 @@ var FormSchemaScheduler = {
     }
   },
 }
-
-registerForm(FormSchemaScheduler, schema => {
-  if (schema.format === 'scheduler') {
-    return true
-  }
-})
-
-export default FormSchemaScheduler
 
 </script>

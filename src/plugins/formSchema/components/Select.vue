@@ -2,9 +2,9 @@
   <form-schema-layout class="form-schema-select">
     <q-select
       v-bind:value="c_value" v-on:input="c_value = $event"
-      :options="selectOptions"
+      :options="items"
       :error="!!error"
-      :multiple:"multiple"
+      :multiple="isMultiple"
     />
   </form-schema-layout>
 </template>
@@ -26,10 +26,16 @@ export default {
 
   computed: {
     enumSchema () {
-      if (this.multiple) return this.c_schema.items
+      if (this.isBoolean) {
+        return Object.assign({
+          enum: [true, false],
+          $labels: ['True', 'False']
+        }, this.c_schema)
+      }
+      if (this.isMultiple) return this.c_schema.items
       return this.c_schema
     },
-    selectOptions () {
+    items () {
       return (this.enumSchema.enum || []).map( (v, i, arr) => {
         var len = arr.length
         return {
@@ -39,8 +45,11 @@ export default {
         }
       })
     },
-    multiple () {
+    isMultiple () {
       return this.c_schema.type === 'array' && this.c_schema.items.enum
+    },
+    isBoolean () {
+      return this.c_schema.type === 'boolean'
     }
   },
 
@@ -69,7 +78,7 @@ export default {
   },
 
   rule (schema) {
-    return (typeof schema.enum != 'undefined') || (schema.type === 'array' && schema.items.enum)
+    return (typeof schema.enum != 'undefined') || (schema.type === 'array' && schema.items.enum) || schema.type === 'boolean'
   }
 
 }

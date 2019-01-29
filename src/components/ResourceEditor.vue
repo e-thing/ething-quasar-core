@@ -149,13 +149,14 @@ export default {
 
               schema.properties.content = {
                 id: 'resource.content',
-                type: 'binary'
+                type: 'string',
+                '$component': 'file'
               }
 
               schema.properties.name.dependencies = {
                 'resource.content': function (_, self, node) {
                   if (node.files.length > 0) {
-                    self.setValue( node.files[0].name )
+                    self.c_value = node.files[0].name
                   }
                 }
               }
@@ -164,8 +165,8 @@ export default {
 
               schema.properties.content = {
                 id: 'resource.content',
-                type: 'binary',
-                format: 'text',
+                type: 'string',
+                '$component': 'file',
                 accept: '.json,.csv',
                 '$converter': function (file, data, done, error) {
 
@@ -209,7 +210,7 @@ export default {
               schema.properties.name.dependencies = {
                 'resource.content': function (_, self, node) {
                   if (node.files.length > 0) {
-                    self.setValue( node.files[0].name )
+                    self.c_value = node.files[0].name
                   }
                 }
               }

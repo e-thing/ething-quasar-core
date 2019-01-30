@@ -103,7 +103,7 @@ export default {
               monthday: {
                 label: 'day of month',
                 enum: monthDays,
-                dependencies: {
+                '$dependencies': {
                   'FormSchemaScheduler.mode': function (mode, self, node) {
                     self.$set(self.parent().c_schema.properties.monthday, '$disabled', mode !== 'monthly')
                   }
@@ -113,7 +113,7 @@ export default {
                 label: 'week day',
                 enum: [1, 2, 3, 4, 5, 6, 7],
                 '$labels': weekDays,
-                dependencies: {
+                '$dependencies': {
                   'FormSchemaScheduler.mode': function (mode, self, node) {
                     self.$set(self.parent().c_schema.properties.weekday, '$disabled', mode !== 'weekly')
                   }
@@ -134,7 +134,7 @@ export default {
               monthday: {
                 label: 'day of month',
                 enum: monthDays,
-                dependencies: {
+                '$dependencies': {
                   'FormSchemaScheduler.mode': function (mode, self, node) {
                     self.$set(self.parent().c_schema.properties.monthday, '$disabled', mode !== 'monthly')
                   }
@@ -144,7 +144,7 @@ export default {
                 label: 'week day',
                 enum: [1, 2, 3, 4, 5, 6, 7],
                 '$labels': weekDays,
-                dependencies: {
+                '$dependencies': {
                   'FormSchemaScheduler.mode': function (mode, self, node) {
                     self.$set(self.parent().c_schema.properties.weekday, '$disabled', mode !== 'weekly')
                   }

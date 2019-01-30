@@ -122,10 +122,7 @@ export default {
         }
       }
 
-      if (typeof itemSchema['$label'] !== 'undefined') return itemSchema['$label']
-      if (typeof itemSchema.properties.type['$label'] !== 'undefined') return itemSchema.properties.type['$label']
-
-      return itemSchema.properties.type.title || itemSchema.properties.type.const
+      return itemSchema.title || itemSchema.properties.type.title || itemSchema.properties.type.const
     },
     getIcon (schema, itemSchema, index, len) {
       if (typeof schema['$icons'] !== 'undefined') {

@@ -2,8 +2,8 @@
   <div>
     <slot></slot>
 
-    <blockquote>
-      <vue-markdown v-if="meta.description" :anchorAttributes="{target: '_blank'}">{{ meta.description.trim() }}</vue-markdown>
+    <blockquote v-if="!!meta.description">
+      <vue-markdown :anchorAttributes="{target: '_blank'}">{{ meta.description.trim() }}</vue-markdown>
     </blockquote>
 
     <form-schema :schema="schema" v-model="model" @error="inputError = $event" class="q-mb-xl"/>
@@ -19,6 +19,7 @@
 <script>
 import EThing from 'ething-js'
 import VueMarkdown from 'vue-markdown'
+import { extend } from 'quasar'
 const csv = require('csvtojson')
 
 export default {
@@ -84,7 +85,7 @@ export default {
 
           var meta = resource ? this.$ethingUI.get(resource) : this.$ethingUI.get(type)
 
-          meta = this.customize(meta, resource, type)
+          meta = this.customize(extend(true, {}, meta), resource, type)
 
           var required = meta.required || []
           var properties = {}
@@ -153,7 +154,7 @@ export default {
                 '$component': 'file'
               }
 
-              schema.properties.name.dependencies = {
+              schema.properties.name['$dependencies'] = {
                 'resource.content': function (_, self, node) {
                   if (node.files.length > 0) {
                     self.c_value = node.files[0].name
@@ -207,7 +208,7 @@ export default {
                 }
               }
 
-              schema.properties.name.dependencies = {
+              schema.properties.name['$dependencies'] = {
                 'resource.content': function (_, self, node) {
                   if (node.files.length > 0) {
                     self.c_value = node.files[0].name

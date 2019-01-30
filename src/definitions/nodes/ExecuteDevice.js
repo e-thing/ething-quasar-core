@@ -7,7 +7,7 @@ export default {
     method: {
       id: 'ExecuteDevice.method',
       enum: [],
-      dependencies: {
+      '$dependencies': {
         'ExecuteDevice.device': function (id, self, node) {
           var r = self.$ething.arbo.get(id)
           var methods = []
@@ -19,7 +19,7 @@ export default {
       }
     },
     args: {
-      dependencies: {
+      '$dependencies': {
         'ExecuteDevice.method': function (method, self, node) {
           var r = self.$ething.arbo.get(self.find('ExecuteDevice.device').value)
           if (r && method) {

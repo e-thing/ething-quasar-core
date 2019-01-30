@@ -9,8 +9,12 @@
         :class="{'form-schema-object-item-required': item.required, 'form-schema-object-item-error': !!errors[item.key]}"
         :style="{display: inlined ? 'inline' : 'block'}"
       >
-        <div class="form-schema-object-item-title q-field-label q-field-label-inner" :style="{display: inlined ? 'inline' : 'block'}">
-          {{ item.schema.title || item.schema.label || item.key }}
+        <div
+          class="form-schema-object-item-title q-field-label q-field-label-inner"
+          :style="{display: inlined ? 'inline' : 'block'}"
+          v-if="!item.schema.$hideLabel"
+        >
+          {{ item.schema.title || item.key }}
           <small v-if="!inlined && !item.required">(optional)</small>
         </div>
         <form-schema :required="item.required" :inline="inlined" :schema="item.schema" :value="item.model" :level="level+1" @input="onChildValueChange(item, $event)" @error="onChildErrorChange(item, $event)"/>
@@ -32,6 +36,7 @@ import { FormComponent } from '../core'
 /*
 options
 $order: string[] // order the properties according to the given list
+properties.$hideLabel: boolean // if true, no label will be displayed for this properties
 properties.$readOnly: boolean // if true, this property will be skipped
 properties.$disabled: boolean // if true, this property will be skipped
 properties.$required: boolean // if true, this property will be considered as required

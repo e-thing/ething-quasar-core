@@ -11,6 +11,7 @@ import Vue from 'vue'
 options:
 $component: string
 $inline: boolean | 'inherit'
+$idPrefix: string
 */
 
 
@@ -126,6 +127,8 @@ var resolve = function (schema) {
 var makeForm = function (createElement, props, on) {
   var schema = props.schema = resolve(props.schema)
 
+  if(!schema || Object.keys(schema).length===0) return 
+
   //console.log('SCHEMA', JSON.stringify(schema, null, 2))
   //console.log('MODEL', JSON.stringify(props.value, null, 2))
 
@@ -141,7 +144,7 @@ var makeForm = function (createElement, props, on) {
   // registered components
   for (let i in _registeredForms) {
     let item = _registeredForms[i]
-    
+
     if (componentName && item.name && item.name === formattedComponentName) {
       return createElement(item.component, attributes)
     }
@@ -199,8 +202,15 @@ var FormComponent = {
   },
 
   data () {
+    var id = this.schema.id
+    if (!id) {
+      id = this.schema.type + '-' + parseInt(Math.random()*10000)
+      if (this.schema['$idPrefix']) {
+        id = String(this.schema['$idPrefix']) + '-' + id
+      }
+    }
     return {
-      id: this.schema.id || (this.schema.type + '-' + parseInt(Math.random()*10000)),
+      id,
     	c_schema: null,
       formSchemaNode: true,
       //formSchemaDirty: 0,
@@ -470,10 +480,10 @@ var FormComponent = {
     }
 
     // handle dependencies
-    if (this.c_schema.dependencies) {
+    if (this.c_schema['$dependencies']) {
 
-      for (let id in this.c_schema.dependencies) {
-        let callback = this.c_schema.dependencies[id]
+      for (let id in this.c_schema['$dependencies']) {
+        let callback = this.c_schema['$dependencies'][id]
         let node = this.find(id)
         if (debug) this.log('find node', id)
         if (node && callback) {

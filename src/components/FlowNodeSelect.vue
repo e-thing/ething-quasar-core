@@ -92,7 +92,7 @@ export default {
             icon: this.$ethingUI.get(node.type).icon,
             leftColor: this.$ethingUI.get(node.type).color,
             inset: true,
-            stamp: this.$ethingUI.get(node.type).label,
+            stamp: this.$ethingUI.get(node.type).title,
             sublabel: this.flow ? null : flow.basename
           }
         })

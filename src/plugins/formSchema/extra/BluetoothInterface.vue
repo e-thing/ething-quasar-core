@@ -7,6 +7,7 @@
         v-on:input="c_value = $event"
         :error="!!error"
         class="col"
+        prefix="hci"
       />
       <q-btn flat color="faded" icon="search" class="col-auto">
         <q-popover @show="show" anchor="bottom right" self="top right" fit>

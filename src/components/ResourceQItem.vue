@@ -10,7 +10,7 @@
         <q-icon v-if="resource.public()" class="vertical-middle on-right" name="share" color="warning" />
       </q-item-tile>
       <q-item-tile sublabel>{{ $ethingUI.utils.dateToString(date) }}</q-item-tile>
-      <q-item-tile sublabel v-if="showType">{{ meta.label }}</q-item-tile>
+      <q-item-tile sublabel v-if="showType">{{ meta.title }}</q-item-tile>
       <q-item-tile sublabel v-if="showBattery" class="lt-sm">battery: {{ resource.battery() }}%</q-item-tile>
       <q-item-tile sublabel v-if="showLocation" class="lt-sm">location: {{ resource.location() }}</q-item-tile>
       <q-item-tile sublabel v-if="showSize">{{ $ethingUI.utils.sizeToString(resource.size()) }}</q-item-tile>

@@ -214,7 +214,8 @@ function normalize (obj) {
     obj = extend(true, {
       color: 'grey',
       icon: 'mdi-help',
-      label: '',
+      title: '',
+      category: null,
       description: '',
       required: [],
       properties: {},
@@ -295,7 +296,7 @@ function get (definitions, type) {
   } else if(typeof type === 'object' && type!== null && type._type) {
     type = type._type
   }
-  
+
   if (typeof type !== 'string') {
     throw 'type must be a string'
   }

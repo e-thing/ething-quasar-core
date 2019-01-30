@@ -6,6 +6,7 @@
       @input="c_value = $event"
       :error="!!error"
       v-bind="attributes"
+      :placeholder="c_schema['$placeholder']"
     />
   </form-schema-layout>
 </template>
@@ -15,6 +16,11 @@
 import { FormComponent } from '../core'
 import { minLength, maxLength, email, minValue, maxValue } from 'vuelidate/lib/validators'
 import { regex } from '../validators'
+
+/*
+options
+$placeholder: string
+*/
 
 export default {
   name: 'FormSchemaInput',

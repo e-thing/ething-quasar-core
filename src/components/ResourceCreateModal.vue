@@ -5,14 +5,14 @@
     @input="$emit('input', $event)"
     :title="title"
     icon="add"
-    
+
     :valid-btn-disable="formError"
     valid-btn-label="create"
     :valid-btn-loading="loading"
     @valid="handler"
-    
+
     @cancel="onCancel"
-    
+
   >
 
     <q-select
@@ -21,9 +21,9 @@
      :options="items"
      class="q-mb-xl"
     />
-    
+
     <resource-editor v-if="selectedType" ref="form" :resource="selectedType" :key="selectedType" @error="formError=$event"/>
-    
+
     <q-alert
         v-if="error"
         type="negative"
@@ -41,7 +41,7 @@ import ResourceEditor from './ResourceEditor'
 
 export default {
     name: 'ResourceCreateModal',
-    
+
     components: {
       ResourceEditor
     },
@@ -59,15 +59,15 @@ export default {
           formError: false
         }
     },
-    
+
     computed: {
-      
+
       items () {
         var r = []
-        
+
         this.types.forEach(t => {
           var m = this.$ethingUI.get(t)
-          
+
           if (m.virtual) {
             // find all subclass
             this.$ethingUI.iterate('resources', (resourceClsName) => {
@@ -79,18 +79,18 @@ export default {
             r.push(t)
           }
         })
-        
+
         r = r.filter((v, i, a) => a.indexOf(v) === i);
-        
+
         return r.map(t => {
           var m = this.$ethingUI.get(t)
-          
+
           var cat = t.split('/')
           cat.pop()
           cat = cat.join(' ')
-          
+
           return {
-            label: m.label,
+            label: m.title,
             icon: m.icon,
             leftColor: m.color,
             sublabel: cat,
@@ -98,12 +98,12 @@ export default {
           }
         })
       },
-      
+
       title () {
         if (this.items.length==1) return 'create '+this.items[0].label
         return 'create'
       }
-      
+
     },
 
     methods: {
@@ -113,7 +113,7 @@ export default {
       hide () {
         return this.$refs.modal ? this.$refs.modal.hide() : Promise.resolve()
       },
-      
+
       onDone (resource) {
         this.hide()
         this.$emit('ok')
@@ -123,7 +123,7 @@ export default {
         this.hide()
         this.$emit('cancel')
       },
-      
+
       handler () {
         this.loading = true
         this.$refs.form.submit().then(this.onDone).catch(reason => {

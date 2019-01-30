@@ -98,13 +98,15 @@ export default {
             }
           }
 
+          var meta = this.$ethingUI.get(r)
+
           return {
             label: r.name(),
             value: this.useId ? r.id() : r,
             icon: this.$ethingUI.get(r).icon,
             leftColor: this.$ethingUI.get(r).color,
             inset: true,
-            stamp: r.type(),
+            stamp: meta.title,
             sublabel: createdByArr.length ? createdByArr.reverse().map(r => r.basename()).join(' -> ') : undefined
           }
         })

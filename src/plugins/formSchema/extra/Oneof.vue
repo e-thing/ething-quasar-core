@@ -102,6 +102,15 @@ export default {
     },
 
   },
+  
+  watch: {
+    subschema (val, oldVal) {
+      if (!val) {
+        // reset error
+        this.$emit('error', false)
+      }
+    }
+  },
 
   methods: {
     getDefault () {

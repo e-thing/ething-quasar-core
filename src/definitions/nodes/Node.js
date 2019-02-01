@@ -1,7 +1,5 @@
-
 export default {
-  properties: {
 
-    
-  }
+  color: '#eeeeee'
+  
 }

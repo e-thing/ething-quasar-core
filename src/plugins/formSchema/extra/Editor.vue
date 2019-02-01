@@ -35,7 +35,7 @@ export default {
   data () {
     return {
       cmOption: {
-        mode: this.c_schema['$lang'] || 'text', //'application/json',
+        mode: this.schema['$lang'] || 'text', //'application/json',
         tabSize: 4,
         styleActiveLine: true,
         lineNumbers: true,

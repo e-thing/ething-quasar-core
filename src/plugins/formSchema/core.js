@@ -127,7 +127,7 @@ var resolve = function (schema) {
 var makeForm = function (createElement, props, on) {
   var schema = props.schema = resolve(props.schema)
 
-  if(!schema || Object.keys(schema).length===0) return 
+  if(!schema || Object.keys(schema).length===0) return
 
   //console.log('SCHEMA', JSON.stringify(schema, null, 2))
   //console.log('MODEL', JSON.stringify(props.value, null, 2))
@@ -191,6 +191,7 @@ var FormComponent = {
     },
     value: {},
     schema: {},
+    context: Object,
     required: {
       type: Boolean,
       default: false
@@ -367,6 +368,35 @@ var FormComponent = {
       var args = Array.prototype.slice.call(arguments)
       args.unshift('['+this.id+']')
       console.log.apply(console, args)
+    },
+    getContext (key) {
+      if (!key) {
+        var context = this.parseContext(window['FormSchemaContext'])
+        var parent = this.parent()
+        if (parent) {
+          extend(true, context, this.parseContext(parent.getContext()))
+        }
+        extend(true, context, this.parseContext(this.context))
+        return context
+      }
+      return this.getContext()[key]
+    },
+    parseContext (context) {
+      context = context || {}
+      var c = context['global'] || {}
+      var name = this.$options.name
+      var formattedName = formatComponentName(name)
+
+      for (var k in context) {
+        if (formatComponentName(k) === formattedName) {
+          Object.assign(c, context[k] || {})
+          break
+        }
+      }
+
+      Object.assign(c, context[this.id] || {})
+
+      return c
     },
     // search
     parent () {

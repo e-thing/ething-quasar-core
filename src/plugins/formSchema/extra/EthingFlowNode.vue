@@ -19,7 +19,7 @@ import { FormComponent } from '../core'
 
 /*
 options
-$flow: id | Resource // a flow instance, only the nodes for that flow will be listed
+$flow: '$context' | id | Resource | f() => id|resource // a flow instance, only the nodes for that flow will be listed
 $filter: f(flow, node) => boolean // filter the displayed nodes
 */
 
@@ -44,7 +44,14 @@ export default {
       }
     },
     flow () {
-      return this.c_schema['$flow']
+      var flow = this.c_schema['$flow']
+      if (flow === '$context') {
+        flow = this.getContext('flow')
+      }
+      if (typeof flow === 'function') {
+        flow = flow.call(this.c_schema)
+      }
+      return flow
     }
   },
 

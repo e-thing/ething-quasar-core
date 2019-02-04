@@ -225,7 +225,7 @@ DataSource.prototype.add = function (source, done) {
 
           if (typeof self.history === 'number') {
             var d = new Date( Date.now() - (parseInt(self.history)*1000) )
-						query = "date > '"+d.toISOString()+"'";
+						query = "date > dateTime('"+d.toISOString()+"')";
           }
 
           r.select({

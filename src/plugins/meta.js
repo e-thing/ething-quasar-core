@@ -442,7 +442,7 @@ function importMeta (self, meta, done) {
     self.definitions = serverDefinitions
 
     formSchemaCore.addDefinitionsHandler(ref => {
-      return self.get(ref.replace(/^#/, ''))
+      return self.get(ref.replace(/^#\//, ''))
     })
 
     if (done)

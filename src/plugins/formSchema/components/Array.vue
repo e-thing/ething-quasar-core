@@ -51,7 +51,7 @@
 
       </div>
       <div class="form-schema-array-bottom-padding relative-position" style="height: 48px;">
-        <small v-if="!c_value || !c_value.length" class="absolute-center faded">empty</small>
+        <small v-if="!items.length" class="absolute-center faded">empty</small>
       </div>
     </div>
 
@@ -111,6 +111,10 @@ export default {
     },
 
     onChildValueChange (key, val) {
+      if (!this.c_value) {
+        this.c_value = [val]
+        return
+      }
       this.$set(this.c_value, key, val)
     },
 

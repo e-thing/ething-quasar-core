@@ -53,7 +53,7 @@ export default {
         this.$ething.arbo.find(r => r instanceof EThing.Flow).forEach(flow => {
           if (this.computedFlow && flow.id() !== this.computedFlow.id()) return
 
-          flow.attr('flow').nodes.forEach(node => {
+          flow.attr('nodes').forEach(node => {
 
             if (this.filter && !this.filter.call(this, flow, node)) {
               return

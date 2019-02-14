@@ -36,7 +36,7 @@ export default {
       computedNode () {
         if (typeof this.node === 'string') {
           // node id
-          var nodes = this.computedFlow.attr('flow').nodes
+          var nodes = this.computedFlow.attr('nodes')
           for (var i in nodes) {
             if (nodes[i].id === this.node) {
               return nodes[i]

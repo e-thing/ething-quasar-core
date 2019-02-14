@@ -42,10 +42,10 @@ export default {
     computed: {
 
         parsedFlow () {
-          var flow = this.r.attr('flow')
+          var nodes = this.r.attr('nodes')
           var inputs = []
           var outputs = []
-          flow.nodes.forEach(n => {
+          nodes.forEach(n => {
             if (this.$ethingUI.isSubclass(n.type, 'nodes/inputs/Input')) {
               inputs.push(n)
             } else if (this.$ethingUI.isSubclass(n.type, 'nodes/outputs/Output')) {

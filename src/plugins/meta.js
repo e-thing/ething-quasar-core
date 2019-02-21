@@ -287,12 +287,14 @@ function bind (m, resource) {
 
 var cached_meta_types = {}
 
+
 function get (definitions, type) {
-  var resource = null
+  var resource = null, id = null, deps = [], m = {};
 
   if (type instanceof EThing.Resource) {
     resource = type
     type = type.type()
+    id = resource.id()
   } else if(typeof type === 'object' && type!== null && type._type) {
     type = type._type
   }
@@ -303,7 +305,6 @@ function get (definitions, type) {
 
   // check in cache first
   if (resource) {
-    var id = resource.id()
     if (id in cached_meta_types) {
       return cached_meta_types[id]
     }
@@ -314,11 +315,11 @@ function get (definitions, type) {
   }
 
   // compile
-  var m = getFromPath(definitions, type) || {}
-  m = compile(m._mro || [], definitions)
-
-  // dynamic
   if (resource) {
+    deps = resource.attr('extends')
+    m = compile(deps, definitions)
+
+    // dynamic
     if (m.dynamic) {
       m = extend(true, {}, m); // deep copy first !
       (Array.isArray(m.dynamic) ? m.dynamic : [m.dynamic]).forEach(dynamicFn => {
@@ -328,7 +329,18 @@ function get (definitions, type) {
         }
       })
     }
+
+    delete m._mro
+    delete m._type
+    m._resource = id
+
+  } else {
+    m = getFromPath(definitions, type) || {}
+    deps = m._mro || []
+    m = compile(deps, definitions)
   }
+
+  m._dep = deps
 
   // normalize
   m = normalize(m)
@@ -338,7 +350,7 @@ function get (definitions, type) {
 
   // store it in cache
   if (resource) {
-    cached_meta_types[resource.id()] = m
+    cached_meta_types[id] = m
   } else {
     cached_meta_types[type] = m
   }
@@ -512,7 +524,7 @@ export default {
         base = normType(base)
         if (type === base) return true
         var m = this.get(type)
-        return m && m._mro.indexOf(base) !== -1
+        return m && m._mro && m._mro.indexOf(base) !== -1
       },
 
       // extend the metadata of a given type
@@ -523,7 +535,7 @@ export default {
         // remove from cache any dependencies
         Object.keys(cached_meta_types).forEach(key => {
           var n = cached_meta_types[key]
-          if (n._mro.indexOf(type) !== -1) {
+          if (n._dep.indexOf(type) !== -1) {
             delete cached_meta_types[key]
           }
         })

@@ -5,7 +5,10 @@ export default {
   color: 'orange',
 
   properties: {
-    flow: {
+    nodes: {
+      '$readOnly': true
+    },
+    connections: {
       '$readOnly': true
     },
   },

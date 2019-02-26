@@ -15,6 +15,7 @@
       <q-item-tile sublabel v-if="showLocation" class="lt-sm">location: {{ resource.location() }}</q-item-tile>
       <q-item-tile sublabel v-if="showSize">{{ $ethingUI.utils.sizeToString(resource.size()) }}</q-item-tile>
       <q-item-tile sublabel v-if="showLength">{{ resource.length() }} rows</q-item-tile>
+      <q-item-tile sublabel v-if="showError" color="negative"><q-icon name="mdi-alert" /> {{ resource.attr('error') }}</q-item-tile>
     </q-item-main>
     <q-item-side right v-if="Object.keys(data).length>0" class="data gt-sm ellipsis">
       {{ $ethingUI.utils.describe(data) }}
@@ -95,6 +96,10 @@ export default {
 
     showConnected () {
       return this.resource instanceof this.$ething.Device
+    },
+    
+    showError () {
+      return this.resource instanceof this.$ething.Device && this.resource.attr('error')
     },
 
     showBattery () {

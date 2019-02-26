@@ -388,8 +388,7 @@ function importMeta (self, meta, done) {
 
   self.scopes = meta.scopes || {}
   self.info = meta.info || {}
-  self.config = meta.config || {}
-
+  
   // load plugins index.js file
   var plugins = meta.plugins || {}
 

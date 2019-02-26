@@ -23,15 +23,8 @@ export default {
         return d ? date.formatDate(d.getTime(), 'YYYY-MM-DD HH:mm') : 'never'
       }
     },
-
-    methods: {
-      getFormatted: function (resource) {
-        return (this.get(resource) || []).join(', ')
-      }
-    }
+    
   },
-
-  methods: {},
 
   open (resource, more) {
     return '/device/' + resource.id()

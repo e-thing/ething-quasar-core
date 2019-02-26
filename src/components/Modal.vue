@@ -1,11 +1,11 @@
 <template>
   <q-modal
-    ref="modal" 
-    class="column" 
-    :value="value" 
-    @input="$emit('input', $event)" 
-    v-bind="$attrs" 
-    :content-css="contentCss" 
+    ref="modal"
+    class="column"
+    :value="value"
+    @input="$emit('input', $event)"
+    v-bind="$attrs"
+    :content-css="contentCss"
     @show="$emit('show', $event)"
     @escape-key="$emit('cancel')"
     @dismiss="$emit('cancel')"
@@ -163,13 +163,16 @@ export default {
       },
 
       hide () {
-        this.$refs.modal.hide()
+        if (this.$refs.modal)
+          this.$refs.modal.hide()
       },
       show () {
-        this.$refs.modal.show()
+        if (this.$refs.modal)
+          this.$refs.modal.show()
       },
       toggle () {
-        this.$refs.modal.toggle()
+        if (this.$refs.modal)
+          this.$refs.modal.toggle()
       },
     }
 

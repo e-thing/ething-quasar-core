@@ -1,5 +1,5 @@
 <template>
-  <strong class="ellipsis">{{ node.name }}</strong>
+  <strong>{{ node.name }}</strong>
 </template>
 
 <script>

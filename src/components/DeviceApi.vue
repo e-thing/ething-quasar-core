@@ -105,6 +105,7 @@ export default {
             inputError: false,
             error: false,
             loading: false,
+            ts: 0,
             result: null,
             resultType: null,
             resultContentType: null,
@@ -140,31 +141,33 @@ export default {
 
         var contentType = operation.return
 
+        operation.ts = Date.now()
         operation.error = false
         operation.loading = true
         operation.result = null
         operation.resultType = null
         operation.resultContentType = null
 
+
         // MJPEG
     		if (/^image\//.test(contentType) || /^multipart\/x-mixed-replace/.test(contentType) || contentType=='video/x-motion-jpeg' || contentType=='video/x-jpeg') {
-          operation.result = this.toUrl(operation)
+          operation.result = this.toUrl(operation) + '&_ts=' + operation.ts
           operation.resultType = 'image'
     		}
     		else if (/^audio\//.test(contentType) && supportsAudioPlayback(contentType)) {
           operation.resultContentType = contentType
-          operation.result = this.toUrl(operation)
+          operation.result = this.toUrl(operation) + '&_ts=' + operation.ts
           operation.resultType = 'audio'
           operation.loading = false
     		}
     		else if (/^video\//.test(contentType)) {
     			if(supportsVideoPlayback(contentType)){
             operation.resultContentType = contentType
-            operation.result = this.toUrl(operation)
+            operation.result = this.toUrl(operation) + '&_ts=' + operation.ts
             operation.resultType = 'video'
     			} else {
     				// flv ...
-            operation.result = this.toUrl(operation)
+            operation.result = this.toUrl(operation) + '&_ts=' + operation.ts
             operation.resultType = 'videoflash'
     			}
           operation.loading = false
@@ -241,8 +244,8 @@ export default {
     						success( $('<object width="425" height="300" class="videoplayer" data="http://releases.flowplayer.org/swf/flowplayer-3.2.18.swf" type="application/x-shockwave-flash"><param name="movie" value="http://releases.flowplayer.org/swf/flowplayer-3.2.18.swf" /><param name="allowfullscreen" value="true" /><param name="allowscriptaccess" value="always" /><param name="flashvars" value=\'config={"clip":{"url":"'+src+'"},"playlist":[{"url":"'+src+'"}]}\' /></object>') );
     					}
     				}*/ else {
-            operation.error = 'Unable to render the response'
-          }
+              operation.error = 'Unable to render the response'
+            }
 
           }).catch( err => {
             operation.error = err

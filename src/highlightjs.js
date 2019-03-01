@@ -1,4 +1,4 @@
-import '../statics/css/highlight.js.9.9.0.default.min.css'
+import './statics/css/highlight.js.9.9.0.default.min.css'
 import hljs from 'highlight.js/lib/highlight'
 
 import json from 'highlight.js/lib/languages/json'

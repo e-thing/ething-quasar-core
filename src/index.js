@@ -4,8 +4,7 @@ import { version } from '../package.json'
 import Core from './core.js'
 import * as utils from './utils.js'
 
-import * as components from './components.js'
-import * as plugins from './plugins.js'
+import * as components from './components'
 
 
 var EThingUI = {
@@ -34,16 +33,6 @@ EThingUI.install = function(Vue, opts = {}) {
       Vue.component(c.name, c)
     }
   })
-
-  if (plugins) {
-    const param = { EThingUI, Vue, opts }
-    Object.keys(plugins).forEach(key => {
-      const p = plugins[key]
-      if (typeof p.install === 'function') {
-        p.install(param)
-      }
-    })
-  }
 
 }
 

@@ -2,10 +2,10 @@
   <div class="form-schema-layout" :style="{display: inlined ? 'inline' : 'block'}">
     <small
       style="display: block;"
-      v-if="!inlined && schema.description"
+      v-if="(forceDescription || !inlined) && schema.description"
       class="form-schema-description"
     >
-      {{ schema.description }}
+      <vue-markdown :anchorAttributes="{target: '_blank'}">{{ schema.description.trim() }}</vue-markdown>
     </small>
     <slot></slot>
     <small
@@ -20,8 +20,18 @@
 
 <script>
 
+import VueMarkdown from 'vue-markdown'
+
 export default {
   name: 'formSchemaLayout',
+
+  components: {
+    VueMarkdown
+  },
+
+  props: {
+    'forceDescription': Boolean
+  },
 
   computed: {
     inlined () {

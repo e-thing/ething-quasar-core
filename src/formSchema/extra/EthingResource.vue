@@ -13,7 +13,7 @@
 
 <script>
 
-import ResourceSelect from '../../../components/ResourceSelect'
+import ResourceSelect from '../../components/ResourceSelect'
 import { FormComponent } from '../core'
 
 /*

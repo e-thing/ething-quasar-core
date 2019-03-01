@@ -3,6 +3,15 @@ import promiseFinally from 'promise.prototype.finally'
 import storeModules from './store'
 import { LocalStorage, SessionStorage } from 'quasar'
 
+import formSchema from './formSchema'
+import ething from './ething.js'
+import meta from './meta.js'
+import socketio from './socketio.js'
+import widget from './widget.js'
+import highlightjs from './highlightjs.js'
+import vuelidate from './vuelidate.js'
+import modal from './modal.js'
+
 
 // necessary for older browsers
 promiseFinally.shim()
@@ -138,8 +147,22 @@ export default {
 
     })
 
+    var pp = [
+      formSchema,
+      ething,
+      meta,
+      socketio,
+      widget,
+      highlightjs,
+      vuelidate,
+      modal
+    ]
 
-
+    pp.forEach(p => {
+      if (typeof p.install === 'function') {
+        p.install({ EThingUI, Vue, opts })
+      }
+    })
 
   }
 }

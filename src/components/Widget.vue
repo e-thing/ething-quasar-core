@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { widgets } from '../plugins/widget'
+import { widgets } from '../widget'
 
 
 export default {

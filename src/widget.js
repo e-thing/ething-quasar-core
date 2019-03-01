@@ -1,6 +1,6 @@
 // widgets module
 
-import coreWidgets from '../components/widgets'
+import coreWidgets from './components/widgets'
 
 // global widgets map
 export var widgets = {}

@@ -1,4 +1,4 @@
-import ModalComponent from '../components/ResourceCreateModal'
+import ModalComponent from './components/ResourceCreateModal'
 
 export default {
   install ({ EThingUI, Vue }) {

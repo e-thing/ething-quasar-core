@@ -2,7 +2,6 @@
 this module is responsible of downloading metadata from the ething server.
 */
 import EThing from 'ething-js'
-import localDefinitions from '../definitions'
 import * as formSchemaCore from './formSchema/core'
 import { extend } from 'quasar'
 import { linearize } from 'c3-linearization'
@@ -384,11 +383,11 @@ function getScript(source, callback) {
     prior.parentNode.insertBefore(script, prior);
 }
 
-function importMeta (self, meta, done) {
+function importMeta (self, localDefinitions, meta, done) {
 
   self.scopes = meta.scopes || {}
   self.info = meta.info || {}
-  
+
   // load plugins index.js file
   var plugins = meta.plugins || {}
 
@@ -442,7 +441,7 @@ function importMeta (self, meta, done) {
     }
 
     // merge with locals
-    walkThrough(serverDefinitions, self.definitions, (node, local, stop, path) => {
+    walkThrough(serverDefinitions, localDefinitions, (node, local, stop, path) => {
       if (node['type'] === 'class') {
         node = mergeClass(node, local)
         stop()
@@ -486,7 +485,7 @@ export default {
 
       mergeClass,
 
-      definitions: localDefinitions,
+      definitions: {},
 
       iterate: function (def, cb) {
         if (!cb && typeof def === 'function') {
@@ -546,7 +545,12 @@ export default {
       // list the available scopes (used in api key)
       scopes: {},
 
-      loadMeta (done) {
+      loadMeta (localDefinitions, done) {
+        if (typeof done == 'undefined' && typeof localDefinitions == 'function') {
+          done = localDefinitions
+          localDefinitions = null
+        }
+
         var self = this
         return new Promise(function(resolve, reject) {
           EThing.request({
@@ -554,7 +558,7 @@ export default {
             dataType: 'json',
           }).then( (meta) => {
             console.log('[meta] ething meta loaded !')
-            importMeta(self, meta, () => {
+            importMeta(self, localDefinitions || {}, meta, () => {
               if (done) {
                 done()
               }

@@ -1,5 +1,5 @@
 <template>
-  <form-schema-layout class="form-schema-editor">
+  <form-schema-layout class="form-schema-editor" force-description>
     <codemirror ref='cm' v-bind:value="c_value || ''" :options="cmOption" v-on:input="c_value = $event"></codemirror>
   </form-schema-layout>
 </template>

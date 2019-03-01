@@ -13,7 +13,7 @@
 
 <script>
 
-import FlowNodeSelect from '../../../components/FlowNodeSelect'
+import FlowNodeSelect from '../../components/FlowNodeSelect'
 import { FormComponent } from '../core'
 
 

@@ -16,7 +16,7 @@
 <script>
 
 import { FormComponent } from '../core'
-import Cron from '../../../components/Cron'
+import Cron from '../../components/Cron'
 import cronstrue from 'cronstrue'
 
 

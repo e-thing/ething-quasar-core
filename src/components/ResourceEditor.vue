@@ -2,9 +2,7 @@
   <div>
     <slot></slot>
 
-    <blockquote v-if="!!meta.description">
-      <vue-markdown :anchorAttributes="{target: '_blank'}">{{ meta.description.trim() }}</vue-markdown>
-    </blockquote>
+    <vue-markdown v-if="!!meta.description"> class="markdown" :anchorAttributes="{target: '_blank'}">{{ meta.description.trim() }}</vue-markdown>
 
     <form-schema :schema="schema" v-model="model" @error="inputError = $event" class="q-mb-xl"/>
 
@@ -224,10 +222,3 @@ export default {
 
 }
 </script>
-
-<style lang="stylus" scoped>
-  @import '~variables'
-
-  blockquote > div
-    padding-top $space-y-base
-</style>

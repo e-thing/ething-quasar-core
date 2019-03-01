@@ -5,7 +5,7 @@
       v-if="(forceDescription || !inlined) && schema.description"
       class="form-schema-description"
     >
-      <vue-markdown :anchorAttributes="{target: '_blank'}">{{ schema.description.trim() }}</vue-markdown>
+      <vue-markdown class="markdown" :anchorAttributes="{target: '_blank'}">{{ schema.description.trim() }}</vue-markdown>
     </small>
     <slot></slot>
     <small

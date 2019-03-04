@@ -475,6 +475,16 @@ var FormComponent = {
     },
     _is (id) {
       return this.schema.id === id
+    },
+    
+    // dependencies
+    _install_dep (node, callback) {
+      node.$on('input', val => {
+        this.$nextTick(() => { // delay or some bugs may arrise
+          callback.call(this, val, this, node)
+        })
+      })
+      callback.call(this, node.c_value, this, node)
     }
   },
 
@@ -517,12 +527,7 @@ var FormComponent = {
         let node = this.find(id)
         if (debug) this.log('find node', id)
         if (node && callback) {
-          node.$on('input', val => {
-            this.$nextTick(() => { // delay or some bugs may arrise
-              callback.call(this, val, this, node)
-            })
-          })
-          callback.call(this, node.c_value, this, node)
+          this._install_dep(node, callback)
         } else {
           if (!node) {
             console.warn('[form-schema] node with id ""' + id + '" not found for ' + this.$options.name)

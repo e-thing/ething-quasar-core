@@ -177,8 +177,8 @@ export default {
 
     metadata: {
       label: 'multilabel',
-      minWidth: 50,
-      minHeight: 50
+      minWidth: 100,
+      minHeight: 60
     }
 
 

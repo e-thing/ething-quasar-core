@@ -30,8 +30,8 @@ export default {
 
     metadata: {
       label: 'label',
-      minWidth: 50,
-      minHeight: 50
+      minWidth: 100,
+      minHeight: 60
     }
 
 

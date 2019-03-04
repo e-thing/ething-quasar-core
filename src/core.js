@@ -157,12 +157,13 @@ export default {
       vuelidate,
       modal
     ]
-
+    
     pp.forEach(p => {
       if (typeof p.install === 'function') {
         p.install({ EThingUI, Vue, opts })
       }
     })
+
 
   }
 }

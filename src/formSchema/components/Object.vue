@@ -106,6 +106,19 @@ export default {
       if (errorsDirty) {
         this.$emit('error', Object.values(this.errors).some(err => err))
       }
+      
+      // clean value
+      var copy_value = Object.assign({}, this.c_value)
+      var valueDirty = false
+      Object.keys(copy_value).forEach(key => {
+        if (keyOrdered.indexOf(key) === -1) {
+          delete copy_value[key]
+          valueDirty = true
+        }
+      })
+      if (valueDirty) {
+        this.c_value = copy_value
+      }
 
       return keyOrdered.map(key => {
         return {

@@ -6,10 +6,7 @@
         </div>
     </div>
     <div class="widget-content-layer" :class="inline ? '' : 'fit'">
-      <template v-if="isDynReg">
-        <div ref="dynW"/>
-      </template>
-      <component v-else ref="staticW" :is="widgetClass" v-bind="widgetOptions" @error="error = $event"/>
+      <component ref="inner" :is="widgetClass" v-bind="widgetOptions" @error="error=$event"/>
     </div>
   </div>
 </template>
@@ -31,22 +28,17 @@ export default {
     data() {
       return {
         error: false,
-        widgetInstance: null,
-        manualDestroy: false,
-        metadata: null
+        widgetInstance: null
       };
     },
     computed: {
-      isDynReg() {
-        return typeof this.widgetClass !== "string";
-      },
       style () {
-        var style = {}
+        var style = {}, widgetInstance = this.widgetInstance
 
-        if (this.widgetInstance) {
+        if (widgetInstance) {
 
-          style['background-color'] = this.widgetInstance.bgColor || '#FFFFFF'
-          style['color'] = this.widgetInstance.color || '#027be3'
+          style['background-color'] = widgetInstance.bgColor || '#FFFFFF'
+          style['color'] = widgetInstance.color || '#027be3'
 
           var metadata = this.metadata
           if (metadata.minWidth) {
@@ -68,64 +60,30 @@ export default {
       },
       resource () {
         var resource = null
-        if (this.widgetOptions.resource) {
+        if (this.widgetOptions && this.widgetOptions.resource) {
           resource = this.$ething.arbo.get(this.widgetOptions.resource)
         }
         return resource
-      }
-    },
-    mounted() {
-      if (this.isDynReg) {
-
-        var WidgetComponent;
-
-        // create constructor
-        if (this.$ethingUI.utils.isPlainObject(this.widgetClass)) {
-          WidgetComponent = Vue.extend(this.widgetClass);
-        } else {
-          WidgetComponent = this.widgetClass
+      },
+      
+      metadata () {
+        var metadata = this.widgetInstance.constructor.options.metadata
+        if (typeof metadata === 'function') {
+          metadata = metadata.call(this, this.resource)
         }
-
-        // create an instance of WidgetComponent and mount it
-        var WidgetComponentInstance = new WidgetComponent({
-          propsData: this.widgetOptions,
-          parent: this
-        });
-
-        WidgetComponentInstance.$on("error", evt => {
-          this.error = evt;
-        });
-
-        WidgetComponentInstance.$mount(this.$refs.dynW);
-
-        this.widgetInstance = WidgetComponentInstance
-        this.manualDestroy = true
-      } else {
-        this.widgetInstance = this.$refs.staticW
+        return metadata
       }
-
-      var metadata = this.widgetInstance.constructor.options.metadata
-      if (typeof metadata === 'function') {
-        metadata = metadata.call(this, this.resource)
-      }
-      this.metadata = metadata
     },
-
-    beforeDestroy () {
-      if (this.manualDestroy && this.widgetInstance) {
-        this.widgetInstance.$destroy()
-      }
+    
+    mounted () {
+      this.widgetInstance = this.$refs.inner
     },
 
     methods: {
       hasContentOverflow () {
         var el = null
-        if (this.isDynReg) {
-          el = this.$refs.dynW
-        } else {
-          if (this.$refs.staticW) {
-            el = this.$refs.staticW.$el
-          }
+        if (this.widgetInstance) {
+          el = this.widgetInstance.$el
         }
         if (el) {
           return el.scrollWidth > el.clientWidth

@@ -383,7 +383,7 @@ function getScript(source, callback) {
     prior.parentNode.insertBefore(script, prior);
 }
 
-function importMeta (self, localDefinitions, meta, done) {
+function importMeta (self, meta, done) {
 
   self.scopes = meta.scopes || {}
   self.info = meta.info || {}
@@ -441,7 +441,7 @@ function importMeta (self, localDefinitions, meta, done) {
     }
 
     // merge with locals
-    walkThrough(serverDefinitions, localDefinitions, (node, local, stop, path) => {
+    walkThrough(serverDefinitions, self.definitions, (node, local, stop, path) => {
       if (node['type'] === 'class') {
         node = mergeClass(node, local)
         stop()
@@ -550,7 +550,11 @@ export default {
           done = localDefinitions
           localDefinitions = null
         }
-
+        
+        if (localDefinitions) {
+          Object.assign(this.definitions, localDefinitions) // todo: replace by an iterative mergeClass 
+        }
+        
         var self = this
         return new Promise(function(resolve, reject) {
           EThing.request({
@@ -558,7 +562,7 @@ export default {
             dataType: 'json',
           }).then( (meta) => {
             console.log('[meta] ething meta loaded !')
-            importMeta(self, localDefinitions || {}, meta, () => {
+            importMeta(self, meta, () => {
               if (done) {
                 done()
               }

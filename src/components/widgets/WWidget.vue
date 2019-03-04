@@ -23,6 +23,8 @@ Vue.config.optionMergeStrategies.metadata = function (parent, child) {
 export default {
 
   name: 'WWidget',
+  
+  inheritAttrs: false,
 
   props: {
     color: {

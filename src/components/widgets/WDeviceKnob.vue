@@ -44,7 +44,7 @@ export default {
       minWidth: 160,
       minHeight: 160
     }
-
+    
 
 
 

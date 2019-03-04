@@ -2,7 +2,7 @@
   <div>
     <slot></slot>
 
-    <vue-markdown v-if="!!meta.description"> class="markdown" :anchorAttributes="{target: '_blank'}">{{ meta.description.trim() }}</vue-markdown>
+    <vue-markdown v-if="!!meta.description" class="markdown" :anchorAttributes="{target: '_blank'}">{{ meta.description.trim() }}</vue-markdown>
 
     <form-schema :schema="schema" v-model="model" @error="inputError = $event" class="q-mb-xl"/>
 
@@ -222,3 +222,4 @@ export default {
 
 }
 </script>
+
